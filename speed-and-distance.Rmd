@@ -1,7 +1,10 @@
 ---
 title: "Untitled"
-author: "José Incio"
-date: "7/23/2019"
+knit: (function(input_file, encoding) {
+  out_dir <- 'docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
 output: html_document
 ---
 
