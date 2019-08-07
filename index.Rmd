@@ -1,0 +1,28 @@
+---
+title: "STATA to R page"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r eval=FALSE, echo=FALSE}
+#knit: (function(input_file, encoding) {
+#  out_dir <- 'docs';
+#  rmarkdown::render(input_file,
+# encoding=encoding,
+# output_file=file.path(dirname(input_file), out_dir, #'index.html'))})
+#output: html_document
+```
+
+# Introduction <a name="introduction"></a>
+
+With this page, we want to help students, researchers, and practitioners that are used to STATA to include R in their analytic toolbox. Likewise, we present some of the most used panel analysis' technics showing the potential of different approaches. 
+
+This page is not a statistic textbook; we won't discuss the statistic assumptions or mathematical derivations behind the technics. We are assuming two things. First, the reader has enough statistical background to understand the strengths and limitations of each model. Second, the user knows more STATA than R. Therefore, our STATA code will have less comments than the R code. 
+
+Authors: 
+
+## Steve Finkel
+
+## José Incio
