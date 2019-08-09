@@ -6,11 +6,17 @@ navbar:
       icon: fa-home
       text: Home
     - 
+      href: Panel_Data.html
+      text: Panel-Data
+    -
       href: Econometrics.html
       text: Econometric
     -
-      href: Panel_Data.html
-      text: Panel-Data
+      href: SEM.html
+      text: SEM
+    -
+      href: Multilevel.html
+      text: Multilevel
   title: ""
 output:
   bookdown::html_document2:
@@ -19,4 +25,5 @@ output:
     toc_depth: 3
     toc_float: true
     highlight: haddock
+    css: css1.css
 output_dir: docs

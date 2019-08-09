@@ -143,6 +143,7 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="css1.css" type="text/css" />
 
 
 
@@ -421,10 +422,16 @@ div.tocify {
   </a>
 </li>
 <li>
+  <a href="Panel_Data.html">Panel-Data</a>
+</li>
+<li>
   <a href="Econometrics.html">Econometric</a>
 </li>
 <li>
-  <a href="Panel_Data.html">Panel-Data</a>
+  <a href="SEM.html">SEM</a>
+</li>
+<li>
+  <a href="Multilevel.html">Multilevel</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -443,23 +450,892 @@ div.tocify {
 </div>
 
 
-<div id="r-markdown" class="section level2">
-<h2><span class="header-section-number">0.1</span> R Markdown</h2>
-<p>Econometrics!</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">summary</span>(cars)</a></code></pre></div>
-<pre><code>##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00</code></pre>
+<div id="within-estimators-models" class="section level1">
+<h1><span class="header-section-number">1</span> Within estimators models <a name="FE"></a></h1>
+<div id="first-difference-two-waves" class="section level2">
+<h2><span class="header-section-number">1.1</span> First Difference two waves <a name="FDtw"></a></h2>
+<p>Model:</p>
+<p><span class="math display">\[ Y_{it}-Y_{i(t-1)} = X_{1i}-X_{1i(t-1)}+X_{2i}-X_{2i(t-1)}+ \epsilon_i-\epsilon_{i(t-1)}\]</span></p>
+<p>or (Multiwave)</p>
+<p><span class="math display">\[ \Delta Y_i= \Delta X_{1i} + \Delta X_{2i} + .. \Delta \epsilon_i\]</span></p>
+<p><strong>Data details</strong></p>
+<p>We are going to retrieve the data Finkel-Smith 2011. You can find more details about the data here <a href="#cleaning">Datas</a></p>
+<p>This data is in wide format. We will create two variables</p>
+<ul>
+<li>Knowdif (<span class="math inline">\(\Delta Knowledge\)</span>): difference in knowledge bewteen before and after treatment</li>
+<li>newtreat_ww2 (<span class="math inline">\(\Delta Treatment\)</span>): binary variable, “1” if the subject got the treatment.</li>
+</ul>
+<div id="stata" class="section level3">
+<h3><span class="header-section-number">1.1.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
+<ul>
+<li>Creating the variables:</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">gen knowdif=know_w2<span class="op">-</span>know_w1</a>
+<a class="sourceLine" id="cb1-2" title="2">gen treatdif=newtreat_ww2<span class="op">-</span>newtreat_ww1</a>
+<a class="sourceLine" id="cb1-3" title="3">gen intdif=interest_w2<span class="op">-</span>interest_w1</a></code></pre></div>
+<ul>
+<li>Runing the models</li>
+</ul>
+<p><span style="color:blue">FD_1: First Difference without controls</span></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">regress knowdif newtreat_ww2</a></code></pre></div>
+<p><img src="Stata_images/fd1.png" width="80%" /></p>
+<p><span style="color:blue">FD_2: First Difference with controls</span></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">regress knowdif treatdif intdif sex educ</a></code></pre></div>
+<p><img src="Stata_images/fd2.png" width="80%" /></p>
+<p>We can add time invariant variables in our model. However the interpretation is not straighforward. For example, in this case, sex and education have negative effects on change in knowledge. This could mean three differnt things:</p>
+<pre><code>- Women increase more on knwoledge than men, and less educated subjects increase more than highly educated. 
+- Or: sex and education had greater effects on levels of knowldge at time 1 than time 2.
+- Or: sex and education differences were stronger at time 1 than time 2.</code></pre>
 </div>
-<div id="including-plots" class="section level2">
-<h2><span class="header-section-number">0.2</span> Including Plots</h2>
-<p>You can also embed plots, for example:</p>
-<p><img src="Econometrics_files/figure-html/pressure-1.png" width="672" /></p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+<div id="r" class="section level3">
+<h3><span class="header-section-number">1.1.2</span> <span style="color:red"><strong>R</strong></span></h3>
+<p>Now we replicate the models <strong>FD_1</strong> and <strong>FD_2</strong> using R.</p>
+<ul>
+<li>First, we get the data using the function “import” (package rio).</li>
+<li>Then we add the variables using “$”.</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">data=<span class="kw">import</span>(<span class="st">&quot;./datasets/Kenya.3wave wide.2017.dta&quot;</span>)</a>
+<a class="sourceLine" id="cb5-2" title="2">data<span class="op">$</span>Knowdif=data<span class="op">$</span>know_w2<span class="op">-</span>data<span class="op">$</span>know_w1 <span class="co">## Variable Knowdig</span></a>
+<a class="sourceLine" id="cb5-3" title="3">data<span class="op">$</span>treatdif=data<span class="op">$</span>newtreat_ww2<span class="op">-</span>data<span class="op">$</span>newtreat_ww1 <span class="co">## Vairable treatdif</span></a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r Comment1"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">Packages as <span class="st">&quot;dplyr&quot;</span> or <span class="st">&quot;tydr&quot;</span> are giving us more options <span class="cf">for</span> data managment. </a>
+<a class="sourceLine" id="cb6-2" title="2">For instance we can do everything <span class="cf">in</span> <span class="st">&quot;one&quot;</span> line of code.</a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="st">```</span><span class="dt">%&gt;%</span><span class="st">```</span> </a>
+<a class="sourceLine" id="cb6-4" title="4">(it means<span class="op">:</span><span class="st"> &quot;throw the object/output from the left in to the next function&quot;</span>) </a></code></pre></div>
+<ul>
+<li>In this code below we import the dataset and then “throw” it to the function “mutate” to create new variables (Knowdif and treatdif).</li>
+<li>The outuput is the same.</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">data=<span class="kw">import</span>(<span class="st">&quot;./datasets/Kenya.3wave wide.2017.dta&quot;</span>)<span class="op">%&gt;%</span><span class="kw">mutate</span>(<span class="dt">Knowdif=</span>know_w2<span class="op">-</span>know_w1,<span class="dt">treatdif=</span>newtreat_ww2<span class="op">-</span>newtreat_ww1, <span class="dt">intdif=</span>interest_w2<span class="op">-</span>interest_w1)</a></code></pre></div>
+<p><strong>Runing the models</strong></p>
+<p>First option: Create and object that contains all the information of the model and then ask for the summary of the model.</p>
+<ul>
+<li>The function “lm” means “linear model” and it does all the estimation process of the linear model. The dependent and independent variables are separated by “~”, and then, after the coma, we called the data.</li>
+<li>The function <code>summary</code> allow us to get relevant information of the model.</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">FD1=<span class="kw">lm</span>(Knowdif<span class="op">~</span>treatdif, data)</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="kw">summary</span>(FD1) </a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = Knowdif ~ treatdif, data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.6384 -0.6384  0.3616  0.6154  3.6154 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   0.3846     0.0987   3.897 0.000114 ***
+## treatdif      0.2538     0.1201   2.114 0.035176 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.125 on 399 degrees of freedom
+## Multiple R-squared:  0.01107,    Adjusted R-squared:  0.008593 
+## F-statistic: 4.467 on 1 and 399 DF,  p-value: 0.03518</code></pre>
+<ul>
+<li>the object “m1” it has more information that was showed in the summary output. For instance, if we want an analysis of variance of the model we can get that with the function “aov”.</li>
+</ul>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">aov</span>(FD1)</a></code></pre></div>
+<pre><code>## Call:
+##    aov(formula = FD1)
+## 
+## Terms:
+##                 treatdif Residuals
+## Sum of Squares    5.6574  505.3301
+## Deg. of Freedom        1       399
+## 
+## Residual standard error: 1.125385
+## Estimated effects may be unbalanced</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">summary</span>(<span class="kw">aov</span>(FD1))</a></code></pre></div>
+<pre><code>##              Df Sum Sq Mean Sq F value Pr(&gt;F)  
+## treatdif      1    5.7   5.657   4.467 0.0352 *
+## Residuals   399  505.3   1.266                 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Another option is to run all in one line of code, that could be done using the “%&gt;%”. We throw the linear model into the function summary, in this case we are not saving any object in the memory.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="kw">lm</span>(data<span class="op">$</span>Knowdif<span class="op">~</span>data<span class="op">$</span>treatdif, data)<span class="op">%&gt;%</span><span class="kw">summary</span>() </a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = data$Knowdif ~ data$treatdif, data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.6384 -0.6384  0.3616  0.6154  3.6154 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     0.3846     0.0987   3.897 0.000114 ***
+## data$treatdif   0.2538     0.1201   2.114 0.035176 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.125 on 399 degrees of freedom
+## Multiple R-squared:  0.01107,    Adjusted R-squared:  0.008593 
+## F-statistic: 4.467 on 1 and 399 DF,  p-value: 0.03518</code></pre>
+<p>Now the model FD2:</p>
+<p>We can add more independent/explanatories variables using “+”.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">FD2=<span class="kw">lm</span>(Knowdif<span class="op">~</span>treatdif<span class="op">+</span>intdif<span class="op">+</span>sex<span class="op">+</span>educ, data)</a>
+<a class="sourceLine" id="cb16-2" title="2"><span class="kw">summary</span>(FD2) </a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = Knowdif ~ treatdif + intdif + sex + educ, data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.5859 -0.6457  0.0209  0.5808  3.3664 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  0.73174    0.18661   3.921 0.000104 ***
+## treatdif     0.26210    0.11888   2.205 0.028049 *  
+## intdif       0.16672    0.08632   1.931 0.054146 .  
+## sex         -0.27219    0.11188  -2.433 0.015419 *  
+## educ        -0.06049    0.03660  -1.653 0.099140 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.113 on 395 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.04286,    Adjusted R-squared:  0.03317 
+## F-statistic: 4.422 on 4 and 395 DF,  p-value: 0.001655</code></pre>
+<p>The interpretation is the same stated above.</p>
+</div>
+</div>
+<div id="multiwave-first-difference" class="section level2">
+<h2><span class="header-section-number">1.2</span> Multiwave First Difference <a name="FD_MW"></a></h2>
+<p>With the data in long format we can run a Multi Wave First Different Model:</p>
+<p><span class="math display">\[ \Delta Y_i= \Delta X_{1i} + \Delta X_{2i} + .. \Delta \epsilon_i\]</span></p>
+<div id="stata-1" class="section level3">
+<h3><span class="header-section-number">1.2.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
+<p>In STATA first we set the data as panel with <code>xtset</code> and then we run the model using <code>d</code> before each variable. This will tell STATA to take the difference of said variable at its previous time and include it in the model.</p>
+<p><span style="color:blue"><strong>MWFD1: Multiwave First Difference without waves</strong></span></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">xtset id wave</a>
+<a class="sourceLine" id="cb18-2" title="2">reg d.know_w d.totalce_w  </a></code></pre></div>
+<p><img src="Stata_images/fdmw1.png" width="80%" /></p>
+<p><span style="color:blue"><strong>MWFD2: Multiwave First Difference controling by waves(time)</strong></span></p>
+<p>We can run this model controling for the “trend” effect adding the waves.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">tab wave, <span class="kw">gen</span>(wavv) <span class="co">#//this generates two variables, one for each wave</span></a>
+<a class="sourceLine" id="cb19-2" title="2">reg d.know_w d.totalce_w wavv2 wavv3 <span class="co">#// The new model</span></a></code></pre></div>
+<p><img src="Stata_images/fdmw2.png" width="80%" /></p>
+<p>If our data is in a long format, we can also use the
+<code>xtreg</code> command.</p>
+<ul>
+<li><code>xtset</code> Sets the data as panel.</li>
+</ul>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">xtset id wave</a>
+<a class="sourceLine" id="cb20-2" title="2">xtreg d.know_w d.totalce_w</a></code></pre></div>
+<p><img src="Stata_images/fdmw_2.png" width="80%" /></p>
+</div>
+<div id="r-1" class="section level3">
+<h3><span class="header-section-number">1.2.2</span> <span style="color:red"><strong>R</strong></span></h3>
+<p>In R we can use the plm package to run a Multiwave First Difference</p>
+<p><span style="color:blue"><strong>MWFD1: Multiwave First Difference without waves</strong></span></p>
+<ul>
+<li><p>First, we call the package plm. Remember we already called the package <strong>rio</strong> in the step before.</p></li>
+<li><p>Second, we import the data base using “import”, as we did in our previous step <a href="#rio">here</a></p></li>
+<li><p><code>plm</code> is the function for panel model. As in the linear model, the first element on the function is the <em>model(formula)</em> <code>know_w~totalce_w+age+educ+sex</code>.</p></li>
+<li><p>Variables are added using +. then we include the data <code>data =K_long</code>. - The third element in our code is the “index” <code>index = c("id", "wave")</code>, which does the same job that “xtset” in STATA.</p></li>
+<li><p>Finally, we need to specified the type of model <code>model = "fd"</code>. We have several options here that we will be unveiling as we progress.</p></li>
+<li><p><code>summary(MWFD1)</code> show us the results.</p></li>
+</ul>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1"><span class="kw">library</span>(plm)</a>
+<a class="sourceLine" id="cb21-2" title="2"></a>
+<a class="sourceLine" id="cb21-3" title="3">K_long&lt;-<span class="kw">import</span>(<span class="st">&quot;~/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal Inference and Econometrics/Kenya.3wave long.2017.dta&quot;</span>)  <span class="co">### Here I&#39;m importing the data. </span></a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1">MWFD1&lt;-<span class="kw">plm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex,<span class="dt">data =</span>K_long,</a>
+<a class="sourceLine" id="cb22-2" title="2">          <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
+<a class="sourceLine" id="cb22-3" title="3">          <span class="dt">model =</span> <span class="st">&quot;fd&quot;</span>)</a>
+<a class="sourceLine" id="cb22-4" title="4"><span class="kw">summary</span>(MWFD1)</a></code></pre></div>
+<pre><code>## Oneway (individual) effect First-Difference Model
+## 
+## Call:
+## plm(formula = know_w ~ totalce_w + age + educ + sex, data = K_long, 
+##     model = &quot;fd&quot;, index = c(&quot;id&quot;, &quot;wave&quot;))
+## 
+## Balanced Panel: n = 401, T = 3, N = 1203
+## Observations used in estimation: 802
+## 
+## Residuals:
+##      Min.   1st Qu.    Median   3rd Qu.      Max. 
+## -3.469332 -0.599502 -0.078821  0.791009  3.791009 
+## 
+## Coefficients:
+##             Estimate Std. Error t-value  Pr(&gt;|t|)    
+## (Intercept) 0.208991   0.039029  5.3548 1.120e-07 ***
+## totalce_w   0.130170   0.022431  5.8031 9.377e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Total Sum of Squares:    1003
+## Residual Sum of Squares: 962.47
+## R-Squared:      0.040395
+## Adj. R-Squared: 0.039196
+## F-statistic: 33.6764 on 1 and 800 DF, p-value: 9.3768e-09</code></pre>
+<p><span style="color:blue"><strong>MWFD2: Multiwave First Difference controling by waves(time)</strong></span></p>
+<p>First we need to create a dummy for each wave. There are different ways to create this dummies. We are going to use the function <code>mutate</code> from <code>dplyr</code>. We have used that function <a href="#mutate">here</a></p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1">K_long&lt;-K_long<span class="op">%&gt;%</span><span class="kw">mutate</span>(<span class="dt">wavv1=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb24-2" title="2">                        <span class="dt">wavv2=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb24-3" title="3">                        <span class="dt">wavv3=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">0</span>))</a></code></pre></div>
+<p>Now we can include waves in the model, two waves are omited due to multicoliniarity.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1">FDMW2&lt;-<span class="kw">plm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>wavv1<span class="op">+</span>wavv2,<span class="dt">data =</span>K_long,</a>
+<a class="sourceLine" id="cb25-2" title="2">          <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
+<a class="sourceLine" id="cb25-3" title="3">          <span class="dt">model =</span> <span class="st">&quot;fd&quot;</span>)</a>
+<a class="sourceLine" id="cb25-4" title="4"><span class="kw">summary</span>(FDMW2)</a></code></pre></div>
+<pre><code>## Oneway (individual) effect First-Difference Model
+## 
+## Call:
+## plm(formula = know_w ~ totalce_w + wavv1 + wavv2, data = K_long, 
+##     model = &quot;fd&quot;, index = c(&quot;id&quot;, &quot;wave&quot;))
+## 
+## Balanced Panel: n = 401, T = 3, N = 1203
+## Observations used in estimation: 802
+## 
+## Residuals:
+##      Min.   1st Qu.    Median   3rd Qu.      Max. 
+## -3.577496 -0.606372  0.087191  0.480255  3.480255 
+## 
+## Coefficients: (1 dropped because of singularities)
+##              Estimate Std. Error t-value  Pr(&gt;|t|)    
+## (Intercept) -0.058315   0.058270 -1.0008    0.3172    
+## totalce_w    0.028875   0.027564  1.0476    0.2952    
+## wavv1       -0.578061   0.095189 -6.0728 1.943e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Total Sum of Squares:    1003
+## Residual Sum of Squares: 920.01
+## R-Squared:      0.082732
+## Adj. R-Squared: 0.080436
+## F-statistic: 36.0325 on 2 and 799 DF, p-value: 1.0404e-15</code></pre>
+</div>
+</div>
+<div id="simple-fe" class="section level2">
+<h2><span class="header-section-number">1.3</span> Simple FE <a name="FE1"></a></h2>
+<p>Two more common models:</p>
+<p><span class="math display">\[Y_{it}=\alpha + \beta_1X_{1it}+...\beta_kX_{ikt}+\beta_mZ_i+c_1D_1+c_2D_2+c_{n-1}D_{n-1}+e_{it}\]</span></p>
+<p>In the model above we add a dummy variable (“D”) for each unit, this model is common called (“Least Squares Dummy Variables”). Then each unite will have its own intercept, for instance (<span class="math inline">\(\alpha +c1\)</span>) for unite 1. A drawback with this model is that is too computationally demanding, especially if we have a large number of units.</p>
+<p>The most common model is the Fixed Effect model:</p>
+<p><span class="math display">\[Y_{it}-\bar{Y_i}=\beta_i(X_{1it}-\bar{X}_{1i})+...+ \beta_k(X_{kit}-\bar{X}_{ki})+ \epsilon_{it}\]</span></p>
+<p>These model control for the variation <strong>between</strong> units and only use the within estimators.</p>
+<p>To estimate these models we are going to use the data from Finkel-Smith 2011 in its long format. You can donwload it here:</p>
+<ul>
+<li>You can find more details about the data here <a href="#cleaning">Datas</a></li>
+</ul>
+<div id="stata-2" class="section level3">
+<h3><span class="header-section-number">1.3.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
+<p><code>xtset</code> Sets the data as panel.
+<code>gen</code> Creats or generates a new variable “time” (starts in 0)</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1">xtset id wave</a>
+<a class="sourceLine" id="cb27-2" title="2">gen time=wave<span class="dv">-1</span></a></code></pre></div>
+<p><strong>Runing the model</strong></p>
+<ul>
+<li><code>Know_w</code> = level of knowledge.</li>
+<li><code>tatalce_w</code>=</li>
+<li><code>fe</code> means fixed effect</li>
+</ul>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1">xtreg know_w totalce_w sex educ age, fe </a></code></pre></div>
+<p><img src="Stata_images/fe_2.png" width="80%" /></p>
+<p>Time invariants covariates are rid of the model (because they do not vary within subjects!)</p>
+</div>
+<div id="r-2" class="section level3">
+<h3><span class="header-section-number">1.3.2</span> <span style="color:red"><strong>R</strong></span></h3>
+<ul>
+<li><p>There are several packages that can help us to estimate panel models. There is some overlapping, however, some packages can take a specific approach for a given problem. For instance <strong>plm</strong> was created by econometricians and <strong>panelR</strong> by a sociologist. The best practice is to use the package that can help us with our analysis and not to get attached to any in particular.</p></li>
+<li><p>Here is a good post from panelR’s author comparing his package with plm. <a href="https://www.r-bloggers.com/comparing-panelr-and-plm/">Post</a></p></li>
+</ul>
+<p><span style="color:blue"><strong>R- plm</strong></span></p>
+<ul>
+<li>If you hadn’t before: First, we call the package.</li>
+<li>Second, we import the database using “import”</li>
+<li><code>plm</code> is the function for panel model. As the linear model, the first element is the <em>model</em> <code>know_w~totalce_w+age+educ+sex</code>. Variables are added using +. then we include the data <code>data =K_long</code>. The third element in our code is the “index” <code>index = c("id", "wave")</code>. Which does the same job that “xtset” in STATA. Finally, we need to specify the type of model <code>model = "within"</code>. We have several options here, that we are unveiling as we progress.</li>
+<li><code>summary(FE)</code> shows us the results.</li>
+</ul>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r Comment1"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1">We do not have to call the package everytime we run a <span class="cf">function</span>, only once <span class="cf">in</span> a session. </a>
+<a class="sourceLine" id="cb29-2" title="2"></a>
+<a class="sourceLine" id="cb29-3" title="3">For instance we called <span class="kw">library</span>(rio) before, therefore we do not need to call it again</a></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1">K_long&lt;-<span class="kw">import</span>(<span class="st">&quot;~/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal Inference and Econometrics/Kenya.3wave long.2017.dta&quot;</span>)</a>
+<a class="sourceLine" id="cb30-2" title="2">FE&lt;-<span class="kw">plm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex,<span class="dt">data =</span>K_long,</a>
+<a class="sourceLine" id="cb30-3" title="3">        <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
+<a class="sourceLine" id="cb30-4" title="4">        <span class="dt">model =</span> <span class="st">&quot;within&quot;</span>)</a>
+<a class="sourceLine" id="cb30-5" title="5"><span class="kw">summary</span>(FE)</a></code></pre></div>
+<pre><code>## Oneway (individual) effect Within Model
+## 
+## Call:
+## plm(formula = know_w ~ totalce_w + age + educ + sex, data = K_long, 
+##     model = &quot;within&quot;, index = c(&quot;id&quot;, &quot;wave&quot;))
+## 
+## Balanced Panel: n = 401, T = 3, N = 1203
+## 
+## Residuals:
+##     Min.  1st Qu.   Median  3rd Qu.     Max. 
+## -2.53689 -0.37022  0.00000  0.41348  2.08652 
+## 
+## Coefficients:
+##           Estimate Std. Error t-value  Pr(&gt;|t|)    
+## totalce_w  0.12978    0.02632  4.9309 9.951e-07 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Total Sum of Squares:    558
+## Residual Sum of Squares: 541.56
+## R-Squared:      0.029461
+## Adj. R-Squared: -0.45642
+## F-statistic: 24.3142 on 1 and 801 DF, p-value: 9.9511e-07</code></pre>
+<p>The summary of the model does not give us the “intercept”. Stata estimates the intercept running the model after adding the overall sample mean for Y and X to the demeaned X and Y.</p>
+<p><strong>plm</strong> has a function to obtain it</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" title="1"><span class="kw">within_intercept</span>(FE)</a></code></pre></div>
+<pre><code>## (overall_intercept) 
+##            2.572018 
+## attr(,&quot;se&quot;)
+## [1] 0.0279536</code></pre>
+<p>In this case the result is the same as the output from the STATA command.</p>
+<p><span style="color:blue"><strong>R- panelR</strong></span>
+- If you hadn’t before: First, we call the package.
+- We “panel” our data <code>panel_data(K_long, id=id, wave=wave)</code>. We created a new object (K_long_p). We could also replace the previous one.The advantage of R (compare to STATA), is that we can have more than one data “open” in our enviroment.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1"><span class="kw">library</span>(panelr) </a>
+<a class="sourceLine" id="cb34-2" title="2">K_long_p&lt;-<span class="kw">panel_data</span>(K_long, <span class="dt">id=</span>id, <span class="dt">wave=</span>wave)</a>
+<a class="sourceLine" id="cb34-3" title="3"><span class="kw">head</span>(K_long_p)</a></code></pre></div>
+<pre><code>## # Panel data:    6 x 17
+## # entities:      id [2]
+## # wave variable: wave [1, 2, 3 (3 waves)]
+##   id     wave wave1 treat newtreat_ww evertreat totalce_w talknum_w
+##   &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 10452     1     0     1           0         1         0         0
+## 2 10452     2     1     1           1         1         1         1
+## 3 10452     3     2     1           0         1         0         0
+## 4 10455     1     0     1           0         1         0         0
+## 5 10455     2     1     1           1         1         1         3
+## 6 10455     3     2     1           0         1         0         0
+## # … with 9 more variables: interest_w &lt;dbl&gt;, media_w &lt;dbl&gt;, know_w &lt;dbl&gt;,
+## #   polpart_w &lt;dbl&gt;, polprt2_w &lt;dbl&gt;, sex &lt;dbl&gt;, age &lt;dbl&gt;, educ &lt;dbl&gt;,
+## #   totalce_mn &lt;dbl&gt;</code></pre>
+<ul>
+<li>Second, we run the model using the function “wbm”. The structure is the same as “plm”.</li>
+</ul>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" title="1">FE2&lt;-<span class="kw">wbm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex, <span class="dt">data=</span>K_long_p,</a>
+<a class="sourceLine" id="cb36-2" title="2">        <span class="dt">model=</span><span class="st">&quot;within&quot;</span>)</a></code></pre></div>
+<pre><code>## Warning: Constants are ignored with within model specifications.</code></pre>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" title="1"><span class="kw">summary</span>(FE2)</a></code></pre></div>
+<pre><code>## MODEL INFO:
+## Entities: 401
+## Time periods: 1-3
+## Dependent variable: know_w
+## Model type: Linear mixed effects
+## Specification: within
+## 
+## MODEL FIT:
+## AIC = 3314.29, BIC = 3334.66
+## Pseudo-R² (fixed effects) = 0.01
+## Pseudo-R² (total) = 0.33
+## Entity ICC = 0.32
+## 
+## --------------------------------------------------------
+##                     Est.   S.E.   t val.     d.f.      p
+## ----------------- ------ ------ -------- -------- ------
+## (Intercept)         2.65   0.04    71.67   400.00   0.00
+## totalce_w           0.13   0.03     4.93   801.00   0.00
+## --------------------------------------------------------
+## 
+## p values calculated using Satterthwaite d.f.
+##  
+## RANDOM EFFECTS:
+## ------------------------------------
+##   Group      Parameter    Std. Dev. 
+## ---------- ------------- -----------
+##     id      (Intercept)    0.5664   
+##  Residual                  0.8223   
+## ------------------------------------</code></pre>
+</div>
+</div>
+<div id="fe-robust-standard-errors-rse." class="section level2">
+<h2><span class="header-section-number">1.4</span> FE, robust standard errors (RSE). <a name="FE2"></a></h2>
+<p>We can deal with the heteroskedasticity of the error terms obtaining the “ROBUST” standard errors. Panel analysis has potential problems with the error terms produced by unit-level clustering.</p>
+<div id="stata-3" class="section level3">
+<h3><span class="header-section-number">1.4.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" title="1">xtreg know_w totalce_w, <span class="kw">fe</span> (cluster id)</a></code></pre></div>
+<p><img src="Stata_images/fe_3.png" width="80%" /></p>
+<p>As we can see, now the SE are “robust”.</p>
+</div>
+<div id="r-3" class="section level3">
+<h3><span class="header-section-number">1.4.2</span> <span style="color:red"><strong>R</strong></span></h3>
+<p><span style="color:blue"><strong>R- plm</strong></span></p>
+<ul>
+<li>We have more than one option to get the <em>robust standard errors</em> from our model.</li>
+<li>With PLM we can add the argument <code>vcov</code> in <code>summary()</code></li>
+<li>Remember: our model was stored in the object <strong>FE</strong> above.</li>
+</ul>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" title="1"><span class="kw">summary</span>(FE,<span class="dt">vcov =</span> <span class="kw">vcovHC</span>(FE))</a></code></pre></div>
+<pre><code>## Oneway (individual) effect Within Model
+## 
+## Note: Coefficient variance-covariance matrix supplied: vcovHC(FE)
+## 
+## Call:
+## plm(formula = know_w ~ totalce_w + age + educ + sex, data = K_long, 
+##     model = &quot;within&quot;, index = c(&quot;id&quot;, &quot;wave&quot;))
+## 
+## Balanced Panel: n = 401, T = 3, N = 1203
+## 
+## Residuals:
+##     Min.  1st Qu.   Median  3rd Qu.     Max. 
+## -2.53689 -0.37022  0.00000  0.41348  2.08652 
+## 
+## Coefficients:
+##           Estimate Std. Error t-value  Pr(&gt;|t|)    
+## totalce_w 0.129781   0.023403  5.5454 3.984e-08 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Total Sum of Squares:    558
+## Residual Sum of Squares: 541.56
+## R-Squared:      0.029461
+## Adj. R-Squared: -0.45642
+## F-statistic: 30.7516 on 1 and 400 DF, p-value: 5.3379e-08</code></pre>
+<ul>
+<li>Another option is to use a generic function to test our coeficients. The function <code>coeftest</code> from the package <strong>lmtest</strong> performs z and t Wald tests (significance) of the estimated coefficients.</li>
+<li>The argument <strong>vcov</strong> allows us to select a particular variance-covariance matrix.</li>
+</ul>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" title="1"><span class="kw">library</span>(lmtest)</a>
+<a class="sourceLine" id="cb43-2" title="2"><span class="kw">coeftest</span>(FE, <span class="dt">vcov =</span> vcovHC, <span class="dt">type =</span> <span class="st">&quot;HC1&quot;</span>)</a></code></pre></div>
+<pre><code>## 
+## t test of coefficients:
+## 
+##           Estimate Std. Error t value  Pr(&gt;|t|)    
+## totalce_w 0.129781   0.023413  5.5431 4.035e-08 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<ul>
+<li>Now we use get the robust standard error for the intercept.</li>
+</ul>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" title="1"><span class="kw">within_intercept</span>(FE, <span class="dt">vcov =</span> <span class="cf">function</span>(x) </a>
+<a class="sourceLine" id="cb45-2" title="2">  <span class="kw">vcovHC</span>(x, <span class="dt">type=</span><span class="st">&quot;HC1&quot;</span>))</a></code></pre></div>
+<pre><code>## (overall_intercept) 
+##            2.572018 
+## attr(,&quot;se&quot;)
+## [1] 0.01318144</code></pre>
+<p><span style="color:blue"><strong>R- panelR</strong></span></p>
+<ul>
+<li>Panel R does not have implemented yet a easy way to test the coeficients with Robust Standar Error.</li>
+</ul>
+</div>
+</div>
+<div id="random-effects-models" class="section level2">
+<h2><span class="header-section-number">1.5</span> Random Effects Models <a name="RE"></a></h2>
+<ul>
+<li>Also known as <strong>Random Intercept</strong></li>
+</ul>
+<div id="stata-4" class="section level3">
+<h3><span class="header-section-number">1.5.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
+<ul>
+<li>We also use xtreg for <strong>random effects</strong> model.</li>
+<li>We add <strong>theta</strong> (<span class="math inline">\(\theta\)</span>) in the line. Because <span class="math inline">\(\theta\)</span> gives us an idea of the composition of the error term. As <span class="math inline">\(\theta\)</span>
+(theta) gets closer to 1, it means that more and more of the composite error variance is made up of <span class="math inline">\(U_i\)</span> unit-level or “between” variance. Where <span class="math inline">\(\theta\)</span> closser to 1 the RE models reduce to a FE model</li>
+</ul>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" title="1">xtreg know_w totalce_w sex educ age, re theta</a></code></pre></div>
+<p><img src="Stata_images/re_1.png" width="80%" /></p>
+<ul>
+<li>We can also add <strong>Robust Standard Errors</strong> to the model. We added <code>vce(cluster id)</code> same as we did with the Fixed Effects model.</li>
+</ul>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" title="1">xtreg know_w totalce_w sex educ age, re <span class="kw">vce</span> (cluster id) </a></code></pre></div>
+</div>
+<div id="r-4" class="section level3">
+<h3><span class="header-section-number">1.5.2</span> <span style="color:red"><strong>R</strong></span></h3>
+<ul>
+<li>We run the model using the function <strong>plm</strong> from the package with the same name.</li>
+<li>The code follows the same structure as the FE or Multiwave First Difference showed above.</li>
+<li>The difference is in model we select <strong>random</strong>: <code>model = "random"</code></li>
+<li></li>
+</ul>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb49-1" title="1">RE&lt;-<span class="kw">plm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex,<span class="dt">data =</span>K_long,</a>
+<a class="sourceLine" id="cb49-2" title="2">        <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
+<a class="sourceLine" id="cb49-3" title="3">        <span class="dt">model =</span> <span class="st">&quot;random&quot;</span>)</a>
+<a class="sourceLine" id="cb49-4" title="4"></a>
+<a class="sourceLine" id="cb49-5" title="5"><span class="kw">summary</span>(RE)</a></code></pre></div>
+<pre><code>## Oneway (individual) effect Random Effect Model 
+##    (Swamy-Arora&#39;s transformation)
+## 
+## Call:
+## plm(formula = know_w ~ totalce_w + age + educ + sex, data = K_long, 
+##     model = &quot;random&quot;, index = c(&quot;id&quot;, &quot;wave&quot;))
+## 
+## Balanced Panel: n = 401, T = 3, N = 1203
+## 
+## Effects:
+##                  var std.dev share
+## idiosyncratic 0.6761  0.8223 0.827
+## individual    0.1417  0.3764 0.173
+## theta: 0.2164
+## 
+## Residuals:
+##       Min.    1st Qu.     Median    3rd Qu.       Max. 
+## -2.5409793 -0.5741804 -0.0045051  0.6213067  2.1813203 
+## 
+## Coefficients:
+##               Estimate Std. Error z-value  Pr(&gt;|z|)    
+## (Intercept)  1.7126305  0.1430608 11.9713 &lt; 2.2e-16 ***
+## totalce_w    0.1591260  0.0230582  6.9011 5.162e-12 ***
+## age         -0.0037678  0.0023271 -1.6191    0.1054    
+## educ         0.1784879  0.0208672  8.5535 &lt; 2.2e-16 ***
+## sex          0.4890203  0.0610893  8.0050 1.195e-15 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Total Sum of Squares:    960.45
+## Residual Sum of Squares: 812.87
+## R-Squared:      0.15366
+## Adj. R-Squared: 0.15083
+## Chisq: 217.505 on 4 DF, p-value: &lt; 2.22e-16</code></pre>
+<ul>
+<li><code>summary(RE)</code> give us the basic information from the model.</li>
+<li>The results are the same as the STATA output, and <strong>plm</strong> give us <span class="math inline">\(\theta\)</span> by default.</li>
+</ul>
+<p><strong>Robust standard errors</strong></p>
+<ul>
+<li>We can get the **robust standard errors adding the argument in the function <code>summary()</code> as we did with FE models</li>
+</ul>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb51-1" title="1"><span class="kw">summary</span>(RE, <span class="dt">vcov =</span> <span class="kw">vcovHC</span>(RE))</a></code></pre></div>
+<pre><code>## Oneway (individual) effect Random Effect Model 
+##    (Swamy-Arora&#39;s transformation)
+## 
+## Note: Coefficient variance-covariance matrix supplied: vcovHC(RE)
+## 
+## Call:
+## plm(formula = know_w ~ totalce_w + age + educ + sex, data = K_long, 
+##     model = &quot;random&quot;, index = c(&quot;id&quot;, &quot;wave&quot;))
+## 
+## Balanced Panel: n = 401, T = 3, N = 1203
+## 
+## Effects:
+##                  var std.dev share
+## idiosyncratic 0.6761  0.8223 0.827
+## individual    0.1417  0.3764 0.173
+## theta: 0.2164
+## 
+## Residuals:
+##       Min.    1st Qu.     Median    3rd Qu.       Max. 
+## -2.5409793 -0.5741804 -0.0045051  0.6213067  2.1813203 
+## 
+## Coefficients:
+##               Estimate Std. Error z-value  Pr(&gt;|z|)    
+## (Intercept)  1.7126305  0.1593532 10.7474 &lt; 2.2e-16 ***
+## totalce_w    0.1591260  0.0206163  7.7184 1.178e-14 ***
+## age         -0.0037678  0.0027063 -1.3922    0.1639    
+## educ         0.1784879  0.0241090  7.4034 1.328e-13 ***
+## sex          0.4890203  0.0632721  7.7288 1.085e-14 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Total Sum of Squares:    960.45
+## Residual Sum of Squares: 812.87
+## R-Squared:      0.15366
+## Adj. R-Squared: 0.15083
+## Chisq: 260.397 on 4 DF, p-value: &lt; 2.22e-16</code></pre>
+</div>
+</div>
+<div id="hasmaun-test" class="section level2">
+<h2><span class="header-section-number">1.6</span> Hasmaun test <a name="ht"></a></h2>
+<p>If you are unsure about if to use FE or RE, the Hausmaun Test (HT) can help you to decide. The HT tests if the estimates obtained by the Fixed Effect models are the same as those from the Random Effect model. If they are the same, RE it is more efficient.</p>
+<p>The test statistic is :</p>
+<p><span class="math display">\[
+\frac{\beta_{Fe}-\beta_{RE}}{var(\beta_{FE})-var(\beta_{RE})}
+\]</span></p>
+<p>With a <span class="math inline">\(\chi^2\)</span> (Chi-square) with degree of freedom equal to the number of time-varying independent variables.</p>
+<div id="stata-5" class="section level3">
+<h3><span class="header-section-number">1.6.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
+<p>To conduct the Hausman Test we need to store the coefficient from our Fixed Effect and Random Effects model.</p>
+<ul>
+<li><code>qui</code> is to estimate the model but no showing the output.</li>
+<li><code>estimate store</code> save the estimates from the model in the “object” fixed and random respectively.</li>
+</ul>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb53-1" title="1">qui xtreg know_w totalce_w sex educ age, fe  </a>
+<a class="sourceLine" id="cb53-2" title="2">estimates store fixed</a>
+<a class="sourceLine" id="cb53-3" title="3"></a>
+<a class="sourceLine" id="cb53-4" title="4">qui xtreg know_w totalce_w sex educ age, re theta</a>
+<a class="sourceLine" id="cb53-5" title="5">estimates store random</a></code></pre></div>
+<p>We conduct the Hausman test using the command: <code>hausman fixed random</code></p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" title="1">hausman fixed random</a></code></pre></div>
+<p><img src="Stata_images/ht_1.png" width="80%" /></p>
+</div>
+<div id="r-5" class="section level3">
+<h3><span class="header-section-number">1.6.2</span> <span style="color:red"><strong>R</strong></span></h3>
+<p>The package <strong>plm</strong> has a function called <code>phtest</code> to conduct the Hausman test.</p>
+<ul>
+<li>We have created the models before, but we will do it again to be sure we are comparing the right estimators.</li>
+</ul>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb55-1" title="1">FE&lt;-<span class="kw">plm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex,<span class="dt">data =</span>K_long,</a>
+<a class="sourceLine" id="cb55-2" title="2">        <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
+<a class="sourceLine" id="cb55-3" title="3">        <span class="dt">model =</span> <span class="st">&quot;within&quot;</span>) </a>
+<a class="sourceLine" id="cb55-4" title="4"></a>
+<a class="sourceLine" id="cb55-5" title="5">RE&lt;-<span class="kw">plm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex,<span class="dt">data =</span>K_long,</a>
+<a class="sourceLine" id="cb55-6" title="6">        <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
+<a class="sourceLine" id="cb55-7" title="7">        <span class="dt">model =</span> <span class="st">&quot;random&quot;</span>)</a></code></pre></div>
+<ul>
+<li>Now we can conduct the Hausman test.</li>
+</ul>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" title="1"><span class="kw">phtest</span>(FE, RE)</a></code></pre></div>
+<pre><code>## 
+##  Hausman Test
+## 
+## data:  know_w ~ totalce_w + age + educ + sex
+## chisq = 5.3468, df = 1, p-value = 0.02076
+## alternative hypothesis: one model is inconsistent</code></pre>
+<ul>
+<li><p>Another way: <code>phtest</code> let us run the test withour re-running the model</p></li>
+<li><p>We create the object <strong>model</strong> that contains the name of the dependent and independent variables (separated by ~)</p></li>
+<li></li>
+</ul>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb58-1" title="1">modht=<span class="st"> </span>know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex <span class="co">#an object with the model </span></a>
+<a class="sourceLine" id="cb58-2" title="2"><span class="kw">phtest</span>(modht, <span class="dt">data=</span>K_long)  <span class="co">#We can run the test with the model. </span></a></code></pre></div>
+<pre><code>## 
+##  Hausman Test
+## 
+## data:  modht
+## chisq = 5.3468, df = 1, p-value = 0.02076
+## alternative hypothesis: one model is inconsistent</code></pre>
+</div>
+</div>
+</div>
+<div id="hybrid-models" class="section level1">
+<h1><span class="header-section-number">2</span> Hybrid Models <a name="hybrid1"></a></h1>
+<div id="bell-and-jones-model-with-rse" class="section level2">
+<h2><span class="header-section-number">2.1</span> Bell and Jones Model with RSE</h2>
+<ul>
+<li>It includes the mean of the time variant variables into a RE model</li>
+<li>First we generate the mean of <strong>totalce_w</strong> by group and then included it in the model.</li>
+</ul>
+<div id="stata-6" class="section level3">
+<h3><span class="header-section-number">2.1.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" title="1">egen totalce_mn=<span class="kw">mean</span>(totalce_w), <span class="kw">by</span> (id) <span class="op">/</span><span class="er">/</span><span class="st"> </span>egen creates new  variables</a>
+<a class="sourceLine" id="cb60-2" title="2"></a>
+<a class="sourceLine" id="cb60-3" title="3">xtreg polpart_w totalce_w totalce_mn sex educ age wavv2 wavv3, re <span class="kw">vce</span>(cluster id) </a></code></pre></div>
+<p><img src="Stata_images/HY_1.png" width="80%" /></p>
+</div>
+<div id="r-6" class="section level3">
+<h3><span class="header-section-number">2.1.2</span> <span style="color:red"><strong>R</strong></span></h3>
+<ul>
+<li><p>First, we create <strong>totalce_mn</strong>, which is the mean of <strong>totalce_w</strong> by group. To do it we will use the function <strong>mutate</strong> from the package <strong>dplyr</strong>.</p></li>
+<li><p>We are going to use the dummys variables for wave. We had created those dummys using mutate for the Multiwave First Difference model <a href="#FD_MW">here</a></p></li>
+<li><p>We can do it again, just in case:</p></li>
+</ul>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" title="1">K_long&lt;-K_long<span class="op">%&gt;%</span><span class="kw">mutate</span>(<span class="dt">wavv1=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb61-2" title="2">                        <span class="dt">wavv2=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb61-3" title="3">                        <span class="dt">wavv3=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">0</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" title="1">K_long&lt;-K_long<span class="op">%&gt;%</span><span class="kw">group_by</span>(id)<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb62-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">totalce_mn=</span><span class="kw">mean</span>(totalce_w))<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb62-3" title="3"><span class="st">  </span><span class="kw">ungroup</span>() <span class="co"># if you don&#39;t ungroup you may encounter the following error: </span></a>
+<a class="sourceLine" id="cb62-4" title="4"><span class="co">#Can&#39;t join on &#39;.rows&#39; x &#39;.rows&#39; because of incompatible types (list / list)</span></a></code></pre></div>
+<ul>
+<li><p>We include the mean of <strong>totalce_w</strong> by group in our Random Effects model. Using <strong>plm</strong> we obtained the same results than STATA</p></li>
+<li><p>In <code>summary</code> we added the <strong>vcov</strong> option to request the robust standard errors.</p></li>
+</ul>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb63-1" title="1">HY&lt;-<span class="kw">plm</span>(polpart_w<span class="op">~</span>totalce_w<span class="op">+</span>totalce_mn<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex<span class="op">+</span></a>
+<a class="sourceLine" id="cb63-2" title="2"><span class="st">           </span>wavv2<span class="op">+</span>wavv3,<span class="dt">data =</span>K_long,</a>
+<a class="sourceLine" id="cb63-3" title="3">         <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
+<a class="sourceLine" id="cb63-4" title="4">         <span class="dt">model =</span> <span class="st">&quot;random&quot;</span>) <span class="co">## </span></a>
+<a class="sourceLine" id="cb63-5" title="5"></a>
+<a class="sourceLine" id="cb63-6" title="6"><span class="kw">summary</span>(HY, <span class="dt">vcov =</span> <span class="kw">vcovHC</span>(HY))</a></code></pre></div>
+<pre><code>## Oneway (individual) effect Random Effect Model 
+##    (Swamy-Arora&#39;s transformation)
+## 
+## Note: Coefficient variance-covariance matrix supplied: vcovHC(HY)
+## 
+## Call:
+## plm(formula = polpart_w ~ totalce_w + totalce_mn + age + educ + 
+##     sex + wavv2 + wavv3, data = K_long, model = &quot;random&quot;, index = c(&quot;id&quot;, 
+##     &quot;wave&quot;))
+## 
+## Balanced Panel: n = 401, T = 3, N = 1203
+## 
+## Effects:
+##                  var std.dev share
+## idiosyncratic 1.9910  1.4110  0.73
+## individual    0.7350  0.8573  0.27
+## theta: 0.3112
+## 
+## Residuals:
+##     Min.  1st Qu.   Median  3rd Qu.     Max. 
+## -3.68686 -1.01358 -0.16687  0.93524  4.30400 
+## 
+## Coefficients:
+##               Estimate Std. Error z-value  Pr(&gt;|z|)    
+## (Intercept)  0.9021205  0.2702031  3.3387 0.0008418 ***
+## totalce_w    0.1405623  0.0561277  2.5043 0.0122684 *  
+## totalce_mn   0.6240904  0.1101404  5.6663 1.459e-08 ***
+## age          0.0188290  0.0045295  4.1570 3.225e-05 ***
+## educ         0.0948487  0.0402003  2.3594 0.0183043 *  
+## sex          0.6913654  0.1200645  5.7583 8.497e-09 ***
+## wavv2       -0.6283889  0.1261004 -4.9832 6.253e-07 ***
+## wavv3       -0.2548048  0.1105074 -2.3058 0.0211235 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Total Sum of Squares:    2703.8
+## Residual Sum of Squares: 2379.2
+## R-Squared:      0.12004
+## Adj. R-Squared: 0.11489
+## Chisq: 167.474 on 7 DF, p-value: &lt; 2.22e-16</code></pre>
+<p><strong>Hybrid model using panelR package</strong></p>
+<p><code>panelr</code> it has a convenient way to estimate an hybrid model.</p>
+<ul>
+<li>First we need to <em>panel</em> the data:</li>
+</ul>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb65-1" title="1">K_longp&lt;-<span class="kw">panel_data</span>(K_long, <span class="dt">id =</span> id, <span class="dt">wave =</span> wave) </a></code></pre></div>
+<ul>
+<li>The structure of the model is the following:</li>
+</ul>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r Comment1"><code class="sourceCode r"><a class="sourceLine" id="cb66-1" title="1">dv <span class="op">~</span><span class="st"> </span>varying_variables <span class="op">|</span><span class="st"> </span>invariant_variables <span class="op">|</span><span class="st"> </span>cross_level_interactions<span class="op">/</span>random effects</a></code></pre></div>
+<ul>
+<li><p>our varying variables are : <strong>totalce_w</strong> , and <strong>wavv2</strong> + <strong>wavv3</strong></p></li>
+<li><p>Time invariant variables: age, educ, sex</p></li>
+<li><p>Random effect: id</p></li>
+</ul>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb67-1" title="1">model &lt;-<span class="st"> </span><span class="kw">wbm</span>(polpart_w <span class="op">~</span>totalce_w <span class="op">+</span><span class="st"> </span>wavv2<span class="op">+</span>wavv3<span class="op">|</span><span class="st"> </span>totalce_w <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>educ <span class="op">+</span><span class="st"> </span>sex <span class="op">|</span><span class="st"> </span>id, <span class="dt">data =</span> K_longp)</a></code></pre></div>
+<pre><code>## fixed-effect model matrix is rank deficient so dropping 2 columns / coefficients</code></pre>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb69-1" title="1"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## MODEL INFO:
+## Entities: 401
+## Time periods: 1-3
+## Dependent variable: polpart_w
+## Model type: Linear mixed effects
+## Specification: within-between
+## 
+## MODEL FIT:
+## AIC = 4585.88, BIC = 4636.8
+## Pseudo-R² (fixed effects) = 0.16
+## Pseudo-R² (total) = 0.39
+## Entity ICC = 0.27
+## 
+## WITHIN EFFECTS:
+## -------------------------------------------------------
+##                    Est.   S.E.   t val.     d.f.      p
+## --------------- ------- ------ -------- -------- ------
+## totalce_w          0.14   0.06     2.53   799.00   0.01
+## wavv2             -0.63   0.12    -5.16   799.00   0.00
+## wavv3             -0.25   0.10    -2.49   799.00   0.01
+## -------------------------------------------------------
+## 
+## BETWEEN EFFECTS:
+## -------------------------------------------------------------
+##                          Est.   S.E.   t val.     d.f.      p
+## ---------------------- ------ ------ -------- -------- ------
+## (Intercept)              0.61   0.28     2.16   396.00   0.03
+## imean(totalce_w)         0.76   0.09     8.25   396.00   0.00
+## age                      0.02   0.00     4.15   396.00   0.00
+## educ                     0.09   0.04     2.33   396.00   0.02
+## sex                      0.69   0.12     5.80   396.00   0.00
+## -------------------------------------------------------------
+## 
+## p values calculated using Satterthwaite d.f.
+##  
+## RANDOM EFFECTS:
+## ------------------------------------
+##   Group      Parameter    Std. Dev. 
+## ---------- ------------- -----------
+##     id      (Intercept)    0.8573   
+##  Residual                   1.411   
+## ------------------------------------</code></pre>
+</div>
+</div>
+</div>
+<div id="dynamic-models" class="section level1">
+<h1><span class="header-section-number">3</span> Dynamic Models <a name="Dynamic"></a></h1>
+<p>Panel econometric models can include <strong>dynamic</strong> effects. There are different kinds of dynamic models those can include <em>lag dependent</em> variable, <em>lag independent</em></p>
+<p><span class="math display">\[
+Y_{it}= \alpha+ \beta_1Y_{it-1}+\beta_2X_{it}+\beta_3X_{it-1}+...U_{it}+\epsilon_{it}
+\]</span></p>
+<p>The problem to include the lag dependent variable is that the estimator would be bias because the lag dependent variable is correlated with <span class="math inline">\(U\)</span> (the time invariant unobserved component of the error term)</p>
+<p>The most well know approach is the proposeb by Arellano and Bond that use the lag variables as instruments.</p>
+<div id="stata-7" class="section level3">
+<h3><span class="header-section-number">3.0.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
+<ul>
+<li>We are going to use the data XXXX. More details about the data here: <a href="#packages">R packages and datasets</a></li>
+<li>First, we set the data as panel data with <code>xtset</code></li>
+<li>Second, we are going to creat a dummy variable for each year to use them as control variables using the command <code>tab</code></li>
+<li>Finally, we use the command <code>xtabond</code> to estimate the Arellano Bond (1991) model also known as “Generalized Method of Moments (GMM)”</li>
+</ul>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb71-1" title="1">xtset cc_<span class="dv">2</span> yearnum</a>
+<a class="sourceLine" id="cb71-2" title="2">tab yearnum, <span class="kw">gen</span>(yrr) </a></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb72-1" title="1">use <span class="st">&quot;./datasets/democracy.dta&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb73-1" title="1">xtabond dg02i aid100 yrr3<span class="op">-</span>yrr14, noconstant twostep  </a></code></pre></div>
+<p><strong>Output</strong></p>
+<p><img src="Stata_images/dynamic1.png" width="80%" /></p>
+</div>
+<div id="r-7" class="section level3">
+<h3><span class="header-section-number">3.0.2</span> <span style="color:red"><strong>R</strong></span></h3>
+<ul>
+<li>For GMM models we can use the function <code>pgmm</code> from the package <code>plm</code>.</li>
+<li>First, lets get the data with the function <code>import</code> from the package <code>rio</code></li>
+</ul>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb74-1" title="1">demo&lt;-<span class="kw">import</span>(<span class="st">&quot;./datasets/democracy.dta&quot;</span>)</a></code></pre></div>
+<ul>
+<li>Now the model. The basic model follows the same estructure of the lineal models we run before: <code>~</code> separates the dependent and independent variables</li>
+<li>In this model we have <code>aid100</code> and the lag of <code>dg02i</code> as independent variables.</li>
+<li>The other lags (from t-3 to t-14) are used as instruments. We add those using <code>|lag(dg02i,2:14)</code></li>
+<li>We index <code>index=c("cname","year")</code> to let R know the structure of our data.</li>
+<li>We run the model in two steps same as STATA.</li>
+</ul>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb75-1" title="1">dynamic1&lt;-<span class="kw">pgmm</span>(dg02i<span class="op">~</span><span class="st"> </span>aid100<span class="op">+</span><span class="kw">lag</span>(dg02i,<span class="dv">1</span>)<span class="op">|</span><span class="st"> </span><span class="kw">lag</span>(dg02i,<span class="dv">2</span><span class="op">:</span><span class="dv">14</span>), <span class="dt">data =</span> demo,</a>
+<a class="sourceLine" id="cb75-2" title="2">         <span class="dt">index=</span><span class="kw">c</span>(<span class="st">&quot;cname&quot;</span>,<span class="st">&quot;year&quot;</span>),</a>
+<a class="sourceLine" id="cb75-3" title="3">         <span class="dt">effect =</span> <span class="st">&quot;twoways&quot;</span>, <span class="dt">model =</span> <span class="st">&quot;twosteps&quot;</span>)</a></code></pre></div>
+<p><strong>output</strong></p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb76-1" title="1"><span class="kw">summary</span>(dynamic1)</a></code></pre></div>
+<pre><code>## Twoways effects Two steps model
+## 
+## Call:
+## pgmm(formula = dg02i ~ aid100 + lag(dg02i, 1) | lag(dg02i, 2:14), 
+##     data = demo, effect = &quot;twoways&quot;, model = &quot;twosteps&quot;, index = c(&quot;cname&quot;, 
+##         &quot;year&quot;))
+## 
+## Unbalanced Panel: n = 147, T = 1-14, N = 1960
+## 
+## Number of Observations Used: 1669
+## 
+## Residuals:
+##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+## -8.364290 -0.178830  0.000000 -0.000113  0.140986  7.908348 
+## 
+## Coefficients:
+##                Estimate Std. Error z-value  Pr(&gt;|z|)    
+## aid100        0.0251453  0.0057681  4.3593 1.305e-05 ***
+## lag(dg02i, 1) 0.7717945  0.0518348 14.8895 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Sargan test: chisq(77) = 88.74848 (p-value = 0.16965)
+## Autocorrelation test (1): normal = -5.172326 (p-value = 2.312e-07)
+## Autocorrelation test (2): normal = 1.199462 (p-value = 0.23035)
+## Wald test for coefficients: chisq(2) = 244.8409 (p-value = &lt; 2.22e-16)
+## Wald test for time dummies: chisq(12) = 19.4706 (p-value = 0.077787)</code></pre>
+<ul>
+<li>We can also test our coefficient using <strong>robust standard errors</strong></li>
+</ul>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb78-1" title="1"><span class="kw">summary</span>(dynamic1, <span class="dt">robust=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>## Twoways effects Two steps model
+## 
+## Call:
+## pgmm(formula = dg02i ~ aid100 + lag(dg02i, 1) | lag(dg02i, 2:14), 
+##     data = demo, effect = &quot;twoways&quot;, model = &quot;twosteps&quot;, index = c(&quot;cname&quot;, 
+##         &quot;year&quot;))
+## 
+## Unbalanced Panel: n = 147, T = 1-14, N = 1960
+## 
+## Number of Observations Used: 1669
+## 
+## Residuals:
+##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+## -8.364290 -0.178830  0.000000 -0.000113  0.140986  7.908348 
+## 
+## Coefficients:
+##                Estimate Std. Error z-value  Pr(&gt;|z|)    
+## aid100        0.0251453  0.0057681  4.3593 1.305e-05 ***
+## lag(dg02i, 1) 0.7717945  0.0518348 14.8895 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Sargan test: chisq(77) = 88.74848 (p-value = 0.16965)
+## Autocorrelation test (1): normal = -5.172326 (p-value = 2.312e-07)
+## Autocorrelation test (2): normal = 1.199462 (p-value = 0.23035)
+## Wald test for coefficients: chisq(2) = 244.8409 (p-value = &lt; 2.22e-16)
+## Wald test for time dummies: chisq(12) = 19.4706 (p-value = 0.077787)</code></pre>
+</div>
 </div>
 
 

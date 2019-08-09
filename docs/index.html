@@ -12,7 +12,7 @@
 
 
 
-<title>STATA to R page</title>
+<title>STATA to R</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -28,6 +28,92 @@
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; } /* Alert */
+code span.an { color: #008000; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #0000ff; } /* ControlFlow */
+code span.ch { color: #008080; } /* Char */
+code span.cn { } /* Constant */
+code span.co { color: #008000; } /* Comment */
+code span.cv { color: #008000; } /* CommentVar */
+code span.do { color: #008000; } /* Documentation */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.im { } /* Import */
+code span.in { color: #008000; } /* Information */
+code span.kw { color: #0000ff; } /* Keyword */
+code span.op { } /* Operator */
+code span.ot { color: #ff4000; } /* Other */
+code span.pp { color: #ff4000; } /* Preprocessor */
+code span.sc { color: #008080; } /* SpecialChar */
+code span.ss { color: #008080; } /* SpecialString */
+code span.st { color: #008080; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #008080; } /* VerbatimString */
+code span.wa { color: #008000; font-weight: bold; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
 
 
 <style type="text/css">
@@ -57,6 +143,7 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="css1.css" type="text/css" />
 
 
 
@@ -335,10 +422,16 @@ div.tocify {
   </a>
 </li>
 <li>
+  <a href="Panel_Data.html">Panel-Data</a>
+</li>
+<li>
   <a href="Econometrics.html">Econometric</a>
 </li>
 <li>
-  <a href="Panel_Data.html">Panel-Data</a>
+  <a href="SEM.html">SEM</a>
+</li>
+<li>
+  <a href="Multilevel.html">Multilevel</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -352,7 +445,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">STATA to R page</h1>
+<h1 class="title toc-ignore">STATA to R</h1>
 
 </div>
 
@@ -360,13 +453,72 @@ div.tocify {
 <div id="introduction" class="section level1">
 <h1><span class="header-section-number">1</span> Introduction <a name="introduction"></a></h1>
 <p>With this page, we want to help students, researchers, and practitioners that are used to STATA to include R in their analytic toolbox. Likewise, we present some of the most used panel analysis’ technics showing the potential of different approaches.</p>
-<p>This page is not a statistic textbook; we won’t discuss the statistic assumptions or mathematical derivations behind the technics. We are assuming two things. First, the reader has enough statistical background to understand the strengths and limitations of each model. Second, the user knows more STATA than R. Therefore, our STATA code will have less comments than the R code.</p>
-<p>Authors:</p>
+<p>This page is not a statistic textbook; we won’t discuss the statistic assumptions or mathematical derivations behind the technics. We are assuming two things. First, the reader has enough statistical background to understand the strengths and limitations of each model. Second, the user knows more STATA than R. Therefore, our STATA code will have less comments than the R code. Navegate among the topics covered here using the top menu.</p>
+<p>Here are some textbooks that we recommend for panel analysis:</p>
+<ul>
+<li>Allison, Paul. 2009. Fixed Effects Regression Models. Thousand Oaks, Ca.: Sage Publications.</li>
+<li>Finkel, Steven E. 1995. Causal Analysis with Panel Data. Thousand Oaks, Ca.: Sage Publications. (Royalties donated to University of Pittsburgh Chapter, Pi Sigma Alpha, Political Science Undergraduate Honor Society).</li>
+<li>Andreß, Golsch, and Schmidt. 2013. Applied Panel Data Analysis for Economic and Social Surveys. Heidelberg: Springer-Verlag.</li>
+</ul>
+</div>
+<div id="authors" class="section level1">
+<h1><span class="header-section-number">2</span> Authors:</h1>
 <div id="steve-finkel" class="section level2">
-<h2><span class="header-section-number">1.1</span> Steve Finkel</h2>
+<h2><span class="header-section-number">2.1</span> Steve Finkel</h2>
+<p>Steven E. Finkel Daniel Wallace Professor of Political Science at the University of Pittsburgh. His areas of expertise include comparative political behavior, public opinion, democratization, and quantitative methods. Since 1997, he has conducted evaluations of the effectiveness of US and other international donors’ civic education programs in South Africa, Poland, the Dominican Republic, and Kenya. He has also pioneered the use of survey research as an aid to peace negotiations in conflict settings such as Sri Lanka and Kosovo. He is the author of Causal Analysis with Panel Data (Sage Publications, 1995) as well as numerous articles on political participation, voting behavior, and civic education in new and established democracies. Between 2004 and 2007, he conducted the first macro-comparative evaluation of the impact of all USAID democracy assistance programs on democratic development in recipient countries (published in World Politics, 2007). He holds a PhD in political science from the State University of New York at Stony Brook, and has taught previously at the University of Virginia, Arizona State University, and the Hertie School of Governance in Berlin, Germany.</p>
+<p>Website: <a href="http://www.stevenfinkel.info/index.html" class="uri">http://www.stevenfinkel.info/index.html</a></p>
 </div>
 <div id="jose-incio" class="section level2">
-<h2><span class="header-section-number">1.2</span> José Incio</h2>
+<h2><span class="header-section-number">2.2</span> José Incio</h2>
+<p>José Incio is a Ph.D. Candidate at the University of Pittsburgh. His research interest include subnational politics, democracy, and political methodology.</p>
+<p>website: www.joseincio.com</p>
+</div>
+</div>
+<div id="basics" class="section level1">
+<h1><span class="header-section-number">3</span> Basics</h1>
+<p><strong>Code:</strong></p>
+<p>STATA and R code will be in grey boxes like this:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">Code here </a></code></pre></div>
+<p>Notes about R, and R features will be in turquoise boxes like this:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r Comment1"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">Example</a></code></pre></div>
+<p>Sometimes the output has warnings, we are not showing those here. In general, you shouldnt worry about warnings. When the ouput shows “error” that means something is wrong and didn’t execute the code.</p>
+<div id="r-packages-and-data-sets" class="section level2">
+<h2><span class="header-section-number">3.1</span> R packages and data sets <a name="packages"></a></h2>
+<p>We are going to use the following packages:</p>
+<p><strong>For data managment: </strong></p>
+<ul>
+<li>rio: <a href="https://cran.r-project.org/web/packages/rio/index.html" title="rio package">rio</a></li>
+<li>dplyr: <a href="https://cran.r-project.org/web/packages/dplyr/dplyr.pdf" title="dplyr package">dplyr</a></li>
+<li>tidyr: <a href="https://cran.r-project.org/web/packages/tidyr/index.html" title="dplyr package">tidyr</a></li>
+</ul>
+<p><strong>For modeling: </strong></p>
+<ul>
+<li>lme4: <a href="https://cran.r-project.org/web/packages/lme4/lme4.pdf" title="lme4 package">lme4</a></li>
+<li>plm: <a href="https://cran.r-project.org/web/packages/plm/plm.pdf" title="plm package">plm</a></li>
+<li>lmtest <a href="https://cran.r-project.org/web/packages/lmtest/index.html" title="lmtest">lmtest</a></li>
+<li>panelr: <a href="https://cran.r-project.org/web/packages/panelr/index.html" title="panelr package">panelr</a></li>
+<li>lavaan: <a href="https://cran.r-project.org/web/packages/lavann/index.html" title="lavann package">lavaan</a></li>
+<li>semPlot: <a href="https://cran.r-project.org/web/packages/lavann/index.html" title="semPlot package">semPlot</a></li>
+</ul>
+<p>Here is some resources to learn the most basic steps:</p>
+<ul>
+<li>How to install R and Rstudio <a href="https://www.youtube.com/watch?v=orjLGFmx6l4" title="install">video</a></li>
+<li>How to install packages in R <a href="https://www.youtube.com/watch?v=Fyy9Eqp2AA0" title="packages">video</a></li>
+</ul>
+<p>Let’s install all our packages at once.</p>
+<ul>
+<li>Packages are grouped using “c()” and separated by “,”. It is possible to install one by one, or several at the same time.</li>
+<li>You need to install a package <strong>only one time</strong>.</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">install.packages</span>(<span class="kw">c</span>(<span class="st">&quot;lme4&quot;</span>, <span class="st">&quot;panelr&quot;</span>,<span class="st">&quot;plm&quot;</span>,<span class="st">&quot;rio&quot;</span>,<span class="st">&quot;lmtest&quot;</span>,<span class="st">&quot;dplyr&quot;</span>,<span class="st">&quot;tidyr&quot;</span>, <span class="st">&quot;lavaan&quot;</span>,<span class="st">&quot;semPlot&quot;</span>))</a></code></pre></div>
+<ul>
+<li>If you want to know which packages you have installed use the code below (Becareful, the output could be long.):</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">installed.packages</span>(.Library)</a></code></pre></div>
+<ul>
+<li>If you use R Studio (Highly recommended), you can see the packages installed here. In the right panel:</li>
+</ul>
+<p><img src="Stata_images/rstudio.png" width="80%" /></p>
 </div>
 </div>
 

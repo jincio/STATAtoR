@@ -12,7 +12,7 @@
 
 
 
-<title>Panel Datas</title>
+<title>Panel Data</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -143,6 +143,7 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="css1.css" type="text/css" />
 
 
 
@@ -421,10 +422,16 @@ div.tocify {
   </a>
 </li>
 <li>
+  <a href="Panel_Data.html">Panel-Data</a>
+</li>
+<li>
   <a href="Econometrics.html">Econometric</a>
 </li>
 <li>
-  <a href="Panel_Data.html">Panel-Data</a>
+  <a href="SEM.html">SEM</a>
+</li>
+<li>
+  <a href="Multilevel.html">Multilevel</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -438,29 +445,119 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Panel Datas</h1>
+<h1 class="title toc-ignore">Panel Data</h1>
 
 </div>
 
 
-<div id="r-markdown" class="section level2">
-<h2><span class="header-section-number">0.1</span> R Markdown</h2>
-<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">summary</span>(cars)</a></code></pre></div>
-<pre><code>##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00</code></pre>
+<p>Here we are going to use data sets from published papers. You can retrieve the data from the links below:</p>
+<ul>
+<li><a href="https://www.google.com" title="Google&#39;s Homepage">Civic education, political discussion, and the social transmission of democratic knowledge and values in a new democracy: Kenya 2002. Finkel-Smith (AJPS 2011)</a></li>
+<li></li>
+</ul>
+<div id="data-organization" class="section level1">
+<h1><span class="header-section-number">1</span> Data organization <a name="cleaning"></a></h1>
+<p>Panel data belongs to the category of “longitudinal data”. It is different from cross-sectional data given that it gathers observations from different times. We can distinguish four types of longitudinal data:</p>
+<ul>
+<li><strong>Trend data</strong>: where we gathered data, variables, for multiple times ( <span class="math inline">\(t\)</span> ) but for different observations (<span class="math inline">\(i\)</span>) at each time.</li>
+<li><strong>Time series data</strong>: where we gathered data, variables, for multiple times (<span class="math inline">\(t\)</span>) for a single observation (<span class="math inline">\(i\)</span>)</li>
+<li><strong>Panel data</strong>: where we gathered data, variables, for same <span class="math inline">\(i\)</span> and multiple times (<span class="math inline">\(t\)</span>). It has a large number of observations (<span class="math inline">\(i\)</span>) and small times (<span class="math inline">\(t\)</span>)</li>
+<li><strong>Time-Series Cross-Section (TSCS)</strong>: It has a small number of observations (<span class="math inline">\(i\)</span>) and large number of times (<span class="math inline">\(t\)</span>)<br />
+We will focus on <strong>panel data</strong>.</li>
+</ul>
+<div id="from-long-to-wide-and-viceversa" class="section level2">
+<h2><span class="header-section-number">1.1</span> From long to wide and viceversa: <a name="wide_long"></a></h2>
+<p>Panel data can be in a “long” or “wide” format, and depending of the model we may need to use one or another.</p>
+<p><strong>Wide format</strong></p>
+<p>The variable “Known” is time variant, that is why we have “known_w1”, “known_w2” and “known_w3”. This variable known (political knowledge) has been measured for each individual in three different times. The variable “age” and “sex” for instance, are time “invariant” because haven’t change during this study</p>
+<p><img src="Stata_images/wide_format.png" width="80%" /></p>
+<p><strong>Long format</strong></p>
+<p>The structure is different than wide format. The observations repeat for each subject as times were gathered. We can observe that the variable know_w is changing in each “wave” (time) and the variable sex or age does not change for each subject.</p>
+<p><img src="Stata_images/long_format.png" width="80%" /></p>
+<div id="stata" class="section level3">
+<h3><span class="header-section-number">1.1.1</span> <span style="color:red">STATA</span></h3>
+<ul>
+<li>Lets get the data and keep the variables we need for this example.</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">use <span class="st">&quot;/Users/joseincio/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal In</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="st">&gt; ference and Econometrics/Kenya.3wave wide.2017.dta&quot;</span>, clear</a>
+<a class="sourceLine" id="cb1-3" title="3"></a>
+<a class="sourceLine" id="cb1-4" title="4">keep know_w1 know_w2 know_w3 age sex id age</a></code></pre></div>
+<p><strong>From wide to long in Stata</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">reshape long newtreat_ww know_w , <span class="kw">i</span>(id) <span class="kw">j</span>(wave)</a></code></pre></div>
+<p><strong>From long to wide in Stata</strong></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">reshape wide know_w, <span class="kw">i</span>(id) <span class="kw">j</span>(wave)</a></code></pre></div>
 </div>
-<div id="including-plots" class="section level2">
-<h2><span class="header-section-number">0.2</span> Including Plots</h2>
-<p>You can also embed plots, for example:</p>
-<p><img src="Panel_Data_files/figure-html/pressure-1.png" width="672" /></p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+<div id="r" class="section level3">
+<h3><span class="header-section-number">1.1.2</span> <span style="color:red"> R </span></h3>
+<ul>
+<li><p>First, lets “upload/open” the data set. There are different packages and ways to do it. Here we use the package <strong>rio</strong> <a name="rio"></a>.</p></li>
+<li><p><strong>Remember:</strong> first install the packages, you can check the list of packages we are using here <a href="#packages">R packages and data sets</a>.</p></li>
+<li><p>You can check other ways here:</p>
+<ul>
+<li><a href="https://www.statmethods.net/input/importingdata.html">Upload data to R</a>.</li>
+<li><a href="https://www.statmethods.net/input/importingdata.html">Other formats</a></li>
+</ul></li>
+<li><p>After install a package <strong>rio</strong> we have to “call” it. For that we use <code>library</code> and it has to be done each session.</p></li>
+<li><p>The function <code>import</code> from the package <strong>rio</strong> recognizes different extensions such as: “.sav”,“xls”,“xlsx”,“DOB”, “csv”, “SAS”, “dta”.. among others. for more info run: <code>?import</code></p></li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">library</span>(rio) <span class="co">## calling the package</span></a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="kw">library</span>(dplyr) <span class="co">## calling the package</span></a>
+<a class="sourceLine" id="cb4-3" title="3">data&lt;-<span class="kw">import</span>(<span class="st">&quot;./datasets/Kenya.3wave wide.2017.dta&quot;</span>)</a>
+<a class="sourceLine" id="cb4-4" title="4"></a>
+<a class="sourceLine" id="cb4-5" title="5">data=data[,<span class="kw">c</span>(<span class="st">&quot;sex&quot;</span>,<span class="st">&quot;id&quot;</span>,<span class="st">&quot;age&quot;</span>,<span class="st">&quot;know_w1&quot;</span>,<span class="st">&quot;know_w2&quot;</span>,<span class="st">&quot;know_w3&quot;</span>)]</a>
+<a class="sourceLine" id="cb4-6" title="6"></a>
+<a class="sourceLine" id="cb4-7" title="7"><span class="co">## Our object &quot;data&quot; has two dimensions: rows, and columns. We can manipulate it using brackets</span></a>
+<a class="sourceLine" id="cb4-8" title="8"><span class="co">## [ rows , columns ]</span></a>
+<a class="sourceLine" id="cb4-9" title="9"><span class="co">## We keep the columns we need manipulating the second dimension. </span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r Comment1"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="op">-</span><span class="st"> </span>Different than STATA <span class="cf">in</span> R we can have more than one dataset <span class="st">&quot;open&quot;</span>. </a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="op">-</span><span class="st"> </span>Remeber<span class="op">:</span><span class="st"> </span>R is an object oriented language.</a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="op">-</span><span class="st"> </span>An object can be a dataset, a map, an image, etc.</a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="op">-</span><span class="st"> </span>We can have <span class="kw">data</span> (with all the variables), </a>
+<a class="sourceLine" id="cb5-5" title="5">and data2 with the selected variables <span class="st">&quot;open&quot;</span> at the same time. </a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="op">-</span><span class="st"> </span>This is an advantage because we do not need to close our enviroment to change dataset. </a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="op">-</span><span class="st"> </span>On a different note, remember<span class="op">:</span><span class="st"> </span>Packages have functions, and functions have arguments<span class="op">!</span></a></code></pre></div>
+<p><strong>From wide to long in R</strong></p>
+<p>As in STATA this transformation will create a variable <strong>wave</strong> to point out each time. The values will be: know_w1, know_w2, know_w3.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">library</span>(tidyr)</a>
+<a class="sourceLine" id="cb6-2" title="2">long &lt;-<span class="st"> </span>data<span class="op">%&gt;%</span><span class="kw">gather</span>(wave, know_w, <span class="op">-</span><span class="kw">c</span>(id,sex,age))<span class="op">%&gt;%</span><span class="kw">arrange</span>(id) <span class="co">## Collapse the variables know_w1,know_w2,know_w3 in the new variable know_w</span></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="kw">head</span>(long,<span class="dv">10</span>)</a></code></pre></div>
+<pre><code>##    sex    id age    wave know_w
+## 1    0 10452  35 know_w1      3
+## 2    0 10452  35 know_w2      3
+## 3    0 10452  35 know_w3      2
+## 4    0 10455  61 know_w1      2
+## 5    0 10455  61 know_w2      3
+## 6    0 10455  61 know_w3      4
+## 7    0 10474  28 know_w1      2
+## 8    0 10474  28 know_w2      1
+## 9    0 10474  28 know_w3      4
+## 10   1 10475  62 know_w1      1</code></pre>
+<ul>
+<li><code>gather</code> is a tydr function that helps us to reshape the data from wide to long.</li>
+<li><code>arrange</code> is a dplyr function that sort the data.</li>
+<li><code>%&gt;%</code> it is a convenient way to concatanate all the steps in one line code.</li>
+<li><code>head</code> is a base function to show us a glimpse of the data, in this case we asked for the first 10 cases.</li>
+</ul>
+<p><strong>From long to wide in R</strong></p>
+<p><code>spread</code>is a tydr function that it does the oposite of <code>gather</code></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">wide &lt;-<span class="st"> </span>long<span class="op">%&gt;%</span><span class="kw">spread</span>(wave, know_w)<span class="op">%&gt;%</span><span class="kw">arrange</span>(id) <span class="co">#create the variable know_w for each wave and sort the data by id</span></a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="kw">head</span>(wide,<span class="dv">10</span>) <span class="co"># show some data (10 first rows)</span></a></code></pre></div>
+<pre><code>##    sex    id age know_w1 know_w2 know_w3
+## 1    0 10452  35       3       3       2
+## 2    0 10455  61       2       3       4
+## 3    0 10474  28       2       1       4
+## 4    1 10475  62       1       4       2
+## 5    1 10555  29       4       4       3
+## 6    1 10575  28       4       1       3
+## 7    1 10653  49       2       4       3
+## 8    1 10658  54       4       3       4
+## 9    1 10659  45       3       3       4
+## 10   0 10672  51       2       3       2</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r Comment1"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">Dplyr and Tidyr are becoming very popular among R users.</a>
+<a class="sourceLine" id="cb10-2" title="2">That is why we suggest to get use to <span class="op">%&gt;%</span><span class="st"> </span></a></code></pre></div>
+</div>
+</div>
 </div>
 
 

@@ -1,0 +1,1032 @@
+---
+title: "STATA to R: Panel analysis and SEM"
+author: "Steve Finkel-José Incio"
+output: 
+   html_document:
+     css: css1.css
+     self_contained: no
+     number_sections: false
+     toc: true
+     toc_float:
+       collapsed: true
+       smooth_scroll: true
+     theme: "readable"
+     highlight: "pygments"
+     smart: true
+     df_print: "paged"
+---
+
+<style>
+#TOC {
+  top: 1%;
+  opacity: 0.5;
+}
+#TOC:hover {
+  opacity: 1;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+library(dplyr)
+library(rio)
+library(stargazer)
+```
+
+# Table of contents
+1. [Introduction](#introduction)
+    1. [R packages and data managment](#packages)
+    2. [Data organization](#cleaning)
+        a. [From long to wide and viceversa](#wide_long)
+2. [Econometric Models](#econometric)
+    1. [Within estimators models](#FE)
+        a. [First Difference two waves](#FDtw)
+        b. [Multiwave First Difference](#FD_MW)
+        c. [Basic Fixed Effects](#FE1)
+        d. [Fixed Effects with robust standard errors](#FE2)
+    2. [Random Effects Models](#RE)
+        a. [Hasmaun test](#ht)
+    3. [Hybrid Models](#HYBRID)
+3. [SEM](#SEM)
+    1. [Autoregresive Model-Three waves](#autoregresive)
+    2. [Cross-Lagged Models](#CL_Models)
+    3. [Synchronus and cross-lagged modes](#SCL)
+4. [Integration](#Integration)
+    1. [Dynamic Models](#Dynamic)
+        a. [Lag Endogenous Variables](#lag_endogenous)
+        b. [Autocorrelated disturbances](#autocorrelated)
+        c. [Growth Models](#growth)
+    2. [SEM Dynamic Models](#SEM_D)
+5. [Multilevel Models](#Multilevel)
+    1. [SEM Multilevel Models](#SEM_Multilevel)
+    2. [Econometric Multilevel Models](#ECO_Multilevel)
+6. [Tables and plots](#tables_plot)
+    1. [Regresion tables](#tables)
+    2. [Regresion plots](#plots)
+
+
+# Introduction <a name="introduction"></a>
+
+With this page, we want to help students, researchers, and practitioners that are used to STATA to include R in their analytic toolbox. Likewise, we present some of the most used panel analysis' technics showing the potential of different approaches. 
+
+This page is not a statistic textbook; we won't discuss the statistic assumptions or mathematical derivations behind the technics. We are assuming two things. First, the reader has enough statistical background to understand the strengths and limitations of each model. Second, the user knows more STATA than R. Therefore, our STATA code will have less comments than the R code. 
+
+Here are some textbooks that we recommend for panel analysis: 
+
+  - Allison, Paul. 2009. Fixed Effects Regression Models. Thousand Oaks, Ca.: Sage Publications.
+  - Finkel, Steven E. 1995. Causal Analysis with Panel Data. Thousand Oaks, Ca.: Sage Publications. (Royalties donated to University of Pittsburgh Chapter, Pi Sigma Alpha, Political Science Undergraduate Honor Society).
+  - Andreß, Golsch, and Schmidt. 2013. Applied Panel Data Analysis for Economic and Social Surveys. Heidelberg: Springer-Verlag.
+
+**Code:** 
+
+STATA and R code will be in grey boxes like this: 
+
+```{r, eval=FALSE}
+Code here 
+```
+
+Notes about R, and R features will be in turquoise boxes like this:
+
+```{r eval=FALSE, class.source="Comment1"}
+Example
+```
+
+Sometimes the output has warnings, we are not showing those here. In general, you shouldnt worry about warnings. When the ouput shows "error" that means something is wrong and didn't execute the code. 
+
+## R packages and data sets <a name="packages"></a>
+
+We are going to use the following packages: 
+
+**For data managment: **
+
+- rio: [rio](https://cran.r-project.org/web/packages/rio/index.html "rio package")
+- dplyr: [dplyr](https://cran.r-project.org/web/packages/dplyr/dplyr.pdf "dplyr package")
+- tidyr: [tidyr](https://cran.r-project.org/web/packages/tidyr/index.html "dplyr package")
+
+**For modeling: **
+
+- lme4: [lme4](https://cran.r-project.org/web/packages/lme4/lme4.pdf "lme4 package")
+- plm: [plm](https://cran.r-project.org/web/packages/plm/plm.pdf "plm package")
+- lmtest [lmtest](https://cran.r-project.org/web/packages/lmtest/index.html "lmtest")
+- panelr: [panelr](https://cran.r-project.org/web/packages/panelr/index.html "panelr package")
+- lavaan: [panelr](https://cran.r-project.org/web/packages/lavann/index.html "lavann package")
+- lavaan: [semPlot](https://cran.r-project.org/web/packages/lavann/index.html "semPlot package")
+
+Here is some resources to learn the most basic steps:
+
+  - How to install R and Rstudio [video](https://www.youtube.com/watch?v=orjLGFmx6l4 "install")
+  - How to install packages in R [video]( https://www.youtube.com/watch?v=Fyy9Eqp2AA0 "packages")
+
+
+Let's install all our packages at once.
+
+- Packages are grouped using "c()" and separated by ",". It is possible to install one by one, or several at the same time.
+- You need to install a package **only one time**.
+
+```{r, eval=FALSE}
+install.packages(c("lme4", "panelr","plm","rio","lmtest","dplyr","tidyr", "lavaan","semPlot"))
+```
+
+- If you want to know which packages you have installed use the code below (Becareful, the output could be long.):
+
+
+```{r, eval=FALSE}
+installed.packages(.Library)
+```
+
+- If you use R Studio (Highly recommended), you can see the packages installed here. In the right panel:
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/rstudio.png')
+```
+
+**Data sets** 
+
+Here we are going to use data sets from published papers. You can retrieve the data from the links below:
+
+- [Civic education, political discussion, and the social transmission of democratic knowledge and values in a new democracy: Kenya 2002. Finkel-Smith (AJPS 2011)](https://www.google.com "Google's Homepage")
+- 
+- 
+
+## Data organization <a name="cleaning"></a>
+
+Panel data belongs to the category of "longitudinal data". It is different from cross-sectional data given that it gathers observations from different times. We can distinguish four types of longitudinal data: 
+
+-  **Trend data**: where we gathered data, variables, for multiple times ($t$) but for different observations ($i$) at each time. 
+-  **Time series data**: where we gathered data, variables, for multiple times ($t$) for a single observation ($i$)
+-  **Panel data**: where we gathered data, variables, for same $i$ and multiple times ($t$). It has a large number of observations ($i$) and small times ($t$)
+-  **Time-Series Cross-Section (TSCS)**: It has a small number of observations ($i$) and large number of times ($t$)  
+
+We will focus on **panel data**. 
+
+### From long to wide and viceversa: <a name="wide_long"></a>
+
+Panel data can be in a "long" or "wide" format, and depending of the model we may need to use one or another.  
+
+**Wide format**  
+
+The variable "Known" is time variant, that is why we have "known_w1", "known_w2" and "known_w3". This variable known (political knowledge) has been measure for each individual in three different times. The variable "age" and "sex" for instance, are time "invariant" because haven't  change during this study
+
+![](Stata_images/wide_format.png)
+
+**Long format**
+
+The structure is different than wide format. The observations repeat for each subject as times were gathered. We can observe that the variable know_w is changing in each "wave" (time) and the variable sex or age does not change for each subject.
+
+![](Stata_images/long_format.png)
+
+ 
+
+#### <span style="color:red">STATA</span>
+
+- Lets get the data and keep the variables we need for this example. 
+
+```{r, eval = FALSE}
+use "/Users/joseincio/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal In
+> ference and Econometrics/Kenya.3wave wide.2017.dta", clear
+
+keep know_w1 know_w2 know_w3 age sex id age
+```
+
+**From wide to long in Stata**
+```{r, eval = FALSE}
+reshape long newtreat_ww know_w , i(id) j(wave)
+```
+**From long to wide in Stata** 
+
+```{r, eval = FALSE}
+reshape wide know_w, i(id) j(wave)
+```
+
+#### <span style="color:red"> R </span>
+
+  - First, lets "upload/open" the data set. There are different packages and ways to do it. Here we use the package **rio** <a name="rio"></a>. You can check other ways here: [Upload data to R](https://www.statmethods.net/input/importingdata.html). **Remember:** first install the packages, you can check the list of packages we are using here [R packages and data sets](#packages). 
+
+  - After install a package **rio** we have to "call" it. For that we use ```library``` and it has to be done each session. 
+  
+  - The function ```import``` from the package **rio** recognizes different extensions such as: ".sav","xls","xlsx","DOB", "csv", "SAS", "dta".. among others. for more info run: ```?import```
+
+  
+```{r}
+library(rio) ## calling the package
+library(dplyr) ## calling the package
+data<-import("~/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal Inference and Econometrics/Kenya.3wave wide.2017.dta")
+
+data=data[,c("sex","id","age","know_w1","know_w2","know_w3")]
+
+## Our object "data" has two dimensions: rows, and columns. We can manipulate it using brackets
+## [ rows , columns ]
+## We keep the columns we need manipulating the second dimension. 
+
+```
+
+- Another option, more efficient, is to use the function "select" (similar to keep in STATA) from the package "dplyr". 
+- We can use %>% with functions from the packages "dplyr" and "tydr". Gives the same output than the code above. 
+
+```{r}
+library(rio) ## calling the package
+library(dplyr) ## calling the package
+data<-import("~/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal Inference and Econometrics/Kenya.3wave wide.2017.dta")%>%
+  select(sex,id,age,know_w1,know_w2,know_w3) 
+```
+
+
+```{r eval=FALSE, class.source="Comment1"}
+- Different than STATA in R we can have more than one data "open". 
+- Remeber: R is an object oriented language.
+- An object can be a dataset, a map, an image, etc.
+- We can have data (with all the variables), 
+and data2 with the selected variables "open" at the same time. 
+- This is an advantage because we do not need to close our enviroment to change dataset. 
+- On a different note, remember: Packages have functions, and functions have arguments!
+```
+
+**From wide to long in R**
+
+```{r, warning=FALSE}
+library(tidyr)
+long <- data%>%gather(wave, know_w, -c(id,sex,age))%>%arrange(id) ## Collapse the variables know_w1,know_w2,know_w3 in the new variable know_w
+head(long,10)
+```
+
+- ```gather``` is a tydr function that helps us to reshape the data from wide to long. 
+- ```arrange``` is a dplyr function that sort the data. 
+- ``` %>% ``` it is a convenient way to concatanate all the steps in one line code. 
+- ```head``` is a base function to show us a glimpse of the data, in this case we asked for the first 10 cases. 
+
+**recoding variables**
+
+- In STATA wave has values: 1,2,3. While in R we got values:
+know_w1,know_w2, know_w3.
+- We can change the values on "wave" to have the exactly output as our stata file. (code below)
+- ```mutate``` is a dplyr function that helps to create and manipulate variables. <a name="mutate"></a>
+- ```recode``` is a dplyr function that recode the variables based on the previous values. 
+
+```{r, warning=FALSE}
+long <- data%>%gather(wave,know_w,-c(id,sex,age))%>%mutate(wave=recode(wave,`know_w1`=1,`know_w2`=2,`know_w3`=3))%>%##Mutate is to create new variables 
+  arrange(id)
+head(long,10) #glimpse of the data.
+```
+
+**From long to wide in R**
+
+```spread```is a tydr function that it does the oposite of ```gather```
+
+```{r, include=FALSE}
+long <- data%>%gather(wave, know_w, 
+                      -c(id,sex,age))%>%arrange(id) 
+
+```
+
+```{r, warning=FALSE}
+wide <- long%>%spread(wave, know_w)%>%arrange(id) #create the variable know_w for each wave and sort the data by id
+head(wide,10) # show some data (10 first rows)
+```
+
+
+```{r eval=FALSE, class.source="Comment1"}
+Dplyr and Tidyr are becoming very popular among R users.
+That is why we suggest to get use to %>% 
+```
+
+# Econometric Panel Models <a name="Econometric"></a>
+
+## Within estimators models <a name="FE"></a>
+
+### First Difference two waves <a name="FDtw"></a>
+Model: 
+
+$$ Y_{it}-Y_{i(t-1)} = X_{1i}-X_{1i(t-1)}+X_{2i}-X_{2i(t-1)}+ \epsilon_i-\epsilon_{i(t-1)}$$
+
+or (Multiwave)
+
+$$ \Delta Y_i= \Delta X_{1i} + \Delta X_{2i} + .. \Delta \epsilon_i$$
+**Data details**
+
+We are going to retrieve the data Finkel-Smith 2011. You can find more details about the data here [Datas](#cleaning) 
+
+This data is in wide format. We will create two variables
+
+- Knowdif ($\Delta Knowledge$): difference in knowledge bewteen before and after treatment
+- newtreat_ww2 ($\Delta Treatment$): binary variable, "1" if the subject got the treatment. 
+
+#### <span style="color:red">**STATA**</span>
+
+- Creating the variables: 
+
+```{r, eval = FALSE}
+gen knowdif=know_w2-know_w1
+gen treatdif=newtreat_ww2-newtreat_ww1
+```
+- Runing the models
+
+<span style="color:blue">FD_1</span>
+
+```{r eval=FALSE}
+regress knowdif newtreat_ww2
+```
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/fd1.png')
+```
+
+<span style="color:blue">FD_2</span>
+
+We can add time invariant variables in our model. However the interpretation is not straighforward. 
+
+```{r eval=FALSE}
+regress knowdif treatdif intdif sex educ
+```
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/fd2.png')
+```
+
+In this case, sex and education have negative effects on change in knowledge. This could mean: 
+
+    - Women increase more on knwoledge than men, and less educated subjects increase more than highly educated. 
+    - Or: sex and education had greater effects on levels of knowldge at time 1 than time 2.
+    - Or: sex and education differences were stronger at time 1 than time 2.
+
+#### <span style="color:red">**R**</span>
+
+Now we replicate the models **FD_1** and **FD_2** in R. 
+
+- First, we get the data using the function "import" (package rio). 
+- Then we add the variables using  "$". 
+
+```{r}
+data=import("~/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal Inference and Econometrics/Kenya.3wave wide.2017.dta")
+data$Knowdif=data$know_w2-data$know_w1 ## Variable Knowdig
+data$treatdif=data$newtreat_ww2-data$newtreat_ww1 ## Vairable treatdif
+```
+
+
+```{r eval=FALSE, class.source="Comment1"}
+Packages as "dplyr" or "tydr" are giving us more options for data managment. 
+For instance we can do everything in "one" line of code.
+```%>%``` 
+(it means: "throw the object/output from the left in to the next function") 
+```
+
+- In this code below we import the dataset and then "throw" it to the function "mutate" to create new variables (Knowdif and treatdif). 
+- The outuput is the same. 
+
+```{r, echo=FALSE}
+wideK=import("~/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal Inference and Econometrics/Kenya.3wave wide.2017.dta")%>%
+  mutate(Knowdif=know_w2-know_w1, treatdif=newtreat_ww2-newtreat_ww1)
+```
+
+**Runing the models**
+
+First option: Create and object that contains all the information of the model and then ask for the summary of the model. 
+
+- The function "lm" means "linear model" and it does all the estimation process of the linear model. The dependent and independent variables are separated by "~", and then, after the coma, we called the data. 
+- The function ```summary``` allow us to get relevant information of the model. 
+
+```{r}
+FD1=lm(Knowdif~treatdif, wideK)
+summary(FD1) 
+```
+
+- the object "m1" it has more information that was showed in the summary output. For instance, if we want an analysis of variance of the model we can get that with the function "aov". 
+
+```{r}
+aov(FD1)
+```
+
+```{r}
+summary(aov(FD1))
+```
+
+Another option is to run all in one line of code, that could be done using the "%>%". We throw the linear model into the function summary, in this case we are not saving any object in the memory. 
+
+```{r}
+lm(data$Knowdif~data$treatdif, data)%>%summary() 
+```
+
+Now the model FD2:
+
+We can add more independent/explanatories variables using "+".
+
+```{r eval=FALSE}
+FD2=lm(Knowdif~treatdif+sex+educ, data)
+summary(FD2) 
+```
+
+The interpretation is the same stated above.
+
+### Multiwave First Difference <a name="FD_MW"></a>
+
+With the data in long format we can run a Multi Wave First Different Model: 
+
+$$ \Delta Y_i= \Delta X_{1i} + \Delta X_{2i} + .. \Delta \epsilon_i$$
+
+#### <span style="color:red">**STATA**</span>
+
+In STATA first we set the data as panel with ```xtset``` and then we run the model using ```d``` for a difference before each variable. 
+
+<span style="color:blue">**MWFD1: Multiwave First Difference without waves**</span>
+
+```{r , eval=FALSE}
+xtset id wave
+reg d.know_w d.totalce_w  
+```
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/fdmw1.png')
+```
+
+<span style="color:blue">**MWFD2: Multiwave First Difference controling by waves(time)**</span>
+
+We can run this model controling for the "trend" effect adding the waves. 
+
+
+```{r , eval=FALSE}
+tab wave, gen(wavv) #//this generates two variables, one for each wave
+reg d.know_w d.totalce_w wavv2 wavv3 #// The new model
+```
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/fdmw2.png')
+```
+
+#### <span style="color:red">**R**</span>
+
+In R we can use the plm package to run a Multiwave First Difference
+
+<span style="color:blue">**MWFD1: Multiwave First Difference without waves**</span>
+
+- First, we call the package plm. Remember we already called the package **rio** in the step before. 
+- Second, we import the data base using "import", as we did in our previous step [here](#rio) 
+- ```plm``` is the function for panel model. As the linear model, the first element is the *model* ```know_w~totalce_w+age+educ+sex```. Variables are added using +. then we include the data ```data =K_long```. The third element in our code is the "index" ```index = c("id", "wave")```. Which does the same job that "xtset" in STATA. Finally, we need to specified the type of model ```model = "fd"```. We have several options here that we will be unveiling as we progress. 
+
+- ```summary(MWFD1)``` show us the results. 
+
+```{r, message=FALSE}
+library(plm)
+
+K_long<-import("~/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal Inference and Econometrics/Kenya.3wave long.2017.dta")  ### Here I'm importing the data. 
+
+MWFD1<-plm(know_w~totalce_w,data =K_long,
+          index = c("id", "wave"), 
+          model = "fd")
+summary(MWFD1)
+```
+
+<span style="color:blue">**MWFD2: Multiwave First Difference controling by waves(time)**</span>
+
+First we need to create a dummy for each wave. There are different ways to create this dummies. We are going to use the function ```mutate``` from ```dplyr```. We have used that function [here](#mutate)
+
+```{r}
+K_long<-K_long%>%mutate(wavv1=ifelse(wave==1,1,0),
+                        wavv2=ifelse(wave==2,1,0),
+                        wavv3=ifelse(wave==3,1,0))
+```
+
+Now we can include waves in the model, two waves are omited due to multicoliniarity. 
+
+```{r}
+FDMW2<-plm(know_w~totalce_w+wavv1+wavv2+wavv3,data =K_long,
+          index = c("id", "wave"), 
+          model = "fd")
+summary(FDMW2)
+```
+
+
+### Simple FE <a name="FE1"></a>
+
+Two more common models: 
+
+$$Y_{it}=\alpha + \beta_1X_{1it}+...\beta_kX_{ikt}+\beta_mZ_i+c_1D_1+c_2D_2+c_{n-1}D_{n-1}+e_{it}$$
+
+In the model above we add a dummy variable ("D") for each unit, this model is common called ("Least Squares Dummy Variables"). Then each unite will have its own intercetp, for instance ($\alpha +c1$) for unite 1. This model is too computationally demanding. 
+
+The most common model is the Fixed Effect model: 
+
+$$Y_{it}-\bar{Y_i}=\beta_i(X_{1it}-\bar{X}_{1i})+...+ \beta_k(X_{kit}-\bar{X}_{ki})+ \epsilon_{it}$$
+
+These model control for the variation **between** units and only use the within estimators. 
+
+To estimate these models we are going to use the data from Finkel-Smith 2011 in its long format. You can donwload it here: 
+You can find more details about the data here [Datas](#cleaning) 
+
+
+#### <span style="color:red">**STATA**</span>
+
+```xtset``` Sets the data as panel.
+```gen``` Creats or generates a new variable "time" (starts in 0)
+
+```{r eval=FALSE}
+xtset id wave  
+```
+
+**Runing the model**
+
+  - ```Know_w``` = level of knowledge.
+  - ```tatalce_w```=
+  - ```fe``` means fixed effect
+
+```{r eval=FALSE}
+xtreg know_w totalce_w sex educ age, fe 
+```
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/fe_2.png')
+```
+
+Time invariants covariates are rid of the model (because they do not vary within subjects!)
+
+#### <span style="color:red">**R**</span>
+
+- There are several packages that can help us to estimate panel models. There is sometimes a lot of overlapping, however, some packages can take a specific approach for a given problem. For instance **plm** was created by econometricians and **panelR** by a sociologist. The best practice is to use the package that can help us with our analysis and not to get attached to any in particular. 
+
+- Here is a good post from panelR's author comparing his package with plm. [Post](https://www.r-bloggers.com/comparing-panelr-and-plm/)
+
+<span style="color:blue">**R- plm**</span>
+
+- First, we call the package.
+- Second, we import the data base using "import"
+- ```plm``` is the function for panel model. As the linear model, the first element is the *model* ```know_w~totalce_w+age+educ+sex```. Variables are added using +. then we include the data ```data =K_long```. The third element in our code is the "index" ```index = c("id", "wave")```. Which does the same job that "xtset" in STATA. Finally, we need to specified the type of model ```model = "within"```. We have several options here, we were unveiling as we progress. 
+- ```summary(FE)``` show us the results. 
+
+
+```{r, message=FALSE}
+library(plm)
+K_long<-import("~/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal Inference and Econometrics/Kenya.3wave long.2017.dta")
+FE<-plm(know_w~totalce_w+age+educ+sex,data =K_long,
+        index = c("id", "wave"), 
+        model = "within")
+summary(FE)
+```
+
+The summary of the model does not give us the "intercept". Stata estimates the intercept running the model after adding the overall sample mean for Y and X to the demeaned X and Y. 
+
+**plm** has a function to obtain it
+
+```{r}
+within_intercept(FE)
+```
+
+In this case the result is the same as the output from the STATA command. 
+
+<span style="color:blue">**R- panelR**</span>
+
+- First, we call the package
+- We "panel" our data ```panel_data(K_long, id=id, wave=wave)```. We created a new object (K_long_p). We could also replace the previous one.The advantage of R (compare to STATA), is that we can have more than one data "open" in our enviroment. 
+
+
+```{r, message=FALSE}
+library(panelr)
+K_long_p<-panel_data(K_long, id=id, wave=wave)
+K_long_p
+```
+
+- Second, we run the model using the function "wbm". The structure is the same as "plm". 
+
+```{r, message=FALSE}
+FE2<-wbm(know_w~totalce_w+age+educ+sex, data=K_long_p,
+        model="within")
+summary(FE2)
+```
+
+### Simple FE, robust standard errors (RSE). <a name="FE2"></a>
+
+We can deal with the heteroskedasticity of the error terms obtaining the "ROBUST" standard errors. Panel analysis has potential problems with the error terms produce by unit-level clustering. 
+
+#### <span style="color:red">**STATA**</span>
+
+```{r, eval=FALSE}
+xtreg know_w totalce_w, fe (cluster id)
+```
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/fe_3.png')
+```
+
+As we can see, now the SE are "robust". 
+
+#### <span style="color:red">**R**</span>
+
+<span style="color:blue">**R- plm**</span>
+
+- We have more than one option to get the *robust standard errors* from our model. 
+- With PLM we can add the argument ```vcov``` in ```summary()```
+- Remember: our model is storage in the object **FE** above. 
+
+```{r}
+summary(FE,vcov = vcovHC(FE))
+```
+
+- Another option is to use a generic function to test our coeficients. The function ```coeftest``` from the package **lmtest** helps to perform z and t Wald tests of estimated coefficients. 
+- The argument **vcov** let us to select a particular variance-covariance matrix. 
+
+```{r, message=FALSE}
+library(lmtest)
+coeftest(FE, vcov = vcovHC, type = "HC1")
+```
+
+- Now we use get the robust standard error for the intercept. 
+
+```{r}
+within_intercept(FE, vcov = function(x) 
+  vcovHC(x, type="HC1"))
+```
+
+<span style="color:blue">**R- panelR**</span>
+
+- Panel R does not have implemented yet a easy way to test the coeficients with Robust Standar Error. 
+
+## Random Effects Models <a name="RE"></a>
+
+- Also known as **Random Intercept**
+
+#### <span style="color:red">**STATA**</span>
+
+- We also use xtreg for **random effects** model. 
+- We add **theta** ($\theta$) in the line. Because $\theta$ gives us an idea of the composition of the error term. Where $\theta$ closser to 1 the RE models reduce to a FE model
+
+```{r, eval=FALSE }
+xtreg know_w totalce_w sex educ age, re
+```
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/re_1.png')
+```
+
+- We can also add **Robust Standard Errors** to the model. We added ```vce(cluster id)``` same as we did with the Fixed Effects model.  
+
+
+```{r, eval=FALSE }
+xtreg know_w totalce_w sex educ age, re vce (cluster id) 
+```
+
+#### <span style="color:red">**R**</span>
+
+- We run the model using the function **plm** from the package with the same name. 
+- The code follows the same structure as the FE or Multiwave First Difference showed above. 
+- The difference is in model we select **random**: ```model = "random"```
+- 
+```{r}
+RE<-plm(know_w~totalce_w+age+educ+sex,data =K_long,
+        index = c("id", "wave"), 
+        model = "random")
+
+summary(RE)
+```
+
+- ```summary(RE)``` give us the basic information from the model.
+- The results are the same as the STATA output, and **plm** give us $\theta$ by default. 
+
+**Robust standard errors**
+
+- We can get the **robust standard errors adding the argument in the function ```summary()``` as we did with FE models 
+
+```{r}
+summary(RE, vcov = vcovHC(RE))
+```
+
+### Hasmaun test <a name="ht"></a>
+
+The Hausmaun Test if the estimates obtained by the Fixed Effect models are the same as those from the Random Effect model. If they are the same, RE it is more efficient. 
+
+The test statistic is : 
+
+$$
+\frac{\beta_{Fe}-\beta_{RE}}{var(\beta_{FE})-var(\beta_{RE})}
+$$
+
+With a $\chi^2$ (Chi-square)  with degree of freedom equal to the number of time-varying independent variables. 
+
+#### <span style="color:red">**STATA**</span>
+
+To conduct the Hausman Test we need to store the coefficient from our Fixed Effect and Random Effects model. 
+
+- ```qui``` is to estimate the model but no showing the output.
+- ```estimate store``` save the estimates from the model in the "object" fixed and random respectively. 
+
+```{r, eval=FALSE}
+qui xtreg know_w totalce_w sex educ age, fe  
+estimates store fixed
+
+qui xtreg know_w totalce_w sex educ age, re theta
+estimates store random
+```
+We conduct the Hausman test using the command: ```hausman fixed random```
+
+```{r, eval=FALSE}
+hausman fixed random
+```
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/ht_1.png')
+```
+
+#### <span style="color:red">**R**</span>
+
+The package **plm** has a function called ```phtest``` to conduct the Hausman test. 
+
+- We have created the models before, but we will do it again to be sure we are comparing the right estimators.
+
+```{r}
+FE<-plm(know_w~totalce_w+age+educ+sex,data =K_long,
+        index = c("id", "wave"), 
+        model = "within") 
+
+RE<-plm(know_w~totalce_w+age+educ+sex,data =K_long,
+        index = c("id", "wave"), 
+        model = "random")
+```
+
+- Now we can conduct the Hausman test. 
+
+```{r}
+phtest(FE, RE)
+```
+
+- Another way: ```phtest``` let us run the test withour running the model
+
+- We create the object **model** that contains the name of the dependent and independent variables (separated by ~)
+-  
+
+```{r}
+modht= know_w~totalce_w+age+educ+sex #an object with the model 
+phtest(modht, data=K_long)  #We can run the test with the model. 
+```
+
+## Hybrid Models <a name="HYBRID"></a>
+### Bell and Jones Model with RSE
+
+- It includes the mean of the time variant variables into a RE model
+- First we generate the mean of **totalce_w** by group and then included it  in the model. 
+
+#### <span style="color:red">**STATA**</span>
+
+```{r, eval=FALSE}
+egen totalce_mn=mean(totalce_w), by (id) // egen creates new  variables
+
+xtreg polpart_w totalce_w totalce_mn sex educ age wavv2 wavv3, re vce(cluster id) 
+```
+
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/HY_1.png')
+```
+
+#### <span style="color:red">**R**</span>
+
+- First, we create **totalce_mn**, is the mean of **totalce_w** by group. To do it we will use the function **mutate** from the package **dplyr**. 
+- We are going to use the dummys variables for wave. We had created those dummys using mutate for the Multiwave First Difference model [here](#mutate)
+
+```{r, echo=FALSE}
+K_long<-K_long%>%mutate(wavv1=ifelse(wave==1,1,0),
+                        wavv2=ifelse(wave==2,1,0),
+                        wavv3=ifelse(wave==3,1,0))
+```
+
+```{r}
+K_long<-K_long%>%group_by(id)%>%
+  mutate(totalce_mn=mean(totalce_w))%>%
+  ungroup() # if you don't ungroup you may encounter the following error: 
+#Can't join on '.rows' x '.rows' because of incompatible types (list / list)
+```
+
+- We include the mean of **totalce_w** by group in our Random Effects model. Using **plm** we obtained the same results than STATA
+
+- In ```summary``` we added the **vcov** option to request the robust standard errors. 
+
+```{r}
+HY<-plm(polpart_w~totalce_w+totalce_mn+age+educ+sex+
+           wavv2+wavv3,data =K_long,
+         index = c("id", "wave"), 
+         model = "random") ## 
+
+summary(HY, vcov = vcovHC(HY))
+```
+
+# SEM (Structural Equation Modeling) <a name="SEM"></a>
+
+Also known as "Covariance Structure Analysis" (CSA). We used observed variance-covariances to estimate to estimate structural parameters and we use the estimated structural parameters to generate predicted variances and covariances.
+
+IN SEM we care about: regression coefficients, $R^2$ and overall fit of the model. 
+
+## Autoregresive model (Three waves) <a name="autoregresive"></a>
+
+- For this mode we will use the data "XXXX". You can check more details of the data [here](#packages)
+
+#### <span style="color:red">**STATA**</span>
+
+- SEM in stata can be done with commands in the **do** file, but also has an "SEM builder". Which is more intuitive for SEM models. 
+
+- You can open the "SEM builder" from the menu "Statistic" (figure below)
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/SEM1.png')
+```
+
+- A different window will open where you can build your model (figure below). 
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/SEM2.png')
+```
+
+Below is how it looks an autoregressive model with three waves (using the SEM builder). To estimate the model, we need to clik "Estimate" (right on the horizontal menu)
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/SEM3.png')
+```
+
+After the estimation (using Maximun Likelihood) we estimate the estructural estimates and the error terms. 
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/SEM4.png')
+```
+
+Another way to estimate SEM model is using stata code:
+
+```{r eval=FALSE}
+sem (pid2000 -> pid2002, ) (pid2002 -> pid2004, ), nocapslatent
+```
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/SEM5.png')
+```
+
+- As we mentioned above, for SEM models fit measures are really important. We can obtain that in stata running ```estat gof, sta(all)``` after estimating the model.
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/SEM6.png')
+```
+
+#### <span style="color:red">**R**</span>
+
+- For this model we are going to use the data **XXX** from the XXXXX
+- We get the data using the function ```import``` from the package **rio**
+
+ 
+```{r}
+new<-import("~/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 2 -- Structural Equation Panel Models/nes3wave.dta")
+```
+
+- To run SEM we are going to use the package **lavaan** 
+- The first step is to call the package using ```library(lavaan)```
+- Then we write our model as string.
+- Then we estimate the model using the function **sem** from the package ```lavaan```
+- Finally, we used the function ```summary``` to retrieve the information from our model. 
+
+```{r}
+library(lavaan)
+path1<- '
+pid2002 ~ pid2000 
+pid2004 ~ pid2002 
+'
+## pid2000 is the exogenous variable.
+## The models have to be in different lines
+
+sem1 <- sem(path1, data=new)
+## The objecto sem1 has all the information from the estimation process.
+
+summary(sem1)
+```
+
+- We can also get the fit model's information adding an argument ```fit.measures=TRUE``` into ```summary```. We have the same information as the stata command ```estat gof, sta(all)```
+
+
+```{r}
+summary(sem1,fit.measures=TRUE )
+```
+
+#### <span style="color:red">**SEM ploting with R**</span>
+
+- To plot the model we will need the package **semPlot**
+- We call the package with library()
+- And we use ```semPaths`` to get the basic plot of our SEM model.
+
+```{r}
+library(semPlot)
+semPaths(sem1)
+```
+
+- ```semPlot``` has a lot of arguments, and we can customize the plot using these arguments. For instance, we can add the coefficients and give weigth (based on the coefficients) to the arrows. 
+
+- We will explore this arguments progresively. Lets start changing the style to "lisrel", this option changes the plot and shows a single headed edges with no node as origin."Estimates" add the estimates to the arrows.
+
+```{r}
+semPaths(sem1,"Estimates", style="lisrel",
+         layout = "tree")
+```
+
+## Cross-lagged models <a name="clagged"></a>
+
+
+<span style="color:red">**STATA**</span>
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/clagged1.png')
+```
+
+**Code:** 
+
+```{r, eval=FALSE}
+sem (pid2000 -> pid2002, ) (pid2000 -> app2002, ) //
+(app2000 -> pid2002, ) (app2000 -> app2002, ),  //
+cov( pid2000*app2000) standardized 
+```
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/clagged2.png')
+```
+
+<span style="color:red">**R**</span>
+
+- First, lets write our model.
+- We had added to the model the coviarence between the **pid2000** y **app2000**
+- We added ```app2002~~pid2002``` to estimate the covariance.
+
+```{r}
+cl1<-
+  '
+pid2002 ~ pid2000 + app2000
+app2002 ~ app2000 + pid2000
+## Covariances
+app2000~~pid2000
+app2002~~pid2002
+'
+```
+
+- Then we estimate it 
+
+```{r}
+cl1<- sem(cl1, data=new)
+```
+
+- Now, we ask for the results
+
+```{r}
+summary(cl1)
+```
+
+```{r}
+semPaths(cl1,"Estimates",standardized=TRUE, 
+         layout="tree2")
+```
+
+## Synchronus and cross-lagged model <a name="SCL"></a>
+
+- This model has two new features. First it has a reciprocal effect, meaning that the variables can affect each other in a given time. 
+
+- We added equality constraints to the coefficients accross waves. For intance, the effect from **pid2004** to **app2004** we had contrained  (```a```) to be the same than the **pid2002** to **app2002**. The same way, we used (```b```) to constrained the effect from **app2004** to **pid2004** to be the same as **app2002** to **app2002**
+
+- We can add those constraints in the SEM builder first selecting the arrow and then adding the constraint (Red box at the top left corner)
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('Stata_images/clagged3.png')
+```
+
+**Code**
+
+- We can add the constraints to the effect using the @. For instance, ```(pid2002@a -> app2002, )``` and ```(pid2004@a -> app2004, )``` are equally constraint (we have added the @a to both)
+
+```{r, eval=FALSE}
+sem (pid2000 -> pid2002, ) (pid2002 -> pid2004, ) (pid2002@a -> app2002, ) /// (pid2004@a -> app2004, ) (app2000 -> app2002, ) (app2002@b -> pid2002, ) ///
+(app2002 -> app2004, ) (app2004@b -> pid2004, ), ///
+standardized cov( pid2000*app2000) nocapslatent
+estat gof, sta(all)
+```
+
+- We wont show the output here ()
+
+
+
+
+## Random Error <a name="SEM"></a>
+
+## Cross-Lagged Models <a name="SEM"></a>
+
+# Integration <a name="Integration"></a>
+
+## Dynamic Models <a name="Dynamic"></a>
+
+### Lag Endogenous Variables <a name="lag_endogenous"></a>
+
+### Autocorrelated disturbances <a name="autocorrelated"></a>
+
+### Growth Models <a name="growth"></a>
+
+## SEM Dynamic Models <a name="SEM"></a>
+
+# Multilevel Models  <a name="Multilevel"></a>
+### SEM Multilevel Models <a name="SEM_Multilevel"></a>
+### Econometric Multilevel Models <a name="ECO_Multilevel"></a>
+
+# Tables and plots <a name="tables_plot"></a>
+## Regresion table output <a name="tables"></a>
+## Regresion plots <a name="plots"></a>
+
+**Last update**
+```{r, echo=FALSE}
+Sys.Date()
+```

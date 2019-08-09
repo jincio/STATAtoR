@@ -1,0 +1,12 @@
+article .begin-examples ~ h3,
+article .begin-examples ~ p,
+article .begin-examples ~ .highlight {
+    width: 50%;
+}
+img[alt=drawing] { width: 100px; }
+
+.Comment1 {
+background-color: paleTurquoise;
+}
+
+div.blue pre { background-color:#d5f4e6; }
