@@ -51,13 +51,13 @@ STATA and R code will be in grey boxes like this:
 Code here 
 ```
 
-Notes about R, and R features will be in turquoise boxes like this:
+Notes about R, and R features will be in boxes like this:
 
 ```{r eval=FALSE, class.source="Comment1"}
 Example
 ```
 
-Sometimes the output has warnings, we are not showing those here. In general, you shouldnt worry about warnings. When the ouput shows "error" that means something is wrong and didn't execute the code. 
+Sometimes the output has warnings. We are not showing those here. In general, you shouldnt worry about warnings. When the ouput shows "error" that means something is wrong and didn't execute the code. 
 
 ## R packages and data sets <a name="packages"></a>
 
@@ -100,7 +100,7 @@ install.packages(c("lme4", "panelr","plm","rio","lmtest","dplyr","tidyr", "lavaa
 installed.packages(.Library)
 ```
 
-- If you use R Studio (Highly recommended), you can see the packages installed here. In the right panel:
+- You can find a menu to install and browse your package at the right panel in R Studio (Highly recommended).
 
 ```{r echo=FALSE, out.width='80%'}
 knitr::include_graphics('./Stata_images/rstudio.png')

@@ -9,8 +9,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Here we are going to use data sets from published papers. You can retrieve the data from the links below:
 
-- [Civic education, political discussion, and the social transmission of democratic knowledge and values in a new democracy: Kenya 2002. Finkel-Smith (AJPS 2011)](https://www.google.com "Google's Homepage")
-- 
+- [Civic education, political discussion, and the social transmission of democratic knowledge and values in a new democracy: Kenya 2002. Finkel-Smith (AJPS 2011)](https://www.polisci.pitt.edu/sites/default/files/FinkelSmith.CivicEducationPoliticalDiscussion.pdf "Article")
+
+- [Effects of US Foreign Assistance on Democracy Building: Results of a Cross-National Quantitative Study (Final report, prepared for USAID) Finkel, Steven E., Anibal Perez-Linan, Mitchell A. Seligson, and Dinorah Azpuru. 2006](https://www3.nd.edu/~mcoppedg/crd/USAID_Democracy_Assistance_and_its_Impact_on_Democratization_v34.pdf "Report")
 
 # Data organization <a name="cleaning"></a>
 
