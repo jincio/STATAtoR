@@ -38,8 +38,8 @@ Website: http://www.stevenfinkel.info/index.html
 ## José Incio
 
 José Incio is a Ph.D. Candidate at the University of Pittsburgh. His research interest include subnational politics, democracy, and political methodology.
+website: [www.joseincio.com](www.joseincio.com)
 
-website: www.joseincio.com 
 
 # Basics
 
@@ -57,7 +57,7 @@ Notes about R, and R features will be in boxes like this:
 Example
 ```
 
-Sometimes the output has warnings. We are not showing those here. In general, you shouldnt worry about warnings. When the ouput shows "error" that means something is wrong and didn't execute the code. 
+Sometimes the output has warnings. We are not showing those here. In general, you shouldnt worry about warnings.However, be worry about errors. When the ouput shows "**error**" that means something is wrong and R didn't execute the code. 
 
 ## R packages and data sets <a name="packages"></a>
 
