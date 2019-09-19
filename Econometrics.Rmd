@@ -650,7 +650,7 @@ dynamic1<-pgmm(dg02i~ aid100+lag(dg02i,1)| lag(dg02i,2:14), data = demo,
 summary(dynamic1)
 ```
 
-- We can also test our coefficient using **robust standard errors**
+- We can also test our coefficient using **robust standard errors (rse)**
 
 ```{r}
 summary(dynamic1, robust=TRUE)
