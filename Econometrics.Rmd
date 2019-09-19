@@ -58,10 +58,10 @@ regress knowdif treatdif intdif sex educ
 knitr::include_graphics('./Stata_images/fd2.png')
 ```
 
-We can add time invariant variables in our model. However the interpretation is not straighforward. For example, in this case, sex and education have negative effects on change in knowledge. This could mean three differnt things: 
+We can add time invariant variables in our model. However the interpretation is not straightforward. For example, in this case, sex and education have negative effects on change in knowledge. This could mean three different things: 
 
     - Women increase more on knwoledge than men, and less educated subjects increase more than highly educated. 
-    - Or: sex and education had greater effects on levels of knowldge at time 1 than time 2.
+    - Or: sex and education had greater effects on levels of knowledge at time 1 than time 2.
     - Or: sex and education differences were stronger at time 1 than time 2.
 
 ### <span style="color:red">**R**</span>
@@ -80,38 +80,38 @@ library(tidyr)
 
 ```{r}
 data=import("./datasets/Kenya.3wave wide.2017.dta")
-data$Knowdif=data$know_w2-data$know_w1 ## Variable Knowdig
+data$Knowdif=data$know_w2-data$know_w1 ## Variable Knowdif
 data$treatdif=data$newtreat_ww2-data$newtreat_ww1 ## Vairable treatdif
 ```
 
 
 ```{r eval=FALSE, class.source="Comment1"}
-Packages as "dplyr" or "tydr" are giving us more options for data managment. 
-For instance we can do everything in "one" line of code.
+Packages as "dplyr" or "tydr" are giving us more options for data management. 
+For instance, we can do everything in "one" line of code.
 ```%>%``` 
 (it means: "throw the object/output from the left in to the next function") 
 ```
 
 - In this code below we import the dataset and then "throw" it to the function "mutate" to create new variables (Knowdif and treatdif). 
-- The outuput is the same. 
+- The output is the same. 
 
 ```{r, eval=FALSE}
 data=import("./datasets/Kenya.3wave wide.2017.dta")%>%mutate(Knowdif=know_w2-know_w1,treatdif=newtreat_ww2-newtreat_ww1, intdif=interest_w2-interest_w1)
 ```
 
-**Runing the models**
+**Running the models**
 
 First option: Create and object that contains all the information of the model and then ask for the summary of the model. 
 
 - The function "lm" means "linear model" and it does all the estimation process of the linear model. The dependent and independent variables are separated by "~", and then, after the coma, we called the data. 
-- The function ```summary``` allow us to get relevant information of the model. 
+- The function ```summary``` allows us to get relevant information of the model. 
 
 ```{r}
 FD1=lm(Knowdif~treatdif, data)
 summary(FD1) 
 ```
 
-- the object "m1" it has more information that was showed in the summary output. For instance, if we want an analysis of variance of the model we can get that with the function "aov". 
+- The object "m1" it has more information that was showed in the summary output. For instance, if we want an analysis of variance of the model we can get that with the function "aov". 
 
 ```{r}
 aov(FD1)
@@ -121,7 +121,7 @@ aov(FD1)
 summary(aov(FD1))
 ```
 
-Another option is to run all in one line of code, that could be done using the "%>%". We throw the linear model into the function summary, in this case we are not saving any object in the memory. 
+Another option is to run all in one line of code, which could be done using the "%>%". We throw the linear model into the function summary, in this case we are not saving any object in the memory. 
 
 ```{r}
 lm(data$Knowdif~data$treatdif, data)%>%summary() 
@@ -129,7 +129,7 @@ lm(data$Knowdif~data$treatdif, data)%>%summary()
 
 Now the model FD2:
 
-We can add more independent/explanatories variables using "+".
+We can add more independent/explanatory variables using "+".
 
 ```{r, echo=FALSE}
 data=import("./datasets/Kenya.3wave wide.2017.dta")%>%mutate(Knowdif=know_w2-know_w1,treatdif=newtreat_ww2-newtreat_ww1, intdif=interest_w2-interest_w1)
@@ -144,7 +144,7 @@ The interpretation is the same stated above.
 
 ## Multiwave First Difference <a name="FD_MW"></a>
 
-With the data in long format we can run a Multi Wave First Different Model: 
+With the data in long format we can run a Multi Wave First Difference Model: 
 
 $$ \Delta Y_i= \Delta X_{1i} + \Delta X_{2i} + .. \Delta \epsilon_i$$
 
@@ -200,10 +200,10 @@ In R we can use the plm package to run a Multiwave First Difference
 - First, we call the package plm. Remember we already called the package **rio** in the step before. 
 - Second, we import the data base using "import", as we did in our previous step [here](#rio) 
 - ```plm``` is the function for panel model. As in the linear model, the first element on the function is the  *model(formula)* ```know_w~totalce_w+age+educ+sex```. 
-- Variables are added using +. then we include the data ```data =K_long```. - The third element in our code is the "index" ```index = c("id", "wave")```, which does the same job that "xtset" in STATA. 
+- Variables are added using +. Then we include the data ```data =K_long```. - The third element in our code is the "index" ```index = c("id", "wave")```, which does the same job that "xtset" in STATA. 
 - Finally, we need to specified the type of model ```model = "fd"```. We have several options here that we will be unveiling as we progress. 
 
-- ```summary(MWFD1)``` show us the results. 
+- ```summary(MWFD1)``` shows us the results. 
 
 ```{r message=FALSE}
 library(plm)
@@ -220,7 +220,7 @@ summary(MWFD1)
 
 <span style="color:blue">**MWFD2: Multiwave First Difference controling by waves(time)**</span>
 
-First we need to create a dummy for each wave. There are different ways to create this dummies. We are going to use the function ```mutate``` from ```dplyr```. We have used that function [here](#mutate)
+First, we need to create a dummy for each wave. There are different ways to create dummy variables. We are going to use the function ```mutate``` from ```dplyr```. We have used that function [here](#mutate)
 
 ```{r}
 K_long<-K_long%>%mutate(wavv1=ifelse(wave==1,1,0),
@@ -228,7 +228,7 @@ K_long<-K_long%>%mutate(wavv1=ifelse(wave==1,1,0),
                         wavv3=ifelse(wave==3,1,0))
 ```
 
-Now we can include waves in the model, two waves are omited due to multicoliniarity. 
+Now we can include waves in the model. Two waves are omited due to multicoliniarity. 
 
 ```{r}
 FDMW2<-plm(know_w~totalce_w+wavv1+wavv2,data =K_long,
@@ -244,22 +244,22 @@ Two more common models:
 
 $$Y_{it}=\alpha + \beta_1X_{1it}+...\beta_kX_{ikt}+\beta_mZ_i+c_1D_1+c_2D_2+c_{n-1}D_{n-1}+e_{it}$$
 
-In the model above we add a dummy variable ("D") for each unit, this model is common called ("Least Squares Dummy Variables"). Then each unite will have its own intercept, for instance ($\alpha +c1$) for unite 1. A drawback with this model is that is too computationally demanding, especially if we have a large number of units. 
+In the model above we add a dummy variable ("D") for each unit; this model is common called ("Least Squares Dummy Variables"). Then each unite will have its own intercept. For instance ($\alpha +c1$) for unite 1. A drawback with this model is that it is too computationally demanding, especially if we have a large number of units. 
 
 The most common model is the Fixed Effect model: 
 
 $$Y_{it}-\bar{Y_i}=\beta_i(X_{1it}-\bar{X}_{1i})+...+ \beta_k(X_{kit}-\bar{X}_{ki})+ \epsilon_{it}$$
 
-These model control for the variation **between** units and only use the within estimators. 
+These models control for the variation **between** units and only use the within estimators. 
 
-To estimate these models we are going to use the data from Finkel-Smith 2011 in its long format. You can donwload it here: 
+To estimate these models we are going to use the data from Finkel-Smith 2011 in its long format. You can download it here: 
 
 - You can find more details about the data here [Datas](#cleaning) 
 
 ### <span style="color:red">**STATA**</span>
 
-```xtset``` Sets the data as panel.
-```gen``` Creats or generates a new variable "time" (starts in 0)
+```xtset``` sets the data as panel.
+```gen``` creates or generates a new variable "time" (starts in 0)
 
 ```{r eval=FALSE}
 xtset id wave
@@ -280,19 +280,20 @@ xtreg know_w totalce_w sex educ age, fe
 knitr::include_graphics('./Stata_images/fe_2.png')
 ```
 
-Time invariants covariates are rid of the model (because they do not vary within subjects!)
+Time invariants covariates were eliminated from the model (because they do not vary within subjects!)
 
 ### <span style="color:red">**R**</span>
 
-- There are several packages that can help us to estimate panel models. There is some overlapping, however, some packages can take a specific approach for a given problem. For instance **plm** was created by econometricians and **panelR** by a sociologist. The best practice is to use the package that can help us with our analysis and not to get attached to any in particular. 
+- There are several packages that can help us to estimate panel models. There is some overlapping, as some packages can take a specific approach for a given problem. For instance **plm** was created by econometricians and **panelR** by a sociologist. The best practice is to use the package that can help us with our analysis and not to get attached to any in particular. 
 
 - Here is a good post from panelR's author comparing his package with plm. [Post](https://www.r-bloggers.com/comparing-panelr-and-plm/)
 
 <span style="color:blue">**R- plm**</span>
 
-- If you hadn't before: First, we call the package.
+- If you hadn't uploaded the dataset before remember: 
+- First, we call the package.
 - Second, we import the database using "import"
-- ```plm``` is the function for panel model. As the linear model, the first element is the *model* ```know_w~totalce_w+age+educ+sex```. Variables are added using +. then we include the data ```data =K_long```. The third element in our code is the "index" ```index = c("id", "wave")```. Which does the same job that "xtset" in STATA. Finally, we need to specify the type of model ```model = "within"```. We have several options here, that we are unveiling as we progress. 
+- ```plm``` is the function for panel model. As the linear model, the first element is the *model* ```know_w~totalce_w+age+educ+sex```. Variables are added using +. then we include the data ```data =K_long```. The third element in our code is the "index" ```index = c("id", "wave")``` which does the same job that "xtset" in STATA. Finally, we need to specify the type of model ```model = "within"```. We have several options here, that we are unveiling as we progress. 
 - ```summary(FE)``` shows us the results. 
 
 ```{r eval=FALSE, class.source="Comment1"}
@@ -310,7 +311,7 @@ FE<-plm(know_w~totalce_w+age+educ+sex,data =K_long,
 summary(FE)
 ```
 
-The summary of the model does not give us the "intercept". Stata estimates the intercept running the model after adding the overall sample mean for Y and X to the demeaned X and Y.
+The summary of the model does not give us the "intercept". STATA estimates the intercept running the model after adding the overall sample mean for Y and X to the demeaned X and Y.
 
 **plm** has a function to obtain it
 
@@ -321,8 +322,9 @@ within_intercept(FE)
 In this case the result is the same as the output from the STATA command. 
 
 <span style="color:blue">**R- panelR**</span>
-- If you hadn't before: First, we call the package.
-- We "panel" our data ```panel_data(K_long, id=id, wave=wave)```. We created a new object (K_long_p). We could also replace the previous one.The advantage of R (compare to STATA), is that we can have more than one data "open" in our enviroment. 
+
+- First, we call the package 'panelR' before using it.
+- We "panel" our data ```panel_data(K_long, id=id, wave=wave)```. We created a new object (K_long_p). We could also replace the previous one.
 
 
 ```{r, message=FALSE}
@@ -375,7 +377,7 @@ library(lmtest)
 coeftest(FE, vcov = vcovHC, type = "HC1")
 ```
 
-- Now we use get the robust standard error for the intercept. 
+- Now we get the robust standard error for the intercept. 
 
 ```{r}
 within_intercept(FE, vcov = function(x) 
@@ -384,7 +386,7 @@ within_intercept(FE, vcov = function(x)
 
 <span style="color:blue">**R- panelR**</span>
 
-- Panel R does not have implemented yet a easy way to test the coeficients with Robust Standar Error. 
+- Panel R has not yet implemented yet a easy way to test the coefficients with Robust Standard Error. 
 
 ## Random Effects Models <a name="RE"></a>
 
@@ -393,7 +395,7 @@ within_intercept(FE, vcov = function(x)
 ### <span style="color:red">**STATA**</span>
 
 - We also use xtreg for **random effects** model. 
-- We add **theta** ($\theta$) in the line. Because $\theta$ gives us an idea of the composition of the error term. As $\theta$
+- We add **theta** ($\theta$) in the line. Because $\theta$ gives us an idea of the error term's compositions. As $\theta$
 (theta) gets closer to 1, it means that more and more of the composite error variance is made up of $U_i$ unit-level or “between” variance. Where $\theta$ closser to 1 the RE models reduce to a FE model
 
 ```{r, eval=FALSE }
@@ -509,8 +511,8 @@ phtest(modht, data=K_long)  #We can run the test with the model.
 # Hybrid Models <a name="hybrid1"></a>
 ## Bell and Jones Model with RSE
 
-- It includes the mean of the time variant variables into a RE model
-- First we generate the mean of **totalce_w** by group and then included it  in the model. 
+- It includes the mean of the time variant variables into an RE model
+- First we generate the mean of **totalce_w** by group and then include it  in the model. 
 
 ### <span style="color:red">**STATA**</span>
 
@@ -527,8 +529,8 @@ knitr::include_graphics('./Stata_images/HY_1.png')
 
 ### <span style="color:red">**R**</span>
 
-- First, we create **totalce_mn**, which is the mean of **totalce_w** by group. To do it we will use the function **mutate** from the package **dplyr**. 
-- We are going to use the dummys variables for wave. We had created those dummys using mutate for the Multiwave First Difference model [here](#FD_MW)
+- First, we create **totalce_mn**, which is the mean of **totalce_w** by group. To do this, we will use the function **mutate** from the package **dplyr**. 
+- We are going to use the dummys variables for wave. We had created those dummies using mutate for the Multiwave First Difference model [here](#FD_MW)
 
 - We can do it again, just in case: 
 ```{r }
@@ -544,7 +546,7 @@ K_long<-K_long%>%group_by(id)%>%
 #Can't join on '.rows' x '.rows' because of incompatible types (list / list)
 ```
 
-- We include the mean of **totalce_w** by group in our Random Effects model. Using **plm** we obtained the same results than STATA
+- We include the mean of **totalce_w** by group in our Random Effects model. Using **plm** we obtained the same results as STATA
 
 - In ```summary``` we added the **vcov** option to request the robust standard errors. 
 
@@ -559,7 +561,7 @@ summary(HY, vcov = vcovHC(HY))
 
 **Hybrid model using panelR package**
 
-```panelr``` it has a convenient way to estimate an hybrid model. 
+```panelr``` has a convenient way to estimate an hybrid model. 
 
 - First we need to *panel* the data:
 
@@ -592,7 +594,7 @@ $$
 Y_{it}= \alpha+ \beta_1Y_{it-1}+\beta_2X_{it}+\beta_3X_{it-1}+...U_{it}+\epsilon_{it}
 $$ 
 
-The problem to include the lag dependent variable is that the estimator would be bias because the lag dependent variable is correlated with $U$ (the time invariant unobserved component of the error term)
+The problem to include the lag dependent variable is that the estimator would be biased because the lag dependent variable is correlated with $U$ (the time invariant unobserved component of the error term)
 
 The most well know approach is the proposeb by Arellano and Bond that use the lag variables as instruments. 
 
@@ -631,11 +633,11 @@ knitr::include_graphics('./Stata_images/dynamic1.png')
 demo<-import("./datasets/democracy.dta")
 ```
 
-- Now the model. The basic model follows the same estructure of the lineal models we run before: ```~``` separates the dependent and independent variables
+- Now the model. The basic model follows the same estructure of the lineal models we ran before: ```~``` separates the dependent and independent variables
 - In this model we have ```aid100``` and the lag of ```dg02i``` as independent variables. 
 - The other lags (from t-3 to t-14) are used as instruments. We add those using ```|lag(dg02i,2:14)```
 - We index ```index=c("cname","year")``` to let R know the structure of our data.
-- We run the model in two steps same as STATA. 
+- We run the model in two steps, this is the same as STATA. 
 
 ```{r}
 dynamic1<-pgmm(dg02i~ aid100+lag(dg02i,1)| lag(dg02i,2:14), data = demo,
@@ -644,13 +646,13 @@ dynamic1<-pgmm(dg02i~ aid100+lag(dg02i,1)| lag(dg02i,2:14), data = demo,
 
 ```
 
-**output**
+**Output**
 
 ```{r}
 summary(dynamic1)
 ```
 
-- We can also test our coefficient using **robust standard errors (rse)**
+- We can also test our coefficient using **robust standard errors**
 
 ```{r}
 summary(dynamic1, robust=TRUE)

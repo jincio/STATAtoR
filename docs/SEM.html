@@ -452,8 +452,8 @@ div.tocify {
 
 <p>Also known as “Covariance Structure Analysis” (CSA). We used observed variance-covariances to estimate structural parameters and we use the estimated structural parameters to generate predicted variances and covariances.</p>
 <p>In SEM we care about: regression coefficients, <span class="math inline">\(R^2\)</span> and overall fit of the model.</p>
-<div id="autoregresive-model-three-waves" class="section level1">
-<h1><span class="header-section-number">1</span> Autoregresive model (Three waves) <a name="autoregresive"></a></h1>
+<div id="autoregressive-model-three-waves" class="section level1">
+<h1><span class="header-section-number">1</span> Autoregressive model (Three waves) <a name="autoregresive"></a></h1>
 <ul>
 <li>For this mode we will use the data “XXXX”. You can check more details of the data <a href="#packages">here</a></li>
 </ul>
@@ -464,7 +464,7 @@ div.tocify {
 </ul>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">use <span class="st">&quot;./datasets/nes3wave.dta&quot;</span>, clear</a></code></pre></div>
 <ul>
-<li><p>SEM in stata can be done with commands in the <strong>do</strong> file, but also has an “SEM builder”. Which is more intuitive for SEM models.</p></li>
+<li><p>SEM in STATA can be done with commands in the <strong>do</strong> file, but also has an “SEM builder”, which is more intuitive for SEM models.</p></li>
 <li><p>You can open the “SEM builder” from the menu “Statistic” (figure below)</p></li>
 </ul>
 <p><img src="Stata_images/SEM1.png" width="80%" /></p>
@@ -472,15 +472,15 @@ div.tocify {
 <li>A different window will open where you can build your model (figure below).</li>
 </ul>
 <p><img src="Stata_images/SEM2.png" width="80%" /></p>
-<p>Below is how an autoregressive model would look with three waves (using the SEM builder). To estimate the model, we need to clik “Estimate” (right on the horizontal menu)</p>
+<p>Below is how an autoregressive model would look with three waves (using the SEM builder). To estimate the model, we need to click “Estimate” (right on the horizontal menu)</p>
 <p><img src="Stata_images/SEM3.png" width="80%" /></p>
-<p>After the estimation (using Maximun Likelihood) we estimate the estructural estimates and the error terms.</p>
+<p>After the estimation (using Maximum Likelihood) we estimate the estructural estimates and the error terms.</p>
 <p><img src="Stata_images/SEM4.png" width="80%" /></p>
 <p>Another way to estimate SEM model is using STATA code:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">sem</span> (pid2000 -&gt;<span class="st"> </span>pid2002, ) (pid2002 -&gt;<span class="st"> </span>pid2004, ), nocapslatent</a></code></pre></div>
 <p><img src="Stata_images/SEM5.png" width="80%" /></p>
 <ul>
-<li>As we mentioned above, for SEM models fit measures are really important. We can obtain that in stata running <code>estat gof, sta(all)</code> after estimating the model.</li>
+<li>As we mentioned above fit measures are important for SEM models. We can obtain that in STATA running <code>estat gof, sta(all)</code> after estimating the model.</li>
 </ul>
 <p><img src="Stata_images/SEM6.png" width="80%" /></p>
 </div>
@@ -506,15 +506,17 @@ div.tocify {
 <li>Finally, we used the function <code>summary</code> to retrieve the information from our model.</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">library</span>(lavaan)</a></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">path1&lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb5-2" title="2"><span class="st">&#39;pid2002 ~ pid2000 </span></a>
-<a class="sourceLine" id="cb5-3" title="3"><span class="st"> pid2004 ~ pid2002 </span></a>
-<a class="sourceLine" id="cb5-4" title="4"><span class="st">&#39;</span></a>
-<a class="sourceLine" id="cb5-5" title="5"><span class="co">## pid2000 is the exogenous variable.</span></a>
-<a class="sourceLine" id="cb5-6" title="6"><span class="co">## The models have to be in different lines</span></a></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">sem1 &lt;-<span class="kw">sem</span>(path1, <span class="dt">data=</span>new)</a>
-<a class="sourceLine" id="cb6-2" title="2"><span class="co">## The objecto sem1 has all the information from the estimation process.</span></a>
-<a class="sourceLine" id="cb6-3" title="3"><span class="kw">summary</span>(sem1)</a></code></pre></div>
+<pre><code>## This is lavaan 0.6-3</code></pre>
+<pre><code>## lavaan is BETA software! Please report any bugs.</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">path1&lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="st">&#39;pid2002 ~ pid2000 </span></a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="st"> pid2004 ~ pid2002 </span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="st">&#39;</span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="co">## pid2000 is the exogenous variable.</span></a>
+<a class="sourceLine" id="cb7-6" title="6"><span class="co">## The models have to be in different lines</span></a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">sem1 &lt;-<span class="kw">sem</span>(path1, <span class="dt">data=</span>new)</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="co">## The objecto sem1 has all the information from the estimation process.</span></a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="kw">summary</span>(sem1)</a></code></pre></div>
 <pre><code>## lavaan 0.6-3 ended normally after 14 iterations
 ## 
 ##   Optimization method                           NLMINB
@@ -546,9 +548,9 @@ div.tocify {
 ##    .pid2002           1.141    0.057   20.125    0.000
 ##    .pid2004           1.215    0.060   20.125    0.000</code></pre>
 <ul>
-<li>We can also get the model’s fit information adding an argument <code>fit.measures=TRUE</code> into <code>summary</code>. We have the same information as the stata command <code>estat gof, sta(all)</code></li>
+<li>We can also get the model’s fit information adding an argument <code>fit.measures=TRUE</code> into <code>summary</code>. We have the same information as the STATA command <code>estat gof, sta(all)</code></li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">summary</span>(sem1,<span class="dt">fit.measures=</span><span class="ot">TRUE</span> )</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">summary</span>(sem1,<span class="dt">fit.measures=</span><span class="ot">TRUE</span> )</a></code></pre></div>
 <pre><code>## lavaan 0.6-3 ended normally after 14 iterations
 ## 
 ##   Optimization method                           NLMINB
@@ -617,15 +619,24 @@ div.tocify {
 <li>We call the package with library()</li>
 <li>And we use `<code>semPaths</code> to get the basic plot of our SEM model.</li>
 </ul>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">library</span>(semPlot)</a>
-<a class="sourceLine" id="cb10-2" title="2"><span class="kw">semPaths</span>(sem1)</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">library</span>(semPlot)</a></code></pre></div>
+<pre><code>## Registered S3 methods overwritten by &#39;ggplot2&#39;:
+##   method         from 
+##   [.quosures     rlang
+##   c.quosures     rlang
+##   print.quosures rlang</code></pre>
+<pre><code>## Registered S3 methods overwritten by &#39;huge&#39;:
+##   method    from   
+##   plot.sim  BDgraph
+##   print.sim BDgraph</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1"><span class="kw">semPaths</span>(sem1)</a></code></pre></div>
 <p><img src="SEM_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <ul>
-<li><p><code>semPlot</code> has a lot of arguments, and we can customize the plot using these arguments. For instance, we can add the coefficients and give weigth (based on the coefficients) to the arrows.</p></li>
-<li><p>We will explore these arguments progresively. Lets start changing the style to “lisrel”, this option changes the plot and shows a single headed edges with no node as origin.“Estimates” add the estimates to the arrows.</p></li>
+<li><p><code>semPlot</code> has a lot of arguments, and we can customize the plot using these arguments. For instance, we can add the coefficients and give weight (based on the coefficients) to the arrows.</p></li>
+<li><p>We will explore these arguments progressively. Lets start changing the style to “lisrel”. This option changes the plot and shows a single headed edges with no node as origin.“Estimates” add the estimates to the arrows.</p></li>
 </ul>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw">semPaths</span>(sem1,<span class="st">&quot;Estimates&quot;</span>, <span class="dt">style=</span><span class="st">&quot;lisrel&quot;</span>,</a>
-<a class="sourceLine" id="cb11-2" title="2">         <span class="dt">layout =</span> <span class="st">&quot;tree&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1"><span class="kw">semPaths</span>(sem1,<span class="st">&quot;Estimates&quot;</span>, <span class="dt">style=</span><span class="st">&quot;lisrel&quot;</span>,</a>
+<a class="sourceLine" id="cb16-2" title="2">         <span class="dt">layout =</span> <span class="st">&quot;tree&quot;</span>)</a></code></pre></div>
 <p><img src="SEM_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>
 </div>
@@ -636,33 +647,33 @@ div.tocify {
 <h2><span class="header-section-number">2.1</span> <span style="color:red"><strong>STATA</strong></span></h2>
 <p><img src="Stata_images/clagged1.png" width="80%" /></p>
 <p><strong>Code:</strong></p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">sem</span> (pid2000 -&gt;<span class="st"> </span>pid2002, ) (pid2000 -&gt;<span class="st"> </span>app2002, ) <span class="op">/</span><span class="er">/</span></a>
-<a class="sourceLine" id="cb12-2" title="2">(app2000 -&gt;<span class="st"> </span>pid2002, ) (app2000 -&gt;<span class="st"> </span>app2002, ),  <span class="op">/</span><span class="er">/</span></a>
-<a class="sourceLine" id="cb12-3" title="3"><span class="kw">cov</span>( pid2000<span class="op">*</span>app2000) standardized </a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"><span class="kw">sem</span> (pid2000 -&gt;<span class="st"> </span>pid2002, ) (pid2000 -&gt;<span class="st"> </span>app2002, ) <span class="op">/</span><span class="er">/</span></a>
+<a class="sourceLine" id="cb17-2" title="2">(app2000 -&gt;<span class="st"> </span>pid2002, ) (app2000 -&gt;<span class="st"> </span>app2002, ),  <span class="op">/</span><span class="er">/</span></a>
+<a class="sourceLine" id="cb17-3" title="3"><span class="kw">cov</span>( pid2000<span class="op">*</span>app2000) standardized </a></code></pre></div>
 <p><img src="Stata_images/clagged2.png" width="80%" /></p>
 </div>
 <div id="r-1" class="section level2">
 <h2><span class="header-section-number">2.2</span> <span style="color:red"><strong>R</strong></span></h2>
 <ul>
 <li>First, lets write our model.</li>
-<li>Similar to the autorregresive model (above), the cross-lagged model has structural effects. For instance <code>pid2002 ~ pid2000 + app2000</code></li>
+<li>Similar to the autorregressive model (above), the cross-lagged model has structural effects. For instance <code>pid2002 ~ pid2000 + app2000</code></li>
 <li>We are adding covariances, for this model <code>app2000~~pid2000</code>. This corresponds to the STATA code <code>cov( pid2000*app2000)</code></li>
 </ul>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">cl1&lt;-</a>
-<a class="sourceLine" id="cb13-2" title="2"><span class="st">  &#39;</span></a>
-<a class="sourceLine" id="cb13-3" title="3"><span class="st">pid2002 ~ pid2000 + app2000</span></a>
-<a class="sourceLine" id="cb13-4" title="4"><span class="st">app2002 ~ app2000 + pid2000</span></a>
-<a class="sourceLine" id="cb13-5" title="5"><span class="st">## Covariances</span></a>
-<a class="sourceLine" id="cb13-6" title="6"><span class="st">app2000~~pid2000</span></a>
-<a class="sourceLine" id="cb13-7" title="7"><span class="st">&#39;</span></a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">cl1&lt;-</a>
+<a class="sourceLine" id="cb18-2" title="2"><span class="st">  &#39;</span></a>
+<a class="sourceLine" id="cb18-3" title="3"><span class="st">pid2002 ~ pid2000 + app2000</span></a>
+<a class="sourceLine" id="cb18-4" title="4"><span class="st">app2002 ~ app2000 + pid2000</span></a>
+<a class="sourceLine" id="cb18-5" title="5"><span class="st">## Covariances</span></a>
+<a class="sourceLine" id="cb18-6" title="6"><span class="st">app2000~~pid2000</span></a>
+<a class="sourceLine" id="cb18-7" title="7"><span class="st">&#39;</span></a></code></pre></div>
 <ul>
 <li>Then we estimate it</li>
 </ul>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">cl1&lt;-<span class="st"> </span><span class="kw">sem</span>(cl1, <span class="dt">data=</span>new)</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">cl1&lt;-<span class="st"> </span><span class="kw">sem</span>(cl1, <span class="dt">data=</span>new)</a></code></pre></div>
 <ul>
-<li>Now, we ask for the results. Adding the option <code>standardized=TRUE</code> add the standarized coefficients (last column)</li>
+<li>Now, we ask for the results. Adding the option <code>standardized=TRUE</code> add the standaridized coefficients (last column)</li>
 </ul>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1"><span class="kw">summary</span>(cl1,<span class="dt">standardized=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1"><span class="kw">summary</span>(cl1,<span class="dt">standardized=</span><span class="ot">TRUE</span>)</a></code></pre></div>
 <pre><code>## lavaan 0.6-3 ended normally after 24 iterations
 ## 
 ##   Optimization method                           NLMINB
@@ -703,34 +714,34 @@ div.tocify {
 ##    .app2002           1.836    0.080   23.011    0.000    1.836    0.732
 ##     pid2000           4.501    0.196   23.011    0.000    4.501    1.000
 ##     app2000           2.785    0.121   23.011    0.000    2.785    1.000</code></pre>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"><span class="kw">semPaths</span>(cl1,<span class="st">&quot;Estimates&quot;</span>,<span class="dt">standardized=</span><span class="ot">TRUE</span>, </a>
-<a class="sourceLine" id="cb17-2" title="2">         <span class="dt">layout=</span><span class="st">&quot;tree2&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1"><span class="kw">semPaths</span>(cl1,<span class="st">&quot;Estimates&quot;</span>,<span class="dt">standardized=</span><span class="ot">TRUE</span>, </a>
+<a class="sourceLine" id="cb22-2" title="2">         <span class="dt">layout=</span><span class="st">&quot;tree2&quot;</span>)</a></code></pre></div>
 <pre><code>## Warning in qgraph::qgraph(Edgelist, labels = nLab, bidirectional = Bidir, :
 ## The following arguments are not documented and likely not arguments of
 ## qgraph and thus ignored: standardized</code></pre>
 <p><img src="SEM_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
 </div>
 </div>
-<div id="synchronus-and-cross-lagged-model" class="section level1">
-<h1><span class="header-section-number">3</span> Synchronus and cross-lagged model <a name="SCL"></a></h1>
+<div id="synchronous-and-cross-lagged-model" class="section level1">
+<h1><span class="header-section-number">3</span> Synchronous and cross-lagged model <a name="SCL"></a></h1>
 <ul>
 <li><p>This model has two new features. First it has a reciprocal effect, meaning that the variables can affect each other in a given time.</p></li>
-<li><p>We added equality constraints to the coefficients accross waves. For intance, the effect from <strong>pid2004</strong> to <strong>app2004</strong> we had contrained (<code>a</code>) to be the same than the <strong>pid2002</strong> to <strong>app2002</strong>. The same way, we used (<code>b</code>) to constrained the effect from <strong>app2004</strong> to <strong>pid2004</strong> to be the same as <strong>app2002</strong> to <strong>app2002</strong></p></li>
+<li><p>We added equality constraints to the coefficients accross waves. For instance, the effect from <strong>pid2004</strong> to <strong>app2004</strong> we had constrained (<code>a</code>) to be the same as the <strong>pid2002</strong> to <strong>app2002</strong>. The same way, we used (<code>b</code>) to constrained the effect from <strong>app2004</strong> to <strong>pid2004</strong> to be the same as <strong>app2002</strong> to <strong>app2002</strong></p></li>
 </ul>
 <div id="stata-2" class="section level2">
 <h2><span class="header-section-number">3.1</span> <span style="color:red"><strong>STATA</strong></span></h2>
 <ul>
-<li>We can add those constraints in the SEM builder first selecting the arrow and then adding the constraint (Red box at the top left corner)</li>
+<li>We can add those constraints in the SEM builder by first selecting the arrow and then adding the constraint (Red box at the top left corner)</li>
 </ul>
 <p><img src="Stata_images/clagged3.png" width="80%" /></p>
 <p><strong>Code</strong></p>
 <ul>
-<li>We can add the constraints to the effect using the @. For instance, <code>(pid2002@a -&gt; app2002, )</code> and <code>(pid2004@a -&gt; app2004, )</code> are equally constraint (we have added the <span class="citation">@a</span> to both)</li>
+<li>We can add the constraints to the effect using the @. For instance, <code>(pid2002@a -&gt; app2002, )</code> and <code>(pid2004@a -&gt; app2004, )</code> are equally constrained (we have added the <span class="citation">@a</span> to both)</li>
 </ul>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="kw">sem</span> (pid2000 -&gt;<span class="st"> </span>pid2002, ) (pid2002 -&gt;<span class="st"> </span>pid2004, ) (pid2002<span class="op">@</span>a -&gt;<span class="st"> </span>app2002, ) <span class="op">/</span><span class="er">//</span><span class="st"> </span>(pid2004<span class="op">@</span>a -&gt;<span class="st"> </span>app2004, ) (app2000 -&gt;<span class="st"> </span>app2002, ) (app2002<span class="op">@</span>b -&gt;<span class="st"> </span>pid2002, ) <span class="op">/</span><span class="er">//</span></a>
-<a class="sourceLine" id="cb19-2" title="2">(app2002 -&gt;<span class="st"> </span>app2004, ) (app2004<span class="op">@</span>b -&gt;<span class="st"> </span>pid2004, ), <span class="op">/</span><span class="er">//</span></a>
-<a class="sourceLine" id="cb19-3" title="3">standardized <span class="kw">cov</span>( pid2000<span class="op">*</span>app2000) nocapslatent</a>
-<a class="sourceLine" id="cb19-4" title="4">estat gof, <span class="kw">sta</span>(all)</a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1"><span class="kw">sem</span> (pid2000 -&gt;<span class="st"> </span>pid2002, ) (pid2002 -&gt;<span class="st"> </span>pid2004, ) (pid2002<span class="op">@</span>a -&gt;<span class="st"> </span>app2002, ) <span class="op">/</span><span class="er">//</span><span class="st"> </span>(pid2004<span class="op">@</span>a -&gt;<span class="st"> </span>app2004, ) (app2000 -&gt;<span class="st"> </span>app2002, ) (app2002<span class="op">@</span>b -&gt;<span class="st"> </span>pid2002, ) <span class="op">/</span><span class="er">//</span></a>
+<a class="sourceLine" id="cb24-2" title="2">(app2002 -&gt;<span class="st"> </span>app2004, ) (app2004<span class="op">@</span>b -&gt;<span class="st"> </span>pid2004, ), <span class="op">/</span><span class="er">//</span></a>
+<a class="sourceLine" id="cb24-3" title="3">standardized <span class="kw">cov</span>( pid2000<span class="op">*</span>app2000) nocapslatent</a>
+<a class="sourceLine" id="cb24-4" title="4">estat gof, <span class="kw">sta</span>(all)</a></code></pre></div>
 <ul>
 <li>We wont show the whole output here, but in this section you can see that the effects of [pidd2002]app2002 and [pidd2002]app2002 are equal.</li>
 </ul>
@@ -739,23 +750,23 @@ div.tocify {
 <div id="r-2" class="section level2">
 <h2><span class="header-section-number">3.2</span> <span style="color:red"><strong>R</strong></span></h2>
 <ul>
-<li>We use a similar idea to add constrains to our model. In this case we multiply for the same constants where we want to equally constrain.</li>
+<li>We use a similar idea to add constrains to our model. In this case, we multiply for the same constants where we want to equally constrain.</li>
 </ul>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">cls1&lt;-</a>
-<a class="sourceLine" id="cb20-2" title="2"><span class="st">  &#39;</span></a>
-<a class="sourceLine" id="cb20-3" title="3"><span class="st">pid2002 ~  pid2000 + app2000 + b*app2002</span></a>
-<a class="sourceLine" id="cb20-4" title="4"><span class="st">app2002 ~  app2000 + pid2000 + a*pid2002</span></a>
-<a class="sourceLine" id="cb20-5" title="5"><span class="st">pid2004 ~  pid2002 + app2002 + b*app2004</span></a>
-<a class="sourceLine" id="cb20-6" title="6"><span class="st">app2004 ~  app2002 + pid2002 + a*pid2004</span></a>
-<a class="sourceLine" id="cb20-7" title="7"><span class="st">## Covariances</span></a>
-<a class="sourceLine" id="cb20-8" title="8"><span class="st">app2000~~pid2000</span></a>
-<a class="sourceLine" id="cb20-9" title="9"><span class="st">#app2002~~0*pid2002</span></a>
-<a class="sourceLine" id="cb20-10" title="10"><span class="st">&#39;</span></a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1">cls1&lt;-</a>
+<a class="sourceLine" id="cb25-2" title="2"><span class="st">  &#39;</span></a>
+<a class="sourceLine" id="cb25-3" title="3"><span class="st">pid2002 ~  pid2000 + app2000 + b*app2002</span></a>
+<a class="sourceLine" id="cb25-4" title="4"><span class="st">app2002 ~  app2000 + pid2000 + a*pid2002</span></a>
+<a class="sourceLine" id="cb25-5" title="5"><span class="st">pid2004 ~  pid2002 + app2002 + b*app2004</span></a>
+<a class="sourceLine" id="cb25-6" title="6"><span class="st">app2004 ~  app2002 + pid2002 + a*pid2004</span></a>
+<a class="sourceLine" id="cb25-7" title="7"><span class="st">## Covariances</span></a>
+<a class="sourceLine" id="cb25-8" title="8"><span class="st">app2000~~pid2000</span></a>
+<a class="sourceLine" id="cb25-9" title="9"><span class="st">#app2002~~0*pid2002</span></a>
+<a class="sourceLine" id="cb25-10" title="10"><span class="st">&#39;</span></a></code></pre></div>
 <ul>
 <li>Now we run the model and ask for the results with summary</li>
 </ul>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">cl1s1m &lt;-<span class="st"> </span><span class="kw">sem</span>(cls1, <span class="dt">data=</span>new)</a>
-<a class="sourceLine" id="cb21-2" title="2"><span class="kw">summary</span>(cl1s1m, <span class="dt">standardized =</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1">cl1s1m &lt;-<span class="st"> </span><span class="kw">sem</span>(cls1, <span class="dt">data=</span>new)</a>
+<a class="sourceLine" id="cb26-2" title="2"><span class="kw">summary</span>(cl1s1m, <span class="dt">standardized =</span><span class="ot">TRUE</span>)</a></code></pre></div>
 <pre><code>## lavaan 0.6-3 ended normally after 30 iterations
 ## 
 ##   Optimization method                           NLMINB
@@ -811,49 +822,57 @@ div.tocify {
 <ul>
 <li>This time we are changing the layout to <code>tree2</code></li>
 </ul>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1"><span class="kw">semPaths</span>(cl1s1m,<span class="dt">standardized=</span><span class="ot">TRUE</span>, <span class="dt">layout =</span> <span class="st">&quot;tree2&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1"><span class="kw">semPaths</span>(cl1s1m,<span class="dt">standardized=</span><span class="ot">TRUE</span>, <span class="dt">layout =</span> <span class="st">&quot;tree2&quot;</span>)</a></code></pre></div>
 <pre><code>## Warning in qgraph::qgraph(Edgelist, labels = nLab, bidirectional = Bidir, :
 ## The following arguments are not documented and likely not arguments of
 ## qgraph and thus ignored: standardized</code></pre>
 <p><img src="SEM_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
 </div>
 </div>
-<div id="meaurement-error-model" class="section level1">
-<h1><span class="header-section-number">4</span> Meaurement error model <a name="ME"></a></h1>
-<p>Measurement erros is especial problematic for panel analysis. In SEM framework we can deal with this in a simple way. For instance, lets take our <strong>Autoregresive model</strong> and lets model its measurement error. We will model the Wiley-Wiley solution ( asuming equal measurement error) in order to have an identified model.</p>
+<div id="measurement-error-model" class="section level1">
+<h1><span class="header-section-number">4</span> Measurement error model <a name="ME"></a></h1>
+<p>Measurement erros is especially problematic for panel analysis. In SEM framework we can deal with this in a simple way. For instance, lets take our <strong>Autoregressive model</strong> and lets model its measurement error. We will model the Wiley-Wiley solution ( assuming equal measurement error) in order to have an identified model.</p>
 <p>In our model we use the error’s variance as constrained:</p>
 <p><span class="math display">\[ 
 Var(w)=Var(y_{2}^*)- \frac{Cov(y_{2}^*,y_{3}^*)Cov(y_{1}^*,y_{2}^*)}{Cov(y_{1}^*,y^*_3)}
 \]</span></p>
 <ul>
 <li>More details about this in Finkel (1995)</li>
-<li>We can obtain our variance-covariance matriz in R.</li>
-<li>First we <code>select</code> the variables we need to obtain our matrix using the function <strong>var</strong>.</li>
+<li>We can obtain our variance-covariance matrix in R.</li>
+<li>First, we <code>select</code> the variables we need to obtain our matrix using the function <strong>var</strong>.</li>
 <li>Lets do it using the the function <code>select</code> from <strong>dplyr</strong> and <code>%&gt;%</code> to do everything in one line.</li>
 </ul>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1"><span class="kw">library</span>(dplyr)</a>
-<a class="sourceLine" id="cb25-2" title="2">new<span class="op">%&gt;%</span>dplyr<span class="op">::</span><span class="kw">select</span>(pid2000,pid2002,pid2004)<span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb25-3" title="3"><span class="st">  </span><span class="kw">var</span>(<span class="dt">na.rm=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1"><span class="kw">library</span>(dplyr)</a></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1">new<span class="op">%&gt;%</span>dplyr<span class="op">::</span><span class="kw">select</span>(pid2000,pid2002,pid2004)<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb34-2" title="2"><span class="st">  </span><span class="kw">var</span>(<span class="dt">na.rm=</span><span class="ot">TRUE</span>)</a></code></pre></div>
 <pre><code>##          pid2000  pid2002  pid2004
 ## pid2000 4.681774 4.111523 4.301286
 ## pid2002 4.111523 4.752644 4.474202
 ## pid2004 4.301286 4.474202 5.428772</code></pre>
 <p>Then following the formula we have that</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1"><span class="fl">4.75</span><span class="op">-</span>(<span class="fl">4.47</span><span class="op">*</span><span class="fl">4.11</span>)<span class="op">/</span><span class="fl">4.30</span></a></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" title="1"><span class="fl">4.75</span><span class="op">-</span>(<span class="fl">4.47</span><span class="op">*</span><span class="fl">4.11</span>)<span class="op">/</span><span class="fl">4.30</span></a></code></pre></div>
 <pre><code>## [1] 0.4775116</code></pre>
 <ul>
 <li>Round to two digits using the function <code>round</code></li>
 </ul>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1"><span class="kw">round</span>(<span class="fl">4.75</span><span class="op">-</span>(<span class="fl">4.47</span><span class="op">*</span><span class="fl">4.11</span>)<span class="op">/</span><span class="fl">4.30</span>,<span class="dv">2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" title="1"><span class="kw">round</span>(<span class="fl">4.75</span><span class="op">-</span>(<span class="fl">4.47</span><span class="op">*</span><span class="fl">4.11</span>)<span class="op">/</span><span class="fl">4.30</span>,<span class="dv">2</span>)</a></code></pre></div>
 <pre><code>## [1] 0.48</code></pre>
 <div id="stata-3" class="section level2">
 <h2><span class="header-section-number">4.1</span> <span style="color:red"><strong>STATA</strong></span></h2>
 <ul>
-<li><p>Usin the SEM builder we create the latent variables for each variable and constraint its error variance to 0.48.</p></li>
-<li><p>The red box shows where you can impose a costraint to the variance error variance.</p></li>
+<li><p>Using the SEM builder we create the latent variables for each variable and constraint its error variance to 0.48.</p></li>
+<li><p>The red box shows where you can impose constraint to the variance error variance.</p></li>
 </ul>
 <p><img src="Stata_images/me1.png" width="80%" /></p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" title="1"><span class="kw">sem</span> (P2002 -&gt;<span class="st"> </span>pid2002, ) (P2002 -&gt;<span class="st"> </span>P2004, ) (P2004 -&gt;<span class="st"> </span>pid2004, ) (P2000 -&gt;<span class="st"> </span>pid2000, ) (P2000 -&gt;<span class="st"> </span>P2002, ), <span class="kw">latent</span>(P2002 P2004 P2000 ) <span class="kw">cov</span>( e.pid2000<span class="op">@</span><span class="fl">0.48</span> e.pid2002<span class="op">@</span><span class="fl">0.48</span> e.pid2004<span class="op">@</span><span class="fl">0.48</span>) nocapslatent</a></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" title="1"><span class="kw">sem</span> (P2002 -&gt;<span class="st"> </span>pid2002, ) (P2002 -&gt;<span class="st"> </span>P2004, ) (P2004 -&gt;<span class="st"> </span>pid2004, ) (P2000 -&gt;<span class="st"> </span>pid2000, ) (P2000 -&gt;<span class="st"> </span>P2002, ), <span class="kw">latent</span>(P2002 P2004 P2000 ) <span class="kw">cov</span>( e.pid2000<span class="op">@</span><span class="fl">0.48</span> e.pid2002<span class="op">@</span><span class="fl">0.48</span> e.pid2004<span class="op">@</span><span class="fl">0.48</span>) nocapslatent</a></code></pre></div>
 <p><strong>output</strong></p>
 <p><img src="Stata_images/me2.png" width="80%" /></p>
 </div>
@@ -861,26 +880,26 @@ Var(w)=Var(y_{2}^*)- \frac{Cov(y_{2}^*,y_{3}^*)Cov(y_{1}^*,y_{2}^*)}{Cov(y_{1}^*
 <h2><span class="header-section-number">4.2</span> <span style="color:red"><strong>R</strong></span></h2>
 <ul>
 <li>We have to add latent variables to our model. To model latent variables we use <code>=~</code>.</li>
-<li>To fix the error variance we multiply it with 0.48</li>
+<li>To fix the error variance we multiply it by 0.48</li>
 </ul>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" title="1">e1&lt;-</a>
-<a class="sourceLine" id="cb32-2" title="2"><span class="st">  &#39;</span></a>
-<a class="sourceLine" id="cb32-3" title="3"><span class="st">## Latents</span></a>
-<a class="sourceLine" id="cb32-4" title="4"><span class="st">P2000=~pid2000</span></a>
-<a class="sourceLine" id="cb32-5" title="5"><span class="st">P2002=~pid2002</span></a>
-<a class="sourceLine" id="cb32-6" title="6"><span class="st">P2004=~pid2004</span></a>
-<a class="sourceLine" id="cb32-7" title="7"><span class="st">## Regresion</span></a>
-<a class="sourceLine" id="cb32-8" title="8"></a>
-<a class="sourceLine" id="cb32-9" title="9"><span class="st">P2002~P2000</span></a>
-<a class="sourceLine" id="cb32-10" title="10"><span class="st">P2004~P2002</span></a>
-<a class="sourceLine" id="cb32-11" title="11"></a>
-<a class="sourceLine" id="cb32-12" title="12"><span class="st">## Fixing Error</span></a>
-<a class="sourceLine" id="cb32-13" title="13"><span class="st">pid2000~~0.48*pid2000</span></a>
-<a class="sourceLine" id="cb32-14" title="14"><span class="st">pid2002~~0.48*pid2002</span></a>
-<a class="sourceLine" id="cb32-15" title="15"><span class="st">pid2004~~0.48*pid2004</span></a>
-<a class="sourceLine" id="cb32-16" title="16"><span class="st">&#39;</span></a></code></pre></div>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" title="1">e1m &lt;-<span class="st"> </span><span class="kw">sem</span>(e1, <span class="dt">data=</span>new)</a></code></pre></div>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1"><span class="kw">summary</span>(e1m)</a></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" title="1">e1&lt;-</a>
+<a class="sourceLine" id="cb41-2" title="2"><span class="st">  &#39;</span></a>
+<a class="sourceLine" id="cb41-3" title="3"><span class="st">## Latents</span></a>
+<a class="sourceLine" id="cb41-4" title="4"><span class="st">P2000=~pid2000</span></a>
+<a class="sourceLine" id="cb41-5" title="5"><span class="st">P2002=~pid2002</span></a>
+<a class="sourceLine" id="cb41-6" title="6"><span class="st">P2004=~pid2004</span></a>
+<a class="sourceLine" id="cb41-7" title="7"><span class="st">## Regresion</span></a>
+<a class="sourceLine" id="cb41-8" title="8"></a>
+<a class="sourceLine" id="cb41-9" title="9"><span class="st">P2002~P2000</span></a>
+<a class="sourceLine" id="cb41-10" title="10"><span class="st">P2004~P2002</span></a>
+<a class="sourceLine" id="cb41-11" title="11"></a>
+<a class="sourceLine" id="cb41-12" title="12"><span class="st">## Fixing Error</span></a>
+<a class="sourceLine" id="cb41-13" title="13"><span class="st">pid2000~~0.48*pid2000</span></a>
+<a class="sourceLine" id="cb41-14" title="14"><span class="st">pid2002~~0.48*pid2002</span></a>
+<a class="sourceLine" id="cb41-15" title="15"><span class="st">pid2004~~0.48*pid2004</span></a>
+<a class="sourceLine" id="cb41-16" title="16"><span class="st">&#39;</span></a></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" title="1">e1m &lt;-<span class="st"> </span><span class="kw">sem</span>(e1, <span class="dt">data=</span>new)</a></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" title="1"><span class="kw">summary</span>(e1m)</a></code></pre></div>
 <pre><code>## lavaan 0.6-3 ended normally after 18 iterations
 ## 
 ##   Optimization method                           NLMINB
@@ -924,72 +943,72 @@ Var(w)=Var(y_{2}^*)- \frac{Cov(y_{2}^*,y_{3}^*)Cov(y_{1}^*,y_{2}^*)}{Cov(y_{1}^*
 ##     P2000             4.196    0.232   18.059    0.000
 ##    .P2002             0.251    0.050    5.020    0.000
 ##    .P2004             0.265    0.054    4.920    0.000</code></pre>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" title="1"><span class="kw">semPaths</span>(e1m, <span class="st">&quot;est&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" title="1"><span class="kw">semPaths</span>(e1m, <span class="st">&quot;est&quot;</span>)</a></code></pre></div>
 <p><img src="SEM_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
 </div>
 </div>
 <div id="sem-fixed-effects" class="section level1">
 <h1><span class="header-section-number">5</span> SEM Fixed Effects <a name="SEM2_1"></a></h1>
 <p>We can incorporate unobserved heterogeneity within the SEM model. In order to do this we use an unobserved latent variable.</p>
-<p>For this section we will use the XXXX dataset, it is in a wide format. You can review about data’s formats (wide and long) here <a href="#cleaning">Data organization</a></p>
+<p>For this section we will use the XXXX dataset; it is in a wide format. You can review about data’s formats (wide and long) here <a href="#cleaning">Data organization</a></p>
 <div id="stata-4" class="section level2">
 <h2><span class="header-section-number">5.1</span> <span style="color:red"><strong>STATA</strong></span></h2>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" title="1">use <span class="st">&quot;./datasets/democracy1996-2002.wide.dta&quot;</span>, clear</a></code></pre></div>
-<p>In this model the <em>latent</em> U correlates with the indepent variables and havea constant effect on the dependent variable.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" title="1">use <span class="st">&quot;./datasets/democracy1996-2002.wide.dta&quot;</span>, clear</a></code></pre></div>
+<p>In this model the <em>latent</em> U correlates with the independent variables and havea constant effect on the dependent variable.</p>
 <p><img src="Stata_images/semfixed1.png" width="80%" /></p>
 <p>We can also estimate the same model using STATA <strong>do</strong> file.</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" title="1"><span class="kw">sem</span> (dg02i1 &lt;-<span class="st"> </span>_cons<span class="op">@</span>x, ) (dg02i2 &lt;-<span class="st"> </span>_cons<span class="op">@</span>x, ) (dg02i3&lt;-_cons<span class="op">@</span>x, ) (aid1001<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i1, ) (aid1002<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i2, ) (aid1003<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i3, ) (U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i1, ) (U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i2, ) (U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i3, ) (U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i4,) (dg02i4 &lt;-<span class="st"> </span>_cons<span class="op">@</span>x, ) (aid1004<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i4, ), <span class="kw">covstruct</span>(_lexogenous, diagonal) <span class="kw">cov</span>(_lexogenous<span class="op">*</span>_oexogenous<span class="op">@</span><span class="dv">0</span>) <span class="kw">latent</span>(U ) <span class="kw">cov</span>( e.dg02i1<span class="op">@</span>e e.dg02i2<span class="op">@</span>e e.dg02i3<span class="op">@</span>e aid1001<span class="op">*</span>aid1002 aid1001<span class="op">*</span>aid1003 aid1001<span class="op">*</span>aid1004 aid1002<span class="op">*</span>aid1003 aid1002<span class="op">*</span>aid1004 aid1003<span class="op">*</span>aid1004 U<span class="op">*</span>aid1001 U<span class="op">*</span>aid1002 U<span class="op">*</span>aid1003 U<span class="op">*</span>aid1004 e.dg02i4<span class="op">@</span>e) nocapslatent</a></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" title="1"><span class="kw">sem</span> (dg02i1 &lt;-<span class="st"> </span>_cons<span class="op">@</span>x, ) (dg02i2 &lt;-<span class="st"> </span>_cons<span class="op">@</span>x, ) (dg02i3&lt;-_cons<span class="op">@</span>x, ) (aid1001<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i1, ) (aid1002<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i2, ) (aid1003<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i3, ) (U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i1, ) (U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i2, ) (U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i3, ) (U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i4,) (dg02i4 &lt;-<span class="st"> </span>_cons<span class="op">@</span>x, ) (aid1004<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i4, ), <span class="kw">covstruct</span>(_lexogenous, diagonal) <span class="kw">cov</span>(_lexogenous<span class="op">*</span>_oexogenous<span class="op">@</span><span class="dv">0</span>) <span class="kw">latent</span>(U ) <span class="kw">cov</span>( e.dg02i1<span class="op">@</span>e e.dg02i2<span class="op">@</span>e e.dg02i3<span class="op">@</span>e aid1001<span class="op">*</span>aid1002 aid1001<span class="op">*</span>aid1003 aid1001<span class="op">*</span>aid1004 aid1002<span class="op">*</span>aid1003 aid1002<span class="op">*</span>aid1004 aid1003<span class="op">*</span>aid1004 U<span class="op">*</span>aid1001 U<span class="op">*</span>aid1002 U<span class="op">*</span>aid1003 U<span class="op">*</span>aid1004 e.dg02i4<span class="op">@</span>e) nocapslatent</a></code></pre></div>
 <p><img src="Stata_images/fe_sem.png" width="80%" /></p>
 <p>Summarizing:
-- This model has a <strong>latent</strong> U term that represent the unobserved heterogeneity that do not change with time.
+- This model has a <strong>latent</strong> U term that represents the unobserved heterogeneity that does not change with time.
 - This U is correlated with the independent and dependent variable. This correlation is constant in time.
 - We set a constant effect from the independent variable for each time.
-- We also set the variance of the dependent variable constant in each time. [ask why]</p>
+- We also set the variance of the dependent variable constant in each time.</p>
 </div>
 <div id="r-4" class="section level2">
 <h2><span class="header-section-number">5.2</span> <span style="color:red"><strong>R</strong></span></h2>
 <p>Lets import the data with the function <code>import</code> from the package <strong>rio</strong></p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" title="1">demo&lt;-<span class="kw">import</span>(<span class="st">&quot;./datasets/democracy1996-2002.wide.dta&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" title="1">demo&lt;-<span class="kw">import</span>(<span class="st">&quot;./datasets/democracy1996-2002.wide.dta&quot;</span>)</a></code></pre></div>
 <p>We use the package <em>Lavaan</em>.</p>
 <ul>
 <li><p>First, we set the <em>latent</em> U term: <code>U_term=~1*dg02i1+1*dg02i2+1*dg02i3+1*dg02i4</code> Multiplying the variables to 1 we are constraining the loads.</p></li>
-<li><p>Then we set the models for instance<code>dg02i1~c*aid1001</code>. Here <strong>dg02i1</strong> is the dependent variable and <strong>aid1001</strong> es the dependent variable. We are multiplying every regression with <em>c</em>, then the effects are constrained.</p></li>
-<li><p>We would like to constraint the intercepts to. We do it multipling the 1 with a constant. <code>dg02i1~x*1</code></p></li>
-<li><p>Finally, we also constrained the variance with a constant <code>dg02i1~~x*dg02i1</code></p></li>
+<li><p>Then we set the models for instance<code>dg02i1~c*aid1001</code>. Here <strong>dg02i1</strong> is the dependent variable and <strong>aid1001</strong> is the dependent variable. We are multiplying every regression with <em>c</em>, then the effects are constrained.</p></li>
+<li><p>We would like to constraint the intercepts too. We do it by multiplying the 1 with a constant. <code>dg02i1~x*1</code></p></li>
+<li><p>Finally, we also constrain the variance with a constant <code>dg02i1~~x*dg02i1</code></p></li>
 </ul>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" title="1">semf&lt;-</a>
-<a class="sourceLine" id="cb40-2" title="2"><span class="st">  &#39;</span></a>
-<a class="sourceLine" id="cb40-3" title="3"><span class="st">## Latents</span></a>
-<a class="sourceLine" id="cb40-4" title="4"><span class="st">U_term=~1*dg02i1+1*dg02i2+1*dg02i3+1*dg02i4</span></a>
-<a class="sourceLine" id="cb40-5" title="5"><span class="st">## Regresion</span></a>
-<a class="sourceLine" id="cb40-6" title="6"><span class="st">dg02i1~c*aid1001</span></a>
-<a class="sourceLine" id="cb40-7" title="7"><span class="st">dg02i2~c*aid1002</span></a>
-<a class="sourceLine" id="cb40-8" title="8"><span class="st">dg02i3~c*aid1003</span></a>
-<a class="sourceLine" id="cb40-9" title="9"><span class="st">dg02i4~c*aid1004</span></a>
-<a class="sourceLine" id="cb40-10" title="10"><span class="st">## Intercepts</span></a>
-<a class="sourceLine" id="cb40-11" title="11"><span class="st">dg02i1~x*1</span></a>
-<a class="sourceLine" id="cb40-12" title="12"><span class="st">dg02i2~x*1</span></a>
-<a class="sourceLine" id="cb40-13" title="13"><span class="st">dg02i3~x*1</span></a>
-<a class="sourceLine" id="cb40-14" title="14"><span class="st">dg02i4~x*1</span></a>
-<a class="sourceLine" id="cb40-15" title="15"><span class="st">## Covariance</span></a>
-<a class="sourceLine" id="cb40-16" title="16"><span class="st">U_term~~aid1001</span></a>
-<a class="sourceLine" id="cb40-17" title="17"><span class="st">U_term~~aid1002</span></a>
-<a class="sourceLine" id="cb40-18" title="18"><span class="st">U_term~~aid1003</span></a>
-<a class="sourceLine" id="cb40-19" title="19"><span class="st">U_term~~aid1004</span></a>
-<a class="sourceLine" id="cb40-20" title="20"><span class="st">aid1001~~aid1002</span></a>
-<a class="sourceLine" id="cb40-21" title="21"><span class="st">aid1001~~aid1003</span></a>
-<a class="sourceLine" id="cb40-22" title="22"><span class="st">aid1001~~aid1004</span></a>
-<a class="sourceLine" id="cb40-23" title="23"><span class="st">aid1002~~aid1003</span></a>
-<a class="sourceLine" id="cb40-24" title="24"><span class="st">aid1002~~aid1004</span></a>
-<a class="sourceLine" id="cb40-25" title="25"><span class="st">aid1003~~aid1004</span></a>
-<a class="sourceLine" id="cb40-26" title="26"><span class="st">## Constraining the variance</span></a>
-<a class="sourceLine" id="cb40-27" title="27"><span class="st">dg02i1~~x*dg02i1</span></a>
-<a class="sourceLine" id="cb40-28" title="28"><span class="st">dg02i2~~x*dg02i2</span></a>
-<a class="sourceLine" id="cb40-29" title="29"><span class="st">dg02i3~~x*dg02i3</span></a>
-<a class="sourceLine" id="cb40-30" title="30"><span class="st">dg02i4~~x*dg02i4</span></a>
-<a class="sourceLine" id="cb40-31" title="31"><span class="st">&#39;</span></a></code></pre></div>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" title="1">SEMf&lt;-<span class="kw">sem</span>(semf, <span class="dt">data=</span>demo)</a>
-<a class="sourceLine" id="cb41-2" title="2"><span class="kw">summary</span>(SEMf)</a></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb49-1" title="1">semf&lt;-</a>
+<a class="sourceLine" id="cb49-2" title="2"><span class="st">  &#39;</span></a>
+<a class="sourceLine" id="cb49-3" title="3"><span class="st">## Latents</span></a>
+<a class="sourceLine" id="cb49-4" title="4"><span class="st">U_term=~1*dg02i1+1*dg02i2+1*dg02i3+1*dg02i4</span></a>
+<a class="sourceLine" id="cb49-5" title="5"><span class="st">## Regresion</span></a>
+<a class="sourceLine" id="cb49-6" title="6"><span class="st">dg02i1~c*aid1001</span></a>
+<a class="sourceLine" id="cb49-7" title="7"><span class="st">dg02i2~c*aid1002</span></a>
+<a class="sourceLine" id="cb49-8" title="8"><span class="st">dg02i3~c*aid1003</span></a>
+<a class="sourceLine" id="cb49-9" title="9"><span class="st">dg02i4~c*aid1004</span></a>
+<a class="sourceLine" id="cb49-10" title="10"><span class="st">## Intercepts</span></a>
+<a class="sourceLine" id="cb49-11" title="11"><span class="st">dg02i1~x*1</span></a>
+<a class="sourceLine" id="cb49-12" title="12"><span class="st">dg02i2~x*1</span></a>
+<a class="sourceLine" id="cb49-13" title="13"><span class="st">dg02i3~x*1</span></a>
+<a class="sourceLine" id="cb49-14" title="14"><span class="st">dg02i4~x*1</span></a>
+<a class="sourceLine" id="cb49-15" title="15"><span class="st">## Covariance</span></a>
+<a class="sourceLine" id="cb49-16" title="16"><span class="st">U_term~~aid1001</span></a>
+<a class="sourceLine" id="cb49-17" title="17"><span class="st">U_term~~aid1002</span></a>
+<a class="sourceLine" id="cb49-18" title="18"><span class="st">U_term~~aid1003</span></a>
+<a class="sourceLine" id="cb49-19" title="19"><span class="st">U_term~~aid1004</span></a>
+<a class="sourceLine" id="cb49-20" title="20"><span class="st">aid1001~~aid1002</span></a>
+<a class="sourceLine" id="cb49-21" title="21"><span class="st">aid1001~~aid1003</span></a>
+<a class="sourceLine" id="cb49-22" title="22"><span class="st">aid1001~~aid1004</span></a>
+<a class="sourceLine" id="cb49-23" title="23"><span class="st">aid1002~~aid1003</span></a>
+<a class="sourceLine" id="cb49-24" title="24"><span class="st">aid1002~~aid1004</span></a>
+<a class="sourceLine" id="cb49-25" title="25"><span class="st">aid1003~~aid1004</span></a>
+<a class="sourceLine" id="cb49-26" title="26"><span class="st">## Constraining the variance</span></a>
+<a class="sourceLine" id="cb49-27" title="27"><span class="st">dg02i1~~x*dg02i1</span></a>
+<a class="sourceLine" id="cb49-28" title="28"><span class="st">dg02i2~~x*dg02i2</span></a>
+<a class="sourceLine" id="cb49-29" title="29"><span class="st">dg02i3~~x*dg02i3</span></a>
+<a class="sourceLine" id="cb49-30" title="30"><span class="st">dg02i4~~x*dg02i4</span></a>
+<a class="sourceLine" id="cb49-31" title="31"><span class="st">&#39;</span></a></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" title="1">SEMf&lt;-<span class="kw">sem</span>(semf, <span class="dt">data=</span>demo)</a>
+<a class="sourceLine" id="cb50-2" title="2"><span class="kw">summary</span>(SEMf)</a></code></pre></div>
 <pre><code>## lavaan 0.6-3 ended normally after 148 iterations
 ## 
 ##   Optimization method                           NLMINB
@@ -1068,7 +1087,7 @@ Var(w)=Var(y_{2}^*)- \frac{Cov(y_{2}^*,y_{3}^*)Cov(y_{1}^*,y_{2}^*)}{Cov(y_{1}^*
 ##     aid1003          19.957    2.385    8.367    0.000
 ##     aid1004          54.236    6.482    8.367    0.000
 ##     U_term           51.651    6.202    8.328    0.000</code></pre>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" title="1"><span class="kw">semPaths</span>(SEMf)</a></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" title="1"><span class="kw">semPaths</span>(SEMf)</a></code></pre></div>
 <p><img src="SEM_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
 </div>
 </div>
@@ -1078,9 +1097,9 @@ Var(w)=Var(y_{2}^*)- \frac{Cov(y_{2}^*,y_{3}^*)Cov(y_{1}^*,y_{2}^*)}{Cov(y_{1}^*
 <div id="stata-5" class="section level2">
 <h2><span class="header-section-number">6.1</span> <span style="color:red"><strong>STATA</strong></span></h2>
 <p><img src="Stata_images/semre1.png" width="80%" /></p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" title="1"><span class="kw">sem</span> (dg02i1 &lt;-<span class="st"> </span>_cons<span class="op">@</span>x, ) (dg02i2 &lt;-<span class="st"> </span>_cons<span class="op">@</span>x, ) (dg02i3 &lt;-<span class="st"> </span>_cons<span class="op">@</span>x, ) (dg02i4 &lt;-<span class="st"> </span>_cons<span class="op">@</span>x, ) (aid1001<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i1, ) (aid1002<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i2, ) (aid1003<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i3, ) <span class="op">/</span><span class="er">//</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb44-2" title="2"><span class="st"> </span>(U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i1,) (U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i2, ) (U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i3, ) (U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i4, ) (aid1004<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i4, ), <span class="kw">covstruct</span>(_lexogenous, diagonal) <span class="kw">cov</span>(_lexogenous<span class="op">*</span>_oexogenous<span class="op">@</span><span class="dv">0</span>) <span class="op">/</span><span class="er">//</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb44-3" title="3"><span class="st"> </span><span class="kw">latent</span>(U ) <span class="kw">cov</span>(e.dg02i1<span class="op">@</span>e e.dg02i2<span class="op">@</span>e e.dg02i3<span class="op">@</span>e e.dg02i4<span class="op">@</span>e) nocapslatent</a></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb53-1" title="1"><span class="kw">sem</span> (dg02i1 &lt;-<span class="st"> </span>_cons<span class="op">@</span>x, ) (dg02i2 &lt;-<span class="st"> </span>_cons<span class="op">@</span>x, ) (dg02i3 &lt;-<span class="st"> </span>_cons<span class="op">@</span>x, ) (dg02i4 &lt;-<span class="st"> </span>_cons<span class="op">@</span>x, ) (aid1001<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i1, ) (aid1002<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i2, ) (aid1003<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i3, ) <span class="op">/</span><span class="er">//</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb53-2" title="2"><span class="st"> </span>(U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i1,) (U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i2, ) (U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i3, ) (U<span class="op">@</span><span class="dv">1</span> -&gt;<span class="st"> </span>dg02i4, ) (aid1004<span class="op">@</span>c -&gt;<span class="st"> </span>dg02i4, ), <span class="kw">covstruct</span>(_lexogenous, diagonal) <span class="kw">cov</span>(_lexogenous<span class="op">*</span>_oexogenous<span class="op">@</span><span class="dv">0</span>) <span class="op">/</span><span class="er">//</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb53-3" title="3"><span class="st"> </span><span class="kw">latent</span>(U ) <span class="kw">cov</span>(e.dg02i1<span class="op">@</span>e e.dg02i2<span class="op">@</span>e e.dg02i3<span class="op">@</span>e e.dg02i4<span class="op">@</span>e) nocapslatent</a></code></pre></div>
 <p><img src="Stata_images/fe_rem.png" width="80%" /></p>
 </div>
 <div id="r-5" class="section level2">
@@ -1088,30 +1107,30 @@ Var(w)=Var(y_{2}^*)- \frac{Cov(y_{2}^*,y_{3}^*)Cov(y_{1}^*,y_{2}^*)}{Cov(y_{1}^*
 <ul>
 <li>We have removed the covariance from the U term to the independent variables.</li>
 </ul>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" title="1">semRE&lt;-</a>
-<a class="sourceLine" id="cb45-2" title="2"><span class="st">  &#39;</span></a>
-<a class="sourceLine" id="cb45-3" title="3"><span class="st">## Latents</span></a>
-<a class="sourceLine" id="cb45-4" title="4"><span class="st">U_term=~1*dg02i1+1*dg02i2+1*dg02i3+1*dg02i4</span></a>
-<a class="sourceLine" id="cb45-5" title="5"><span class="st">## Regresion</span></a>
-<a class="sourceLine" id="cb45-6" title="6"><span class="st">dg02i1~x*1+c*aid1001</span></a>
-<a class="sourceLine" id="cb45-7" title="7"><span class="st">dg02i2~x*1+c*aid1002</span></a>
-<a class="sourceLine" id="cb45-8" title="8"><span class="st">dg02i3~x*1+c*aid1003</span></a>
-<a class="sourceLine" id="cb45-9" title="9"><span class="st">dg02i4~x*1+c*aid1004</span></a>
-<a class="sourceLine" id="cb45-10" title="10"><span class="st">## Covariance</span></a>
-<a class="sourceLine" id="cb45-11" title="11"><span class="st">aid1001~~aid1002</span></a>
-<a class="sourceLine" id="cb45-12" title="12"><span class="st">aid1001~~aid1003</span></a>
-<a class="sourceLine" id="cb45-13" title="13"><span class="st">aid1001~~aid1004</span></a>
-<a class="sourceLine" id="cb45-14" title="14"><span class="st">aid1002~~aid1003</span></a>
-<a class="sourceLine" id="cb45-15" title="15"><span class="st">aid1002~~aid1004</span></a>
-<a class="sourceLine" id="cb45-16" title="16"><span class="st">aid1003~~aid1004</span></a>
-<a class="sourceLine" id="cb45-17" title="17"><span class="st">## Fixing variance</span></a>
-<a class="sourceLine" id="cb45-18" title="18"><span class="st">dg02i1~~x*dg02i1</span></a>
-<a class="sourceLine" id="cb45-19" title="19"><span class="st">dg02i2~~x*dg02i2</span></a>
-<a class="sourceLine" id="cb45-20" title="20"><span class="st">dg02i3~~x*dg02i3</span></a>
-<a class="sourceLine" id="cb45-21" title="21"><span class="st">dg02i4~~x*dg02i4</span></a>
-<a class="sourceLine" id="cb45-22" title="22"><span class="st">&#39;</span></a></code></pre></div>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" title="1">semREm&lt;-<span class="kw">sem</span>(semRE, <span class="dt">data=</span>demo)</a>
-<a class="sourceLine" id="cb46-2" title="2"><span class="kw">summary</span>(semREm)</a></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" title="1">semRE&lt;-</a>
+<a class="sourceLine" id="cb54-2" title="2"><span class="st">  &#39;</span></a>
+<a class="sourceLine" id="cb54-3" title="3"><span class="st">## Latents</span></a>
+<a class="sourceLine" id="cb54-4" title="4"><span class="st">U_term=~1*dg02i1+1*dg02i2+1*dg02i3+1*dg02i4</span></a>
+<a class="sourceLine" id="cb54-5" title="5"><span class="st">## Regresion</span></a>
+<a class="sourceLine" id="cb54-6" title="6"><span class="st">dg02i1~x*1+c*aid1001</span></a>
+<a class="sourceLine" id="cb54-7" title="7"><span class="st">dg02i2~x*1+c*aid1002</span></a>
+<a class="sourceLine" id="cb54-8" title="8"><span class="st">dg02i3~x*1+c*aid1003</span></a>
+<a class="sourceLine" id="cb54-9" title="9"><span class="st">dg02i4~x*1+c*aid1004</span></a>
+<a class="sourceLine" id="cb54-10" title="10"><span class="st">## Covariance</span></a>
+<a class="sourceLine" id="cb54-11" title="11"><span class="st">aid1001~~aid1002</span></a>
+<a class="sourceLine" id="cb54-12" title="12"><span class="st">aid1001~~aid1003</span></a>
+<a class="sourceLine" id="cb54-13" title="13"><span class="st">aid1001~~aid1004</span></a>
+<a class="sourceLine" id="cb54-14" title="14"><span class="st">aid1002~~aid1003</span></a>
+<a class="sourceLine" id="cb54-15" title="15"><span class="st">aid1002~~aid1004</span></a>
+<a class="sourceLine" id="cb54-16" title="16"><span class="st">aid1003~~aid1004</span></a>
+<a class="sourceLine" id="cb54-17" title="17"><span class="st">## Fixing variance</span></a>
+<a class="sourceLine" id="cb54-18" title="18"><span class="st">dg02i1~~x*dg02i1</span></a>
+<a class="sourceLine" id="cb54-19" title="19"><span class="st">dg02i2~~x*dg02i2</span></a>
+<a class="sourceLine" id="cb54-20" title="20"><span class="st">dg02i3~~x*dg02i3</span></a>
+<a class="sourceLine" id="cb54-21" title="21"><span class="st">dg02i4~~x*dg02i4</span></a>
+<a class="sourceLine" id="cb54-22" title="22"><span class="st">&#39;</span></a></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb55-1" title="1">semREm&lt;-<span class="kw">sem</span>(semRE, <span class="dt">data=</span>demo)</a>
+<a class="sourceLine" id="cb55-2" title="2"><span class="kw">summary</span>(semREm)</a></code></pre></div>
 <pre><code>## lavaan 0.6-3 ended normally after 108 iterations
 ## 
 ##   Optimization method                           NLMINB
@@ -1185,7 +1204,7 @@ Var(w)=Var(y_{2}^*)- \frac{Cov(y_{2}^*,y_{3}^*)Cov(y_{1}^*,y_{2}^*)}{Cov(y_{1}^*
 ##     aid1003          19.103    2.283    8.367    0.000
 ##     aid1004          50.881    6.081    8.367    0.000
 ##     U_term           51.734    6.208    8.334    0.000</code></pre>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" title="1"><span class="kw">semPaths</span>(semREm)</a></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb57-1" title="1"><span class="kw">semPaths</span>(semREm)</a></code></pre></div>
 <p><img src="SEM_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
 </div>
 </div>

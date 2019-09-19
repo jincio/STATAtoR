@@ -461,7 +461,7 @@ div.tocify {
 <ul>
 <li><strong>Trend data</strong>: where we gathered data, variables, for multiple times ( <span class="math inline">\(t\)</span> ) but for different observations (<span class="math inline">\(i\)</span>) at each time.</li>
 <li><strong>Time series data</strong>: where we gathered data, variables, for multiple times (<span class="math inline">\(t\)</span>) for a single observation (<span class="math inline">\(i\)</span>)</li>
-<li><strong>Panel data</strong>: where we gathered data, variables, for same <span class="math inline">\(i\)</span> and multiple times (<span class="math inline">\(t\)</span>). It has a large number of observations (<span class="math inline">\(i\)</span>) and small times (<span class="math inline">\(t\)</span>)</li>
+<li><strong>Panel data</strong>: where we gathered data, variables, for same observation <span class="math inline">\(i\)</span> and multiple times (<span class="math inline">\(t\)</span>). It has a large number of observations (<span class="math inline">\(i\)</span>) and a small number of times (<span class="math inline">\(t\)</span>)</li>
 <li><strong>Time-Series Cross-Section (TSCS)</strong>: It has a small number of observations (<span class="math inline">\(i\)</span>) and large number of times (<span class="math inline">\(t\)</span>)<br />
 We will focus on <strong>panel data</strong>.</li>
 </ul>
@@ -469,7 +469,7 @@ We will focus on <strong>panel data</strong>.</li>
 <h2><span class="header-section-number">1.1</span> From long to wide and viceversa: <a name="wide_long"></a></h2>
 <p>Panel data can be in a “long” or “wide” format, and depending of the model we may need to use one or another.</p>
 <p><strong>Wide format</strong></p>
-<p>The variable “Known” is time variant, that is why we have “known_w1”, “known_w2” and “known_w3”. This variable known (political knowledge) has been measured for each individual in three different times. The variable “age” and “sex” for instance, are time “invariant” because haven’t change during this study</p>
+<p>The variable “Known” is time variant, that is why we have “known_w1”, “known_w2” and “known_w3”. This variable “known” (political knowledge) has been measured for each individual in three different times. The variable “age” and “sex” for instance, are time “invariant” because haven’t change during this study</p>
 <p><img src="Stata_images/wide_format.png" width="80%" /></p>
 <p><strong>Long format</strong></p>
 <p>The structure is different than wide format. The observations repeat for each subject as times were gathered. We can observe that the variable know_w is changing in each “wave” (time) and the variable sex or age does not change for each subject.</p>
@@ -492,13 +492,13 @@ We will focus on <strong>panel data</strong>.</li>
 <h3><span class="header-section-number">1.1.2</span> <span style="color:red"> R </span></h3>
 <ul>
 <li><p>First, lets “upload/open” the data set. There are different packages and ways to do it. Here we use the package <strong>rio</strong> <a name="rio"></a>.</p></li>
-<li><p><strong>Remember:</strong> first install the packages, you can check the list of packages we are using here <a href="#packages">R packages and data sets</a>.</p></li>
+<li><p><strong>Remember,</strong> first install the packages, you can check the list of packages we are using here <a href="#packages">R packages and data sets</a>.</p></li>
 <li><p>You can check other ways here:</p>
 <ul>
 <li><a href="https://www.statmethods.net/input/importingdata.html">Upload data to R</a>.</li>
 <li><a href="https://www.statmethods.net/input/importingdata.html">Other formats</a></li>
 </ul></li>
-<li><p>After install a package <strong>rio</strong> we have to “call” it. For that we use <code>library</code> and it has to be done each session.</p></li>
+<li><p>After installing the package <strong>rio</strong> we have to “call” it. For that we use <code>library</code> and it has to be done each session.</p></li>
 <li><p>The function <code>import</code> from the package <strong>rio</strong> recognizes different extensions such as: “.sav”,“xls”,“xlsx”,“DOB”, “csv”, “SAS”, “dta”.. among others. for more info run: <code>?import</code></p></li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">library</span>(rio) <span class="co">## calling the package</span></a>
@@ -544,7 +544,7 @@ We will focus on <strong>panel data</strong>.</li>
 <ul>
 <li><code>gather</code> is a tydr function that helps us to reshape the data from wide to long.</li>
 <li><code>arrange</code> is a dplyr function that sort the data.</li>
-<li><code>%&gt;%</code> it is a convenient way to concatanate all the steps in one line code.</li>
+<li><code>%&gt;%</code> it is a convenient way to concatenate all the steps in one line code.</li>
 <li><code>head</code> is a base function to show us a glimpse of the data, in this case we asked for the first 10 cases.</li>
 </ul>
 <p><strong>From long to wide in R</strong></p>

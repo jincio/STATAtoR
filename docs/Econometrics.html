@@ -482,9 +482,9 @@ div.tocify {
 <p><span style="color:blue">FD_2: First Difference with controls</span></p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">regress knowdif treatdif intdif sex educ</a></code></pre></div>
 <p><img src="Stata_images/fd2.png" width="80%" /></p>
-<p>We can add time invariant variables in our model. However the interpretation is not straighforward. For example, in this case, sex and education have negative effects on change in knowledge. This could mean three differnt things:</p>
+<p>We can add time invariant variables in our model. However the interpretation is not straightforward. For example, in this case, sex and education have negative effects on change in knowledge. This could mean three different things:</p>
 <pre><code>- Women increase more on knwoledge than men, and less educated subjects increase more than highly educated. 
-- Or: sex and education had greater effects on levels of knowldge at time 1 than time 2.
+- Or: sex and education had greater effects on levels of knowledge at time 1 than time 2.
 - Or: sex and education differences were stronger at time 1 than time 2.</code></pre>
 </div>
 <div id="r" class="section level3">
@@ -495,22 +495,22 @@ div.tocify {
 <li>Then we add the variables using “$”.</li>
 </ul>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">data=<span class="kw">import</span>(<span class="st">&quot;./datasets/Kenya.3wave wide.2017.dta&quot;</span>)</a>
-<a class="sourceLine" id="cb5-2" title="2">data<span class="op">$</span>Knowdif=data<span class="op">$</span>know_w2<span class="op">-</span>data<span class="op">$</span>know_w1 <span class="co">## Variable Knowdig</span></a>
+<a class="sourceLine" id="cb5-2" title="2">data<span class="op">$</span>Knowdif=data<span class="op">$</span>know_w2<span class="op">-</span>data<span class="op">$</span>know_w1 <span class="co">## Variable Knowdif</span></a>
 <a class="sourceLine" id="cb5-3" title="3">data<span class="op">$</span>treatdif=data<span class="op">$</span>newtreat_ww2<span class="op">-</span>data<span class="op">$</span>newtreat_ww1 <span class="co">## Vairable treatdif</span></a></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r Comment1"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">Packages as <span class="st">&quot;dplyr&quot;</span> or <span class="st">&quot;tydr&quot;</span> are giving us more options <span class="cf">for</span> data managment. </a>
-<a class="sourceLine" id="cb6-2" title="2">For instance we can do everything <span class="cf">in</span> <span class="st">&quot;one&quot;</span> line of code.</a>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r Comment1"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">Packages as <span class="st">&quot;dplyr&quot;</span> or <span class="st">&quot;tydr&quot;</span> are giving us more options <span class="cf">for</span> data management. </a>
+<a class="sourceLine" id="cb6-2" title="2">For instance, we can do everything <span class="cf">in</span> <span class="st">&quot;one&quot;</span> line of code.</a>
 <a class="sourceLine" id="cb6-3" title="3"><span class="st">```</span><span class="dt">%&gt;%</span><span class="st">```</span> </a>
 <a class="sourceLine" id="cb6-4" title="4">(it means<span class="op">:</span><span class="st"> &quot;throw the object/output from the left in to the next function&quot;</span>) </a></code></pre></div>
 <ul>
 <li>In this code below we import the dataset and then “throw” it to the function “mutate” to create new variables (Knowdif and treatdif).</li>
-<li>The outuput is the same.</li>
+<li>The output is the same.</li>
 </ul>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">data=<span class="kw">import</span>(<span class="st">&quot;./datasets/Kenya.3wave wide.2017.dta&quot;</span>)<span class="op">%&gt;%</span><span class="kw">mutate</span>(<span class="dt">Knowdif=</span>know_w2<span class="op">-</span>know_w1,<span class="dt">treatdif=</span>newtreat_ww2<span class="op">-</span>newtreat_ww1, <span class="dt">intdif=</span>interest_w2<span class="op">-</span>interest_w1)</a></code></pre></div>
-<p><strong>Runing the models</strong></p>
+<p><strong>Running the models</strong></p>
 <p>First option: Create and object that contains all the information of the model and then ask for the summary of the model.</p>
 <ul>
 <li>The function “lm” means “linear model” and it does all the estimation process of the linear model. The dependent and independent variables are separated by “~”, and then, after the coma, we called the data.</li>
-<li>The function <code>summary</code> allow us to get relevant information of the model.</li>
+<li>The function <code>summary</code> allows us to get relevant information of the model.</li>
 </ul>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">FD1=<span class="kw">lm</span>(Knowdif<span class="op">~</span>treatdif, data)</a>
 <a class="sourceLine" id="cb8-2" title="2"><span class="kw">summary</span>(FD1) </a></code></pre></div>
@@ -533,7 +533,7 @@ div.tocify {
 ## Multiple R-squared:  0.01107,    Adjusted R-squared:  0.008593 
 ## F-statistic: 4.467 on 1 and 399 DF,  p-value: 0.03518</code></pre>
 <ul>
-<li>the object “m1” it has more information that was showed in the summary output. For instance, if we want an analysis of variance of the model we can get that with the function “aov”.</li>
+<li>The object “m1” it has more information that was showed in the summary output. For instance, if we want an analysis of variance of the model we can get that with the function “aov”.</li>
 </ul>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">aov</span>(FD1)</a></code></pre></div>
 <pre><code>## Call:
@@ -552,7 +552,7 @@ div.tocify {
 ## Residuals   399  505.3   1.266                 
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<p>Another option is to run all in one line of code, that could be done using the “%&gt;%”. We throw the linear model into the function summary, in this case we are not saving any object in the memory.</p>
+<p>Another option is to run all in one line of code, which could be done using the “%&gt;%”. We throw the linear model into the function summary, in this case we are not saving any object in the memory.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="kw">lm</span>(data<span class="op">$</span>Knowdif<span class="op">~</span>data<span class="op">$</span>treatdif, data)<span class="op">%&gt;%</span><span class="kw">summary</span>() </a></code></pre></div>
 <pre><code>## 
 ## Call:
@@ -573,7 +573,7 @@ div.tocify {
 ## Multiple R-squared:  0.01107,    Adjusted R-squared:  0.008593 
 ## F-statistic: 4.467 on 1 and 399 DF,  p-value: 0.03518</code></pre>
 <p>Now the model FD2:</p>
-<p>We can add more independent/explanatories variables using “+”.</p>
+<p>We can add more independent/explanatory variables using “+”.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">FD2=<span class="kw">lm</span>(Knowdif<span class="op">~</span>treatdif<span class="op">+</span>intdif<span class="op">+</span>sex<span class="op">+</span>educ, data)</a>
 <a class="sourceLine" id="cb16-2" title="2"><span class="kw">summary</span>(FD2) </a></code></pre></div>
 <pre><code>## 
@@ -603,7 +603,7 @@ div.tocify {
 </div>
 <div id="multiwave-first-difference" class="section level2">
 <h2><span class="header-section-number">1.2</span> Multiwave First Difference <a name="FD_MW"></a></h2>
-<p>With the data in long format we can run a Multi Wave First Different Model:</p>
+<p>With the data in long format we can run a Multi Wave First Difference Model:</p>
 <p><span class="math display">\[ \Delta Y_i= \Delta X_{1i} + \Delta X_{2i} + .. \Delta \epsilon_i\]</span></p>
 <div id="stata-1" class="section level3">
 <h3><span class="header-section-number">1.2.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
@@ -634,9 +634,9 @@ div.tocify {
 <li><p>First, we call the package plm. Remember we already called the package <strong>rio</strong> in the step before.</p></li>
 <li><p>Second, we import the data base using “import”, as we did in our previous step <a href="#rio">here</a></p></li>
 <li><p><code>plm</code> is the function for panel model. As in the linear model, the first element on the function is the <em>model(formula)</em> <code>know_w~totalce_w+age+educ+sex</code>.</p></li>
-<li><p>Variables are added using +. then we include the data <code>data =K_long</code>. - The third element in our code is the “index” <code>index = c("id", "wave")</code>, which does the same job that “xtset” in STATA.</p></li>
+<li><p>Variables are added using +. Then we include the data <code>data =K_long</code>. - The third element in our code is the “index” <code>index = c("id", "wave")</code>, which does the same job that “xtset” in STATA.</p></li>
 <li><p>Finally, we need to specified the type of model <code>model = "fd"</code>. We have several options here that we will be unveiling as we progress.</p></li>
-<li><p><code>summary(MWFD1)</code> show us the results.</p></li>
+<li><p><code>summary(MWFD1)</code> shows us the results.</p></li>
 </ul>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1"><span class="kw">library</span>(plm)</a>
 <a class="sourceLine" id="cb21-2" title="2"></a>
@@ -671,11 +671,11 @@ div.tocify {
 ## Adj. R-Squared: 0.039196
 ## F-statistic: 33.6764 on 1 and 800 DF, p-value: 9.3768e-09</code></pre>
 <p><span style="color:blue"><strong>MWFD2: Multiwave First Difference controling by waves(time)</strong></span></p>
-<p>First we need to create a dummy for each wave. There are different ways to create this dummies. We are going to use the function <code>mutate</code> from <code>dplyr</code>. We have used that function <a href="#mutate">here</a></p>
+<p>First, we need to create a dummy for each wave. There are different ways to create dummy variables. We are going to use the function <code>mutate</code> from <code>dplyr</code>. We have used that function <a href="#mutate">here</a></p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1">K_long&lt;-K_long<span class="op">%&gt;%</span><span class="kw">mutate</span>(<span class="dt">wavv1=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>),</a>
 <a class="sourceLine" id="cb24-2" title="2">                        <span class="dt">wavv2=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>),</a>
 <a class="sourceLine" id="cb24-3" title="3">                        <span class="dt">wavv3=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">0</span>))</a></code></pre></div>
-<p>Now we can include waves in the model, two waves are omited due to multicoliniarity.</p>
+<p>Now we can include waves in the model. Two waves are omited due to multicoliniarity.</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1">FDMW2&lt;-<span class="kw">plm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>wavv1<span class="op">+</span>wavv2,<span class="dt">data =</span>K_long,</a>
 <a class="sourceLine" id="cb25-2" title="2">          <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
 <a class="sourceLine" id="cb25-3" title="3">          <span class="dt">model =</span> <span class="st">&quot;fd&quot;</span>)</a>
@@ -712,18 +712,18 @@ div.tocify {
 <h2><span class="header-section-number">1.3</span> Simple FE <a name="FE1"></a></h2>
 <p>Two more common models:</p>
 <p><span class="math display">\[Y_{it}=\alpha + \beta_1X_{1it}+...\beta_kX_{ikt}+\beta_mZ_i+c_1D_1+c_2D_2+c_{n-1}D_{n-1}+e_{it}\]</span></p>
-<p>In the model above we add a dummy variable (“D”) for each unit, this model is common called (“Least Squares Dummy Variables”). Then each unite will have its own intercept, for instance (<span class="math inline">\(\alpha +c1\)</span>) for unite 1. A drawback with this model is that is too computationally demanding, especially if we have a large number of units.</p>
+<p>In the model above we add a dummy variable (“D”) for each unit; this model is common called (“Least Squares Dummy Variables”). Then each unite will have its own intercept. For instance (<span class="math inline">\(\alpha +c1\)</span>) for unite 1. A drawback with this model is that it is too computationally demanding, especially if we have a large number of units.</p>
 <p>The most common model is the Fixed Effect model:</p>
 <p><span class="math display">\[Y_{it}-\bar{Y_i}=\beta_i(X_{1it}-\bar{X}_{1i})+...+ \beta_k(X_{kit}-\bar{X}_{ki})+ \epsilon_{it}\]</span></p>
-<p>These model control for the variation <strong>between</strong> units and only use the within estimators.</p>
-<p>To estimate these models we are going to use the data from Finkel-Smith 2011 in its long format. You can donwload it here:</p>
+<p>These models control for the variation <strong>between</strong> units and only use the within estimators.</p>
+<p>To estimate these models we are going to use the data from Finkel-Smith 2011 in its long format. You can download it here:</p>
 <ul>
 <li>You can find more details about the data here <a href="#cleaning">Datas</a></li>
 </ul>
 <div id="stata-2" class="section level3">
 <h3><span class="header-section-number">1.3.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
-<p><code>xtset</code> Sets the data as panel.
-<code>gen</code> Creats or generates a new variable “time” (starts in 0)</p>
+<p><code>xtset</code> sets the data as panel.
+<code>gen</code> creates or generates a new variable “time” (starts in 0)</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1">xtset id wave</a>
 <a class="sourceLine" id="cb27-2" title="2">gen time=wave<span class="dv">-1</span></a></code></pre></div>
 <p><strong>Runing the model</strong></p>
@@ -734,19 +734,20 @@ div.tocify {
 </ul>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1">xtreg know_w totalce_w sex educ age, fe </a></code></pre></div>
 <p><img src="Stata_images/fe_2.png" width="80%" /></p>
-<p>Time invariants covariates are rid of the model (because they do not vary within subjects!)</p>
+<p>Time invariants covariates were eliminated from the model (because they do not vary within subjects!)</p>
 </div>
 <div id="r-2" class="section level3">
 <h3><span class="header-section-number">1.3.2</span> <span style="color:red"><strong>R</strong></span></h3>
 <ul>
-<li><p>There are several packages that can help us to estimate panel models. There is some overlapping, however, some packages can take a specific approach for a given problem. For instance <strong>plm</strong> was created by econometricians and <strong>panelR</strong> by a sociologist. The best practice is to use the package that can help us with our analysis and not to get attached to any in particular.</p></li>
+<li><p>There are several packages that can help us to estimate panel models. There is some overlapping, as some packages can take a specific approach for a given problem. For instance <strong>plm</strong> was created by econometricians and <strong>panelR</strong> by a sociologist. The best practice is to use the package that can help us with our analysis and not to get attached to any in particular.</p></li>
 <li><p>Here is a good post from panelR’s author comparing his package with plm. <a href="https://www.r-bloggers.com/comparing-panelr-and-plm/">Post</a></p></li>
 </ul>
 <p><span style="color:blue"><strong>R- plm</strong></span></p>
 <ul>
-<li>If you hadn’t before: First, we call the package.</li>
+<li>If you hadn’t uploaded the dataset before remember:</li>
+<li>First, we call the package.</li>
 <li>Second, we import the database using “import”</li>
-<li><code>plm</code> is the function for panel model. As the linear model, the first element is the <em>model</em> <code>know_w~totalce_w+age+educ+sex</code>. Variables are added using +. then we include the data <code>data =K_long</code>. The third element in our code is the “index” <code>index = c("id", "wave")</code>. Which does the same job that “xtset” in STATA. Finally, we need to specify the type of model <code>model = "within"</code>. We have several options here, that we are unveiling as we progress.</li>
+<li><code>plm</code> is the function for panel model. As the linear model, the first element is the <em>model</em> <code>know_w~totalce_w+age+educ+sex</code>. Variables are added using +. then we include the data <code>data =K_long</code>. The third element in our code is the “index” <code>index = c("id", "wave")</code> which does the same job that “xtset” in STATA. Finally, we need to specify the type of model <code>model = "within"</code>. We have several options here, that we are unveiling as we progress.</li>
 <li><code>summary(FE)</code> shows us the results.</li>
 </ul>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r Comment1"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1">We do not have to call the package everytime we run a <span class="cf">function</span>, only once <span class="cf">in</span> a session. </a>
@@ -780,7 +781,7 @@ div.tocify {
 ## R-Squared:      0.029461
 ## Adj. R-Squared: -0.45642
 ## F-statistic: 24.3142 on 1 and 801 DF, p-value: 9.9511e-07</code></pre>
-<p>The summary of the model does not give us the “intercept”. Stata estimates the intercept running the model after adding the overall sample mean for Y and X to the demeaned X and Y.</p>
+<p>The summary of the model does not give us the “intercept”. STATA estimates the intercept running the model after adding the overall sample mean for Y and X to the demeaned X and Y.</p>
 <p><strong>plm</strong> has a function to obtain it</p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" title="1"><span class="kw">within_intercept</span>(FE)</a></code></pre></div>
 <pre><code>## (overall_intercept) 
@@ -788,9 +789,11 @@ div.tocify {
 ## attr(,&quot;se&quot;)
 ## [1] 0.0279536</code></pre>
 <p>In this case the result is the same as the output from the STATA command.</p>
-<p><span style="color:blue"><strong>R- panelR</strong></span>
-- If you hadn’t before: First, we call the package.
-- We “panel” our data <code>panel_data(K_long, id=id, wave=wave)</code>. We created a new object (K_long_p). We could also replace the previous one.The advantage of R (compare to STATA), is that we can have more than one data “open” in our enviroment.</p>
+<p><span style="color:blue"><strong>R- panelR</strong></span></p>
+<ul>
+<li>First, we call the package ‘panelR’ before using it.</li>
+<li>We “panel” our data <code>panel_data(K_long, id=id, wave=wave)</code>. We created a new object (K_long_p). We could also replace the previous one.</li>
+</ul>
 <div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1"><span class="kw">library</span>(panelr) </a>
 <a class="sourceLine" id="cb34-2" title="2">K_long_p&lt;-<span class="kw">panel_data</span>(K_long, <span class="dt">id=</span>id, <span class="dt">wave=</span>wave)</a>
 <a class="sourceLine" id="cb34-3" title="3"><span class="kw">head</span>(K_long_p)</a></code></pre></div>
@@ -903,7 +906,7 @@ div.tocify {
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <ul>
-<li>Now we use get the robust standard error for the intercept.</li>
+<li>Now we get the robust standard error for the intercept.</li>
 </ul>
 <div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" title="1"><span class="kw">within_intercept</span>(FE, <span class="dt">vcov =</span> <span class="cf">function</span>(x) </a>
 <a class="sourceLine" id="cb45-2" title="2">  <span class="kw">vcovHC</span>(x, <span class="dt">type=</span><span class="st">&quot;HC1&quot;</span>))</a></code></pre></div>
@@ -913,7 +916,7 @@ div.tocify {
 ## [1] 0.01318144</code></pre>
 <p><span style="color:blue"><strong>R- panelR</strong></span></p>
 <ul>
-<li>Panel R does not have implemented yet a easy way to test the coeficients with Robust Standar Error.</li>
+<li>Panel R has not yet implemented yet a easy way to test the coefficients with Robust Standard Error.</li>
 </ul>
 </div>
 </div>
@@ -926,7 +929,7 @@ div.tocify {
 <h3><span class="header-section-number">1.5.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
 <ul>
 <li>We also use xtreg for <strong>random effects</strong> model.</li>
-<li>We add <strong>theta</strong> (<span class="math inline">\(\theta\)</span>) in the line. Because <span class="math inline">\(\theta\)</span> gives us an idea of the composition of the error term. As <span class="math inline">\(\theta\)</span>
+<li>We add <strong>theta</strong> (<span class="math inline">\(\theta\)</span>) in the line. Because <span class="math inline">\(\theta\)</span> gives us an idea of the error term’s compositions. As <span class="math inline">\(\theta\)</span>
 (theta) gets closer to 1, it means that more and more of the composite error variance is made up of <span class="math inline">\(U_i\)</span> unit-level or “between” variance. Where <span class="math inline">\(\theta\)</span> closser to 1 the RE models reduce to a FE model</li>
 </ul>
 <div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" title="1">xtreg know_w totalce_w sex educ age, re theta</a></code></pre></div>
@@ -1098,8 +1101,8 @@ div.tocify {
 <div id="bell-and-jones-model-with-rse" class="section level2">
 <h2><span class="header-section-number">2.1</span> Bell and Jones Model with RSE</h2>
 <ul>
-<li>It includes the mean of the time variant variables into a RE model</li>
-<li>First we generate the mean of <strong>totalce_w</strong> by group and then included it in the model.</li>
+<li>It includes the mean of the time variant variables into an RE model</li>
+<li>First we generate the mean of <strong>totalce_w</strong> by group and then include it in the model.</li>
 </ul>
 <div id="stata-6" class="section level3">
 <h3><span class="header-section-number">2.1.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
@@ -1111,8 +1114,8 @@ div.tocify {
 <div id="r-6" class="section level3">
 <h3><span class="header-section-number">2.1.2</span> <span style="color:red"><strong>R</strong></span></h3>
 <ul>
-<li><p>First, we create <strong>totalce_mn</strong>, which is the mean of <strong>totalce_w</strong> by group. To do it we will use the function <strong>mutate</strong> from the package <strong>dplyr</strong>.</p></li>
-<li><p>We are going to use the dummys variables for wave. We had created those dummys using mutate for the Multiwave First Difference model <a href="#FD_MW">here</a></p></li>
+<li><p>First, we create <strong>totalce_mn</strong>, which is the mean of <strong>totalce_w</strong> by group. To do this, we will use the function <strong>mutate</strong> from the package <strong>dplyr</strong>.</p></li>
+<li><p>We are going to use the dummys variables for wave. We had created those dummies using mutate for the Multiwave First Difference model <a href="#FD_MW">here</a></p></li>
 <li><p>We can do it again, just in case:</p></li>
 </ul>
 <div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" title="1">K_long&lt;-K_long<span class="op">%&gt;%</span><span class="kw">mutate</span>(<span class="dt">wavv1=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>),</a>
@@ -1123,7 +1126,7 @@ div.tocify {
 <a class="sourceLine" id="cb62-3" title="3"><span class="st">  </span><span class="kw">ungroup</span>() <span class="co"># if you don&#39;t ungroup you may encounter the following error: </span></a>
 <a class="sourceLine" id="cb62-4" title="4"><span class="co">#Can&#39;t join on &#39;.rows&#39; x &#39;.rows&#39; because of incompatible types (list / list)</span></a></code></pre></div>
 <ul>
-<li><p>We include the mean of <strong>totalce_w</strong> by group in our Random Effects model. Using <strong>plm</strong> we obtained the same results than STATA</p></li>
+<li><p>We include the mean of <strong>totalce_w</strong> by group in our Random Effects model. Using <strong>plm</strong> we obtained the same results as STATA</p></li>
 <li><p>In <code>summary</code> we added the <strong>vcov</strong> option to request the robust standard errors.</p></li>
 </ul>
 <div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb63-1" title="1">HY&lt;-<span class="kw">plm</span>(polpart_w<span class="op">~</span>totalce_w<span class="op">+</span>totalce_mn<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex<span class="op">+</span></a>
@@ -1173,7 +1176,7 @@ div.tocify {
 ## Adj. R-Squared: 0.11489
 ## Chisq: 167.474 on 7 DF, p-value: &lt; 2.22e-16</code></pre>
 <p><strong>Hybrid model using panelR package</strong></p>
-<p><code>panelr</code> it has a convenient way to estimate an hybrid model.</p>
+<p><code>panelr</code> has a convenient way to estimate an hybrid model.</p>
 <ul>
 <li>First we need to <em>panel</em> the data:</li>
 </ul>
@@ -1241,7 +1244,7 @@ div.tocify {
 <p><span class="math display">\[
 Y_{it}= \alpha+ \beta_1Y_{it-1}+\beta_2X_{it}+\beta_3X_{it-1}+...U_{it}+\epsilon_{it}
 \]</span></p>
-<p>The problem to include the lag dependent variable is that the estimator would be bias because the lag dependent variable is correlated with <span class="math inline">\(U\)</span> (the time invariant unobserved component of the error term)</p>
+<p>The problem to include the lag dependent variable is that the estimator would be biased because the lag dependent variable is correlated with <span class="math inline">\(U\)</span> (the time invariant unobserved component of the error term)</p>
 <p>The most well know approach is the proposeb by Arellano and Bond that use the lag variables as instruments.</p>
 <div id="stata-7" class="section level3">
 <h3><span class="header-section-number">3.0.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
@@ -1266,16 +1269,16 @@ Y_{it}= \alpha+ \beta_1Y_{it-1}+\beta_2X_{it}+\beta_3X_{it-1}+...U_{it}+\epsilon
 </ul>
 <div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb74-1" title="1">demo&lt;-<span class="kw">import</span>(<span class="st">&quot;./datasets/democracy.dta&quot;</span>)</a></code></pre></div>
 <ul>
-<li>Now the model. The basic model follows the same estructure of the lineal models we run before: <code>~</code> separates the dependent and independent variables</li>
+<li>Now the model. The basic model follows the same estructure of the lineal models we ran before: <code>~</code> separates the dependent and independent variables</li>
 <li>In this model we have <code>aid100</code> and the lag of <code>dg02i</code> as independent variables.</li>
 <li>The other lags (from t-3 to t-14) are used as instruments. We add those using <code>|lag(dg02i,2:14)</code></li>
 <li>We index <code>index=c("cname","year")</code> to let R know the structure of our data.</li>
-<li>We run the model in two steps same as STATA.</li>
+<li>We run the model in two steps, this is the same as STATA.</li>
 </ul>
 <div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb75-1" title="1">dynamic1&lt;-<span class="kw">pgmm</span>(dg02i<span class="op">~</span><span class="st"> </span>aid100<span class="op">+</span><span class="kw">lag</span>(dg02i,<span class="dv">1</span>)<span class="op">|</span><span class="st"> </span><span class="kw">lag</span>(dg02i,<span class="dv">2</span><span class="op">:</span><span class="dv">14</span>), <span class="dt">data =</span> demo,</a>
 <a class="sourceLine" id="cb75-2" title="2">         <span class="dt">index=</span><span class="kw">c</span>(<span class="st">&quot;cname&quot;</span>,<span class="st">&quot;year&quot;</span>),</a>
 <a class="sourceLine" id="cb75-3" title="3">         <span class="dt">effect =</span> <span class="st">&quot;twoways&quot;</span>, <span class="dt">model =</span> <span class="st">&quot;twosteps&quot;</span>)</a></code></pre></div>
-<p><strong>output</strong></p>
+<p><strong>Output</strong></p>
 <div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb76-1" title="1"><span class="kw">summary</span>(dynamic1)</a></code></pre></div>
 <pre><code>## Twoways effects Two steps model
 ## 
@@ -1305,7 +1308,7 @@ Y_{it}= \alpha+ \beta_1Y_{it-1}+\beta_2X_{it}+\beta_3X_{it-1}+...U_{it}+\epsilon
 ## Wald test for coefficients: chisq(2) = 244.8409 (p-value = &lt; 2.22e-16)
 ## Wald test for time dummies: chisq(12) = 19.4706 (p-value = 0.077787)</code></pre>
 <ul>
-<li>We can also test our coefficient using <strong>robust standard errors (rse)</strong></li>
+<li>We can also test our coefficient using <strong>robust standard errors</strong></li>
 </ul>
 <div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb78-1" title="1"><span class="kw">summary</span>(dynamic1, <span class="dt">robust=</span><span class="ot">TRUE</span>)</a></code></pre></div>
 <pre><code>## Twoways effects Two steps model

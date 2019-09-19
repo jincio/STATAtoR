@@ -10,7 +10,7 @@ Also known as "Covariance Structure Analysis" (CSA). We used observed variance-c
 
 In SEM we care about: regression coefficients, $R^2$ and overall fit of the model. 
 
-# Autoregresive model (Three waves) <a name="autoregresive"></a>
+# Autoregressive model (Three waves) <a name="autoregresive"></a>
 
 - For this mode we will use the data "XXXX". You can check more details of the data [here](#packages)
 
@@ -23,7 +23,7 @@ use "./datasets/nes3wave.dta", clear
 ```
 
 
-- SEM in stata can be done with commands in the **do** file, but also has an "SEM builder". Which is more intuitive for SEM models. 
+- SEM in STATA can be done with commands in the **do** file, but also has an "SEM builder", which is more intuitive for SEM models. 
 
 - You can open the "SEM builder" from the menu "Statistic" (figure below)
 
@@ -37,13 +37,13 @@ knitr::include_graphics('./Stata_images/SEM1.png')
 knitr::include_graphics('./Stata_images/SEM2.png')
 ```
 
-Below is how an autoregressive model would look with three waves (using the SEM builder). To estimate the model, we need to clik "Estimate" (right on the horizontal menu)
+Below is how an autoregressive model would look with three waves (using the SEM builder). To estimate the model, we need to click "Estimate" (right on the horizontal menu)
 
 ```{r echo=FALSE, out.width='80%'}
 knitr::include_graphics('./Stata_images/SEM3.png')
 ```
 
-After the estimation (using Maximun Likelihood) we estimate the estructural estimates and the error terms. 
+After the estimation (using Maximum Likelihood) we estimate the estructural estimates and the error terms. 
 
 ```{r echo=FALSE, out.width='80%'}
 knitr::include_graphics('./Stata_images/SEM4.png')
@@ -59,7 +59,7 @@ sem (pid2000 -> pid2002, ) (pid2002 -> pid2004, ), nocapslatent
 knitr::include_graphics('./Stata_images/SEM5.png')
 ```
 
-- As we mentioned above, for SEM models fit measures are really important. We can obtain that in stata running ```estat gof, sta(all)``` after estimating the model.
+- As we mentioned above fit measures are important for SEM models. We can obtain that in STATA running ```estat gof, sta(all)``` after estimating the model.
 
 ```{r echo=FALSE, out.width='80%'}
 knitr::include_graphics('./Stata_images/SEM6.png')
@@ -106,7 +106,7 @@ sem1 <-sem(path1, data=new)
 summary(sem1)
 ```
 
-- We can also get the model's fit information adding an argument ```fit.measures=TRUE``` into ```summary```. We have the same information as the stata command ```estat gof, sta(all)```
+- We can also get the model's fit information adding an argument ```fit.measures=TRUE``` into ```summary```. We have the same information as the STATA command ```estat gof, sta(all)```
 
 
 ```{r}
@@ -124,9 +124,9 @@ library(semPlot)
 semPaths(sem1)
 ```
 
-- ```semPlot``` has a lot of arguments, and we can customize the plot using these arguments. For instance, we can add the coefficients and give weigth (based on the coefficients) to the arrows. 
+- ```semPlot``` has a lot of arguments, and we can customize the plot using these arguments. For instance, we can add the coefficients and give weight (based on the coefficients) to the arrows. 
 
-- We will explore these arguments progresively. Lets start changing the style to "lisrel", this option changes the plot and shows a single headed edges with no node as origin."Estimates" add the estimates to the arrows.
+- We will explore these arguments progressively. Lets start changing the style to "lisrel". This option changes the plot and shows a single headed edges with no node as origin."Estimates" add the estimates to the arrows.
 
 ```{r}
 semPaths(sem1,"Estimates", style="lisrel",
@@ -157,7 +157,7 @@ knitr::include_graphics('./Stata_images/clagged2.png')
 ## <span style="color:red">**R**</span>
 
 - First, lets write our model.
-- Similar to the autorregresive model (above), the cross-lagged model has structural effects. For instance ```pid2002 ~ pid2000 + app2000```
+- Similar to the autorregressive model (above), the cross-lagged model has structural effects. For instance ```pid2002 ~ pid2000 + app2000```
 - We are adding covariances, for this model ```app2000~~pid2000```. This corresponds to the STATA code ```cov( pid2000*app2000)```
 
 ```{r}
@@ -176,7 +176,7 @@ app2000~~pid2000
 cl1<- sem(cl1, data=new)
 ```
 
-- Now, we ask for the results. Adding the option ```standardized=TRUE``` add the standarized coefficients (last column)
+- Now, we ask for the results. Adding the option ```standardized=TRUE``` add the standaridized coefficients (last column)
 
 ```{r}
 summary(cl1,standardized=TRUE)
@@ -189,16 +189,16 @@ semPaths(cl1,"Estimates",standardized=TRUE,
 
 
 
-# Synchronus and cross-lagged model <a name="SCL"></a>
+# Synchronous and cross-lagged model <a name="SCL"></a>
 
 - This model has two new features. First it has a reciprocal effect, meaning that the variables can affect each other in a given time. 
 
-- We added equality constraints to the coefficients accross waves. For intance, the effect from **pid2004** to **app2004** we had contrained  (```a```) to be the same than the **pid2002** to **app2002**. The same way, we used (```b```) to constrained the effect from **app2004** to **pid2004** to be the same as **app2002** to **app2002**
+- We added equality constraints to the coefficients accross waves. For instance, the effect from **pid2004** to **app2004** we had constrained  (```a```) to be the same as the **pid2002** to **app2002**. The same way, we used (```b```) to constrained the effect from **app2004** to **pid2004** to be the same as **app2002** to **app2002**
 
 
 ## <span style="color:red">**STATA**</span>
 
-- We can add those constraints in the SEM builder first selecting the arrow and then adding the constraint (Red box at the top left corner)
+- We can add those constraints in the SEM builder by first selecting the arrow and then adding the constraint (Red box at the top left corner)
 
 ```{r echo=FALSE, out.width='80%'}
 knitr::include_graphics('./Stata_images/clagged3.png')
@@ -206,7 +206,7 @@ knitr::include_graphics('./Stata_images/clagged3.png')
 
 **Code**
 
-- We can add the constraints to the effect using the @. For instance, ```(pid2002@a -> app2002, )``` and ```(pid2004@a -> app2004, )``` are equally constraint (we have added the @a to both)
+- We can add the constraints to the effect using the @. For instance, ```(pid2002@a -> app2002, )``` and ```(pid2004@a -> app2004, )``` are equally constrained (we have added the @a to both)
 
 ```{r, eval=FALSE}
 sem (pid2000 -> pid2002, ) (pid2002 -> pid2004, ) (pid2002@a -> app2002, ) /// (pid2004@a -> app2004, ) (app2000 -> app2002, ) (app2002@b -> pid2002, ) ///
@@ -223,7 +223,7 @@ knitr::include_graphics('./Stata_images/clagged4.png')
 
 ## <span style="color:red">**R**</span>
 
-- We use a similar idea to add constrains to our model. In this case we multiply for the same constants where we want to equally constrain.
+- We use a similar idea to add constrains to our model. In this case, we multiply for the same constants where we want to equally constrain.
 
 ```{r}
 cls1<-
@@ -251,9 +251,9 @@ summary(cl1s1m, standardized =TRUE)
 semPaths(cl1s1m,standardized=TRUE, layout = "tree2")
 ```
 
-# Meaurement error model <a name="ME"></a>
+# Measurement error model <a name="ME"></a>
 
-Measurement erros is especial problematic for panel analysis. In SEM framework we can deal with this in a simple way. For instance, lets take our **Autoregresive model** and lets model its measurement error. We will model the Wiley-Wiley solution ( asuming equal measurement error)  in order to have an identified model.
+Measurement erros is especially problematic for panel analysis. In SEM framework we can deal with this in a simple way. For instance, lets take our **Autoregressive model** and lets model its measurement error. We will model the Wiley-Wiley solution ( assuming equal measurement error)  in order to have an identified model.
 
 In our model we use the error's variance as constrained:
 
@@ -262,8 +262,8 @@ Var(w)=Var(y_{2}^*)- \frac{Cov(y_{2}^*,y_{3}^*)Cov(y_{1}^*,y_{2}^*)}{Cov(y_{1}^*
 $$
 
 - More details about this in Finkel (1995)
-- We can obtain our variance-covariance matriz in R. 
-- First we ```select``` the variables we need to obtain our matrix using the function **var**.
+- We can obtain our variance-covariance matrix in R. 
+- First, we ```select``` the variables we need to obtain our matrix using the function **var**.
 - Lets do it using the the function ```select``` from **dplyr** and ```%>%``` to do everything in one line.
 
 
@@ -288,9 +288,9 @@ round(4.75-(4.47*4.11)/4.30,2)
 
 ## <span style="color:red">**STATA**</span>
 
-- Usin the SEM builder we create the latent variables for each variable and constraint its error variance to 0.48. 
+- Using the SEM builder we create the latent variables for each variable and constraint its error variance to 0.48. 
 
-- The red box shows where you can impose a costraint to the variance error variance.
+- The red box shows where you can impose constraint to the variance error variance.
 
 ```{r echo=FALSE, out.width='80%'}
 knitr::include_graphics('./Stata_images/me1.png')
@@ -309,7 +309,7 @@ knitr::include_graphics('./Stata_images/me2.png')
 ## <span style="color:red">**R**</span>
 
 - We have to add latent variables to our model. To model latent variables we use ```=~```. 
-- To fix the error variance we multiply it with 0.48 
+- To fix the error variance we multiply it by 0.48 
 
 ```{r}
 e1<-
@@ -347,7 +347,7 @@ semPaths(e1m, "est")
 
 We can incorporate unobserved heterogeneity within the SEM model. In order to do this we use an unobserved latent variable. 
 
-For this section we will use the XXXX dataset, it is in a wide format. You can review about data's formats (wide and long) here [Data organization](#cleaning)
+For this section we will use the XXXX dataset; it is in a wide format. You can review about data's formats (wide and long) here [Data organization](#cleaning)
 
 ## <span style="color:red">**STATA**</span>
 
@@ -355,7 +355,7 @@ For this section we will use the XXXX dataset, it is in a wide format. You can r
 use "./datasets/democracy1996-2002.wide.dta", clear
 ```
 
-In this model the *latent* U correlates with the indepent variables and havea constant effect on the dependent variable. 
+In this model the *latent* U correlates with the independent variables and havea constant effect on the dependent variable. 
 
 ```{r echo=FALSE, out.width='80%'}
 knitr::include_graphics('./Stata_images/semfixed1.png')
@@ -372,10 +372,10 @@ knitr::include_graphics('./Stata_images/fe_sem.png')
 ```
 
 Summarizing: 
-- This model has a **latent** U term that represent the unobserved heterogeneity that do not change with time. 
+- This model has a **latent** U term that represents the unobserved heterogeneity that does not change with time. 
 - This U is correlated with the independent and dependent variable. This correlation is constant in time. 
 - We set a constant effect from the independent variable for each time. 
-- We also set the variance of the dependent variable constant in each time. [ask why]
+- We also set the variance of the dependent variable constant in each time.
 
 ## <span style="color:red">**R**</span>
 
@@ -388,11 +388,11 @@ demo<-import("./datasets/democracy1996-2002.wide.dta")
 We use the package *Lavaan*.
 
 - First, we set the *latent* U term: ```U_term=~1*dg02i1+1*dg02i2+1*dg02i3+1*dg02i4``` Multiplying the variables to 1 we are constraining the loads. 
-- Then we set the models for instance```dg02i1~c*aid1001```. Here **dg02i1** is the dependent variable and **aid1001** es the dependent variable. We are multiplying every regression with *c*, then the effects are constrained. 
+- Then we set the models for instance```dg02i1~c*aid1001```. Here **dg02i1** is the dependent variable and **aid1001** is the dependent variable. We are multiplying every regression with *c*, then the effects are constrained. 
 
-- We would like to constraint the intercepts to. We do it multipling the 1 with a constant. ``` dg02i1~x*1``` 
+- We would like to constraint the intercepts too. We do it by multiplying the 1 with a constant. ``` dg02i1~x*1``` 
 
-- Finally, we also constrained the variance with a constant ```dg02i1~~x*dg02i1```
+- Finally, we also constrain the variance with a constant ```dg02i1~~x*dg02i1```
 
 ```{r}
 semf<-

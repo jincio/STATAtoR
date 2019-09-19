@@ -3,7 +3,7 @@ title: "Multilevel Models"
 ---
 # Econometric Multilevel Models <a name="ECO_Multilevel"></a>
 
-Multilevel model takes into advantage the nested data's structure. Where there are data at differente levels of agregation. 
+Multilevel models take into account the nested data's structure, where there are data at different levels of aggregation. 
 
 ## Random Intercept <a name="mixed1"></a>
 
@@ -20,13 +20,13 @@ $$
 $$
 
 
-Where the intercept does not have any independient variable, the "mixed" form can be represented as:
+Where the intercept does not have any independent variable, the "mixed" form can be represented as:
 
 $$
 Y_{it}=\beta_{00}+\beta_{1}X_{1it}..+\zeta_{0i}+ e_{it}
 $$
 
-Which is the same as the Random Effect Model we explained [here](#RE)
+Which is the same as the Random Effect Model we explained in the econometric section [here](#RE)
 
 Lets work in STATA:
 
@@ -41,7 +41,7 @@ $$
 Y_{it}=\beta_{00}+\beta_1*l203_{it}+\beta_2*l2020_{it}+\zeta_i+\epsilon_i
 $$
 
-- In this case we are using the variable l203 and l212 as predictors of the intercept at the second level.
+- In this case, we are using the variable l203 and l212 as predictors of the intercept at the second level.
 - $\beta_1$ and $\beta_2$ are the fixed effect part of the model. - $\zeta_i+\epsilon_i$ are the random effects
 - The command mixed (is for mixed models)
 
@@ -57,9 +57,9 @@ knitr::include_graphics('./Stata_images/mixed1.png')
 
 ### <span style="color:red">**R**</span>
 
-- For mixed model we will use the function ```lmer``` from the package **lm4** 
+- For mixed models, we will use the function ```lmer``` from the package **lm4** 
 
-- This case the model seems similar to what we have done before. The "fixed effect part" comes first ```dg01i~l203+l212``` and we add the randon effect ```(1|cc_2)``` for the intercept.
+- In this case, the model seems similar to what we have done before. The "fixed effect part" comes first ```dg01i~l203+l212``` and we add the random effect ```(1|cc_2)``` for the intercept.
 
 ```{r}
 library(rio)
@@ -75,7 +75,7 @@ m1<-lmer(dg01i~l203+l212+(1|cc_2) , data=demo)
 summary(m1)
 ```
 
-We get the same output than STATA.
+We get the same output as STATA.
 
 ## Random Slope <a name="mixed2"></a>
 
@@ -112,7 +112,7 @@ summary(m2)
 
 ## Growth Models <a name="mixed3"></a>
 
-A growth model it is a especial type of multilevel model. Where time is an independent variable. 
+A growth model it is a especial type of multilevel model where time is an independent variable. 
 
 $$ 
 Y_{it}= \beta_0+ \beta_1*Time+e_{it}
@@ -136,7 +136,7 @@ $$
 ### <span style="color:red">**STATA**</span>
 
 - To estimate the model above in STATA:
-- First we need to standarized the variable TIME 
+- First, we need to standardize the variable TIME 
 
 ```{r,eval=FALSE}
 gen yearnum2=yearnum-1 
@@ -163,13 +163,13 @@ knitr::include_graphics('./Stata_images/mixed3.png')
 
 ### <span style="color:red">**R**</span>
 
-- First we create the variable ```yearnum2`` that recodes the yearnum so there is a zero point at the begining of the series. 
+- First we create the variable ```yearnum2`` that recodes the yearnum so there is a zero point at the beginning of the series. 
 
 ```{r}
 demo$yearnum2<-demo$yearnum-1
 ```
 
-- We don't need to create the interactions variables. We can add the interaction straight to the model ```l203*yearnum2+ l225*yearnum2```. 
+- We don't need to create the interaction variables. We can add the interaction straight to the model ```l203*yearnum2+ l225*yearnum2```. 
                
 
 ```{r}
@@ -184,12 +184,12 @@ m3<-lmer(dg01i~yearnum2+l203+l221+l225+l212+l203*yearnum2+
 summary(m3)
 ```
 
-- The model has three random effects and eigth fixed effects. 
+- The model has three random effects and eight fixed effects. 
 
 
 # SEM Multilevel Models <a name="SEM_Multilevel"></a>
 
-Here we are goint to estimate a Latent Growth Model using the SEM framework. 
+Here we are going to estimate a Latent Growth Model using the SEM framework. 
 
 ## <span style="color:red">**STATA**</span>
 
