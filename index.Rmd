@@ -103,7 +103,7 @@ install.packages(c("lme4", "panelr","plm","rio","lmtest","dplyr","tidyr", "lavaa
 installed.packages(.Library)
 ```
 
-- You can find a menu to install and browse your package at the right panel in R Studio (Highly recommended).
+- You can find a menu to install and browse your package at the right panel in R Studio (Highly recommended!!).
 
 ```{r echo=FALSE, out.width='80%'}
 knitr::include_graphics('./Stata_images/rstudio.png')
