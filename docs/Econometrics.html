@@ -462,7 +462,7 @@ div.tocify {
 <p>We are going to retrieve the data Finkel-Smith 2011. You can find more details about the data here <a href="#cleaning">Datas</a></p>
 <p>This data is in wide format. We will create two variables</p>
 <ul>
-<li>Knowdif (<span class="math inline">\(\Delta Knowledge\)</span>): difference in knowledge bewteen before and after treatment</li>
+<li>Knowdif (<span class="math inline">\(\Delta Knowledge\)</span>): difference in knowledge between before and after treatment</li>
 <li>newtreat_ww2 (<span class="math inline">\(\Delta Treatment\)</span>): binary variable, “1” if the subject got the treatment.</li>
 </ul>
 <div id="stata" class="section level3">
@@ -1033,9 +1033,9 @@ div.tocify {
 ## Chisq: 260.397 on 4 DF, p-value: &lt; 2.22e-16</code></pre>
 </div>
 </div>
-<div id="hasmaun-test" class="section level2">
-<h2><span class="header-section-number">1.6</span> Hasmaun test <a name="ht"></a></h2>
-<p>If you are unsure about if to use FE or RE, the Hausmaun Test (HT) can help you to decide. The HT tests if the estimates obtained by the Fixed Effect models are the same as those from the Random Effect model. If they are the same, RE it is more efficient.</p>
+<div id="hausman-test" class="section level2">
+<h2><span class="header-section-number">1.6</span> Hausman test <a name="ht"></a></h2>
+<p>If you are unsure about if to use FE or RE, the Hausman Test (HT) can help you to decide. The HT tests if the estimates obtained by the Fixed Effect models are the same as those from the Random Effect model. If they are the same, RE it is more efficient.</p>
 <p>The test statistic is :</p>
 <p><span class="math display">\[
 \frac{\beta_{Fe}-\beta_{RE}}{var(\beta_{FE})-var(\beta_{RE})}

@@ -31,17 +31,17 @@ Here are some textbooks that we recommend for panel analysis:
   
 # Authors: 
 
-## Steve Finkel
+## Steven Finkel
 
 Steven E. Finkel is the Daniel Wallace Professor of Political Science at the University of Pittsburgh. His areas of expertise include comparative political behavior, public opinion, democratization, and quantitative methods. Since 1997, he has conducted evaluations of the effectiveness of US and other international donors' civic education programs in South Africa, Poland, the Dominican Republic, and Kenya. He has also pioneered the use of survey research as an aid to peace negotiations in conflict settings such as Sri Lanka and Kosovo. He is the author of Causal Analysis with Panel Data (Sage Publications, 1995) as well as numerous articles on political participation, voting behavior, and civic education in new and established democracies. Between 2004 and 2007, he conducted the first macro-comparative evaluation of the impact of all USAID democracy assistance programs on democratic development in recipient countries (published in World Politics, 2007). He holds a PhD in political science from the State University of New York at Stony Brook, and has taught previously at the University of Virginia, Arizona State University, and the Hertie School of Governance in Berlin, Germany.
 
-Website: [www.stevenfinkel.com](www.stevenfinkel.com) 
+[Website](https://www.stevenfinkel.com)
 
 ## José Incio
 
 José Incio is a Ph.D. Candidate at the University of Pittsburgh. His research interest include subnational politics, democracy, and political methodology.
 
-Website: [www.joseincio.com](www.joseincio.com)
+[Website](https://www.joseincio.com)
 
 
 # Basics

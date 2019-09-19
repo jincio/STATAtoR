@@ -23,7 +23,7 @@ We are going to retrieve the data Finkel-Smith 2011. You can find more details a
 
 This data is in wide format. We will create two variables
 
-- Knowdif ($\Delta Knowledge$): difference in knowledge bewteen before and after treatment
+- Knowdif ($\Delta Knowledge$): difference in knowledge between before and after treatment
 - newtreat_ww2 ($\Delta Treatment$): binary variable, "1" if the subject got the treatment. 
 
 ### <span style="color:red">**STATA**</span>
@@ -439,9 +439,9 @@ summary(RE, vcov = vcovHC(RE))
 ```
 
 
-## Hasmaun test <a name="ht"></a>
+## Hausman test <a name="ht"></a>
 
-If you are unsure about if to use FE or RE, the Hausmaun Test (HT) can help you to decide. The HT tests if the estimates obtained by the Fixed Effect models are the same as those from the Random Effect model. If they are the same, RE it is more efficient. 
+If you are unsure about if to use FE or RE, the Hausman Test (HT) can help you to decide. The HT tests if the estimates obtained by the Fixed Effect models are the same as those from the Random Effect model. If they are the same, RE it is more efficient. 
 
 The test statistic is : 
 
