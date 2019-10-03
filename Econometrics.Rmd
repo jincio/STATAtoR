@@ -6,6 +6,25 @@ title: "Econometrics"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+In this section, we will use data adapted from: <a name="Datas"></a>
+
+Civic education, political discussion, and the social transmission of democratic knowledge and values in a new democracy: Kenya 2002. Finkel-Smith (AJPS 2011)
+
+**Datasets:** 
+
+ - Kenya.3wave wide.2017.dta [Download](https://github.com/jincio/STATAtoR/raw/master/datasets/Kenya.3wave%20wide.2017.dta)
+ 
+ - Kenya.3wave long.2017.dta [Download](https://github.com/jincio/STATAtoR/raw/master/datasets/Kenya.3wave%20long.2017.dta)
+
+Effects of US Foreign Assistance on Democracy Building: Results of a Cross-National Quantitative Study (Final report, prepared for USAID) Finkel, Steven E., Anibal Perez-Linan, Mitchell A. Seligson, and Dinorah Azpuru. 2006
+
+**Dataset:** 
+ 
+ - democracy.dta [Download](https://github.com/jincio/STATAtoR/raw/master/datasets/democracy.dta)
+
+Download the files into your computer. We had saved the data-files in a folder called "datasets," that is why our roots are, for instance: "./datasets/Kenya.3wave wide.2017.dta"
+
+
 # Within estimators models <a name="FE"></a>
 
 ## First Difference two waves <a name="FDtw"></a>
@@ -19,7 +38,7 @@ $$ \Delta Y_i= \Delta X_{1i} + \Delta X_{2i} + .. \Delta \epsilon_i$$
 
 **Data details**
 
-We are going to retrieve the data Finkel-Smith 2011. You can find more details about the data here [Datas](#cleaning) 
+We are going to retrieve the data Finkel-Smith 2011. You can find more details about the data here [Datas](#Datas) 
 
 This data is in wide format. We will create two variables
 
@@ -208,7 +227,7 @@ In R we can use the plm package to run a Multiwave First Difference
 ```{r message=FALSE}
 library(plm)
 
-K_long<-import("~/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal Inference and Econometrics/Kenya.3wave long.2017.dta")  ### Here I'm importing the data. 
+K_long<-import("./datasets/Kenya.3wave long.2017.dta")  ### Here I'm importing the data. 
 ```
 
 ```{r}
@@ -252,9 +271,7 @@ $$Y_{it}-\bar{Y_i}=\beta_i(X_{1it}-\bar{X}_{1i})+...+ \beta_k(X_{kit}-\bar{X}_{k
 
 These models control for the variation **between** units and only use the within estimators. 
 
-To estimate these models we are going to use the data from Finkel-Smith 2011 in its long format. You can download it here: 
-
-- You can find more details about the data here [Datas](#cleaning) 
+To estimate these models we are going to use the data from Finkel-Smith 2011 in its long format. You can download it from here: [Datas](#Datas)
 
 ### <span style="color:red">**STATA**</span>
 
@@ -304,7 +321,7 @@ For instance we called library(rio) before, therefore we do not need to call it 
 
 
 ```{r, message=FALSE}
-K_long<-import("~/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal Inference and Econometrics/Kenya.3wave long.2017.dta")
+K_long<-import("./datasets/Kenya.3wave long.2017.dta")
 FE<-plm(know_w~totalce_w+age+educ+sex,data =K_long,
         index = c("id", "wave"), 
         model = "within")
@@ -600,7 +617,7 @@ The most well know approach is the proposeb by Arellano and Bond that use the la
 
 ### <span style="color:red">**STATA**</span>
 
-- We are going to use the data XXXX. More details about the data here: [R packages and datasets](#packages)
+- We are going to use the data "democracy.dta". More details about the data here: [Data](#Data)
 - First, we set the data as panel data with ```xtset```
 - Second, we are going to creat a dummy variable for each year to use them as control variables using the command ```tab```
 - Finally, we use the command ```xtabond``` to estimate the Arellano Bond (1991) model also known as "Generalized Method of Moments (GMM)"

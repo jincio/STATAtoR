@@ -450,6 +450,19 @@ div.tocify {
 </div>
 
 
+<p>In this section, we will use data adapted from: <a name="Datas"></a></p>
+<p>Civic education, political discussion, and the social transmission of democratic knowledge and values in a new democracy: Kenya 2002. Finkel-Smith (AJPS 2011)</p>
+<p><strong>Datasets:</strong></p>
+<ul>
+<li><p>Kenya.3wave wide.2017.dta <a href="https://github.com/jincio/STATAtoR/raw/master/datasets/Kenya.3wave%20wide.2017.dta">Download</a></p></li>
+<li><p>Kenya.3wave long.2017.dta <a href="https://github.com/jincio/STATAtoR/raw/master/datasets/Kenya.3wave%20long.2017.dta">Download</a></p></li>
+</ul>
+<p>Effects of US Foreign Assistance on Democracy Building: Results of a Cross-National Quantitative Study (Final report, prepared for USAID) Finkel, Steven E., Anibal Perez-Linan, Mitchell A. Seligson, and Dinorah Azpuru. 2006</p>
+<p><strong>Dataset:</strong></p>
+<ul>
+<li>democracy.dta <a href="https://github.com/jincio/STATAtoR/raw/master/datasets/democracy.dta">Download</a></li>
+</ul>
+<p>Download the files into your computer. We had saved the data-files in a folder called “datasets,” that is why our roots are, for instance: “./datasets/Kenya.3wave wide.2017.dta”</p>
 <div id="within-estimators-models" class="section level1">
 <h1><span class="header-section-number">1</span> Within estimators models <a name="FE"></a></h1>
 <div id="first-difference-two-waves" class="section level2">
@@ -459,7 +472,7 @@ div.tocify {
 <p>or (Multiwave)</p>
 <p><span class="math display">\[ \Delta Y_i= \Delta X_{1i} + \Delta X_{2i} + .. \Delta \epsilon_i\]</span></p>
 <p><strong>Data details</strong></p>
-<p>We are going to retrieve the data Finkel-Smith 2011. You can find more details about the data here <a href="#cleaning">Datas</a></p>
+<p>We are going to retrieve the data Finkel-Smith 2011. You can find more details about the data here <a href="#Datas">Datas</a></p>
 <p>This data is in wide format. We will create two variables</p>
 <ul>
 <li>Knowdif (<span class="math inline">\(\Delta Knowledge\)</span>): difference in knowledge between before and after treatment</li>
@@ -640,7 +653,7 @@ div.tocify {
 </ul>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1"><span class="kw">library</span>(plm)</a>
 <a class="sourceLine" id="cb21-2" title="2"></a>
-<a class="sourceLine" id="cb21-3" title="3">K_long&lt;-<span class="kw">import</span>(<span class="st">&quot;~/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal Inference and Econometrics/Kenya.3wave long.2017.dta&quot;</span>)  <span class="co">### Here I&#39;m importing the data. </span></a></code></pre></div>
+<a class="sourceLine" id="cb21-3" title="3">K_long&lt;-<span class="kw">import</span>(<span class="st">&quot;./datasets/Kenya.3wave long.2017.dta&quot;</span>)  <span class="co">### Here I&#39;m importing the data. </span></a></code></pre></div>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1">MWFD1&lt;-<span class="kw">plm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex,<span class="dt">data =</span>K_long,</a>
 <a class="sourceLine" id="cb22-2" title="2">          <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
 <a class="sourceLine" id="cb22-3" title="3">          <span class="dt">model =</span> <span class="st">&quot;fd&quot;</span>)</a>
@@ -716,10 +729,7 @@ div.tocify {
 <p>The most common model is the Fixed Effect model:</p>
 <p><span class="math display">\[Y_{it}-\bar{Y_i}=\beta_i(X_{1it}-\bar{X}_{1i})+...+ \beta_k(X_{kit}-\bar{X}_{ki})+ \epsilon_{it}\]</span></p>
 <p>These models control for the variation <strong>between</strong> units and only use the within estimators.</p>
-<p>To estimate these models we are going to use the data from Finkel-Smith 2011 in its long format. You can download it here:</p>
-<ul>
-<li>You can find more details about the data here <a href="#cleaning">Datas</a></li>
-</ul>
+<p>To estimate these models we are going to use the data from Finkel-Smith 2011 in its long format. You can download it from here: <a href="#Datas">Datas</a></p>
 <div id="stata-2" class="section level3">
 <h3><span class="header-section-number">1.3.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
 <p><code>xtset</code> sets the data as panel.
@@ -753,7 +763,7 @@ div.tocify {
 <div class="sourceCode" id="cb29"><pre class="sourceCode r Comment1"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1">We do not have to call the package everytime we run a <span class="cf">function</span>, only once <span class="cf">in</span> a session. </a>
 <a class="sourceLine" id="cb29-2" title="2"></a>
 <a class="sourceLine" id="cb29-3" title="3">For instance we called <span class="kw">library</span>(rio) before, therefore we do not need to call it again</a></code></pre></div>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1">K_long&lt;-<span class="kw">import</span>(<span class="st">&quot;~/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal Inference and Econometrics/Kenya.3wave long.2017.dta&quot;</span>)</a>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1">K_long&lt;-<span class="kw">import</span>(<span class="st">&quot;./datasets/Kenya.3wave long.2017.dta&quot;</span>)</a>
 <a class="sourceLine" id="cb30-2" title="2">FE&lt;-<span class="kw">plm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex,<span class="dt">data =</span>K_long,</a>
 <a class="sourceLine" id="cb30-3" title="3">        <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
 <a class="sourceLine" id="cb30-4" title="4">        <span class="dt">model =</span> <span class="st">&quot;within&quot;</span>)</a>
@@ -1249,7 +1259,7 @@ Y_{it}= \alpha+ \beta_1Y_{it-1}+\beta_2X_{it}+\beta_3X_{it-1}+...U_{it}+\epsilon
 <div id="stata-7" class="section level3">
 <h3><span class="header-section-number">3.0.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
 <ul>
-<li>We are going to use the data XXXX. More details about the data here: <a href="#packages">R packages and datasets</a></li>
+<li>We are going to use the data “democracy.dta”. More details about the data here: <a href="#Data">Data</a></li>
 <li>First, we set the data as panel data with <code>xtset</code></li>
 <li>Second, we are going to creat a dummy variable for each year to use them as control variables using the command <code>tab</code></li>
 <li>Finally, we use the command <code>xtabond</code> to estimate the Arellano Bond (1991) model also known as “Generalized Method of Moments (GMM)”</li>
