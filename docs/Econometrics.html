@@ -645,7 +645,7 @@ div.tocify {
 <p><span style="color:blue"><strong>MWFD1: Multiwave First Difference without waves</strong></span></p>
 <ul>
 <li><p>First, we call the package plm. Remember we already called the package <strong>rio</strong> in the step before.</p></li>
-<li><p>Second, we import the data base using “import”, as we did in our previous step <a href="#rio">here</a></p></li>
+<li><p>Second, we import the data base using “import”, as we did above.</p></li>
 <li><p><code>plm</code> is the function for panel model. As in the linear model, the first element on the function is the <em>model(formula)</em> <code>know_w~totalce_w+age+educ+sex</code>.</p></li>
 <li><p>Variables are added using +. Then we include the data <code>data =K_long</code>. - The third element in our code is the “index” <code>index = c("id", "wave")</code>, which does the same job that “xtset” in STATA.</p></li>
 <li><p>Finally, we need to specified the type of model <code>model = "fd"</code>. We have several options here that we will be unveiling as we progress.</p></li>

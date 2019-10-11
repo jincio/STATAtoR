@@ -49,8 +49,7 @@ knitr::include_graphics('./Stata_images/long_format.png')
 - Lets get the data and keep the variables we need for this example. 
 
 ```{r, eval = FALSE}
-use "/Users/joseincio/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal In
-> ference and Econometrics/Kenya.3wave wide.2017.dta", clear
+use "./datasets/Kenya.3wave wide.2017.dta", clear
 
 keep know_w1 know_w2 know_w3 age sex id age
 ```

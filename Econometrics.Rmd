@@ -217,7 +217,7 @@ In R we can use the plm package to run a Multiwave First Difference
 <span style="color:blue">**MWFD1: Multiwave First Difference without waves**</span>
 
 - First, we call the package plm. Remember we already called the package **rio** in the step before. 
-- Second, we import the data base using "import", as we did in our previous step [here](#rio) 
+- Second, we import the data base using "import", as we did above. 
 - ```plm``` is the function for panel model. As in the linear model, the first element on the function is the  *model(formula)* ```know_w~totalce_w+age+educ+sex```. 
 - Variables are added using +. Then we include the data ```data =K_long```. - The third element in our code is the "index" ```index = c("id", "wave")```, which does the same job that "xtset" in STATA. 
 - Finally, we need to specified the type of model ```model = "fd"```. We have several options here that we will be unveiling as we progress. 

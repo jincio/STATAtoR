@@ -479,10 +479,9 @@ We will focus on <strong>panel data</strong>.</li>
 <ul>
 <li>Lets get the data and keep the variables we need for this example.</li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">use <span class="st">&quot;/Users/joseincio/Dropbox/Finkel-Incio/PS2701 Stata Files/Unit 1 -- Causal In</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="st">&gt; ference and Econometrics/Kenya.3wave wide.2017.dta&quot;</span>, clear</a>
-<a class="sourceLine" id="cb1-3" title="3"></a>
-<a class="sourceLine" id="cb1-4" title="4">keep know_w1 know_w2 know_w3 age sex id age</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">use <span class="st">&quot;./datasets/Kenya.3wave wide.2017.dta&quot;</span>, clear</a>
+<a class="sourceLine" id="cb1-2" title="2"></a>
+<a class="sourceLine" id="cb1-3" title="3">keep know_w1 know_w2 know_w3 age sex id age</a></code></pre></div>
 <p><strong>From wide to long in Stata</strong></p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">reshape long newtreat_ww know_w , <span class="kw">i</span>(id) <span class="kw">j</span>(wave)</a></code></pre></div>
 <p><strong>From long to wide in Stata</strong></p>

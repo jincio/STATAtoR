@@ -10,9 +10,27 @@ Also known as "Covariance Structure Analysis" (CSA). We used observed variance-c
 
 In SEM we care about: regression coefficients, $R^2$ and overall fit of the model. 
 
+
+In this section, we will use data adapted from: <a name="Datas"></a>
+
+American National Election Studies - 2000-2002-2004
+
+**Datasets:** 
+
+ - nes3wave.dta [Download](https://github.com/jincio/STATAtoR/raw/master/datasets/nes3wave.dta)
+ 
+
+Effects of US Foreign Assistance on Democracy Building: Results of a Cross-National Quantitative Study (Final report, prepared for USAID) Finkel, Steven E., Anibal Perez-Linan, Mitchell A. Seligson, and Dinorah Azpuru. 2006
+
+**Dataset:** 
+ 
+ - democracy1996-2002.dta [Download](https://github.com/jincio/STATAtoR/raw/master/datasets/democracy1996-2002.dta)
+
+Download the files into your computer. We had saved the data-files in a folder called "datasets," that is why our roots are, for instance: "./datasets/nes3wave.dta.dta"
+
 # Autoregressive model (Three waves) <a name="autoregresive"></a>
 
-- For this mode we will use the data "XXXX". You can check more details of the data [here](#packages)
+- For this mode we will use the data "nes3wave". You can check more details of the data [here](#packages)
 
 ## <span style="color:red">**STATA**</span>
 
@@ -347,7 +365,7 @@ semPaths(e1m, "est")
 
 We can incorporate unobserved heterogeneity within the SEM model. In order to do this we use an unobserved latent variable. 
 
-For this section we will use the XXXX dataset; it is in a wide format. You can review about data's formats (wide and long) here [Data organization](#cleaning)
+For this section we will use the democracy1996-2002.dta dataset; it is in a wide format. You can review about data's formats (wide and long) here [Data organization](#Panel_Data)
 
 ## <span style="color:red">**STATA**</span>
 

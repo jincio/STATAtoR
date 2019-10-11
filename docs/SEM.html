@@ -452,10 +452,22 @@ div.tocify {
 
 <p>Also known as “Covariance Structure Analysis” (CSA). We used observed variance-covariances to estimate structural parameters and we use the estimated structural parameters to generate predicted variances and covariances.</p>
 <p>In SEM we care about: regression coefficients, <span class="math inline">\(R^2\)</span> and overall fit of the model.</p>
+<p>In this section, we will use data adapted from: <a name="Datas"></a></p>
+<p>American National Election Studies - 2000-2002-2004</p>
+<p><strong>Datasets:</strong></p>
+<ul>
+<li>nes3wave.dta <a href="https://github.com/jincio/STATAtoR/raw/master/datasets/nes3wave.dta">Download</a></li>
+</ul>
+<p>Effects of US Foreign Assistance on Democracy Building: Results of a Cross-National Quantitative Study (Final report, prepared for USAID) Finkel, Steven E., Anibal Perez-Linan, Mitchell A. Seligson, and Dinorah Azpuru. 2006</p>
+<p><strong>Dataset:</strong></p>
+<ul>
+<li>democracy1996-2002.dta <a href="https://github.com/jincio/STATAtoR/raw/master/datasets/democracy1996-2002.dta">Download</a></li>
+</ul>
+<p>Download the files into your computer. We had saved the data-files in a folder called “datasets,” that is why our roots are, for instance: “./datasets/nes3wave.dta.dta”</p>
 <div id="autoregressive-model-three-waves" class="section level1">
 <h1><span class="header-section-number">1</span> Autoregressive model (Three waves) <a name="autoregresive"></a></h1>
 <ul>
-<li>For this mode we will use the data “XXXX”. You can check more details of the data <a href="#packages">here</a></li>
+<li>For this mode we will use the data “nes3wave”. You can check more details of the data <a href="#packages">here</a></li>
 </ul>
 <div id="stata" class="section level2">
 <h2><span class="header-section-number">1.1</span> <span style="color:red"><strong>STATA</strong></span></h2>
@@ -950,7 +962,7 @@ Var(w)=Var(y_{2}^*)- \frac{Cov(y_{2}^*,y_{3}^*)Cov(y_{1}^*,y_{2}^*)}{Cov(y_{1}^*
 <div id="sem-fixed-effects" class="section level1">
 <h1><span class="header-section-number">5</span> SEM Fixed Effects <a name="SEM2_1"></a></h1>
 <p>We can incorporate unobserved heterogeneity within the SEM model. In order to do this we use an unobserved latent variable.</p>
-<p>For this section we will use the XXXX dataset; it is in a wide format. You can review about data’s formats (wide and long) here <a href="#cleaning">Data organization</a></p>
+<p>For this section we will use the democracy1996-2002.dta dataset; it is in a wide format. You can review about data’s formats (wide and long) here <a href="#Panel_Data">Data organization</a></p>
 <div id="stata-4" class="section level2">
 <h2><span class="header-section-number">5.1</span> <span style="color:red"><strong>STATA</strong></span></h2>
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" title="1">use <span class="st">&quot;./datasets/democracy1996-2002.wide.dta&quot;</span>, clear</a></code></pre></div>
