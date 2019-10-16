@@ -6,6 +6,12 @@ title: "Panel Data"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{css}
+.Comment1 {
+background-color: paleTurquoise;
+}
+```
+
 
 Here we are going to use data sets from published papers. You can retrieve the data from the links below:
 

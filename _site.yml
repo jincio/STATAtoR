@@ -20,10 +20,11 @@ navbar:
   title: ""
 output:
   bookdown::html_document2:
-    theme: yeti
+    theme: cosmo
     toc: yes
     toc_depth: 3
     toc_float: true
     highlight: haddock
-    css: css1.css
+    includes:
+      in_header: ganalytics.html
 output_dir: docs

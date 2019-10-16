@@ -2,6 +2,12 @@
 title: "Econometrics"
 ---
 
+```{css}
+.Comment1 {
+background-color: paleTurquoise;
+}
+```
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```

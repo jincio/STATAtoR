@@ -39,9 +39,14 @@ Steven E. Finkel is the Daniel Wallace Professor of Political Science at the Uni
 
 ## José Incio
 
-José Incio is a Ph.D. Candidate at the University of Pittsburgh. His research interest include subnational politics, democracy, and political methodology.
+José Incio is a Ph.D. Candidate in Political Science at the University of Pittsburgh. His research interest include subnational politics, democracy, and political methodology.
 
 [Website](https://www.joseincio.com)
+
+## Junghyun Lim
+
+Junghyun Lim is a Ph.D. Candidate in Political Science at the University of Pittsburgh. Her concentrations are IPE and political methodology. 
+[Website](https://www.polisci.pitt.edu/people/junghyun-lim)
 
 
 # Basics
@@ -56,9 +61,15 @@ Code here
 
 Notes about R, and R features will also be in boxes like this:
 
+
+```{css}
+.Comment1 {
+background-color: paleTurquoise;
+}
+```
+
 ```{r eval=FALSE, class.source="Comment1"}
 This is a comment. 
-
 ```
 
 Sometimes the output has warnings. We are not showing those here. In general, you should not worry about warnings. However, be wary about errors. When the output shows "**error**" that means something is wrong and R didn't execute the code. 
