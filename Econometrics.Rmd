@@ -2,7 +2,7 @@
 title: "Econometrics"
 ---
 
-```{css}
+```{css, echo=FALSE}
 .Comment1 {
 background-color: paleTurquoise;
 }
@@ -363,6 +363,37 @@ FE2<-wbm(know_w~totalce_w+age+educ+sex, data=K_long_p,
         model="within")
 summary(FE2)
 ```
+
+## Two ways FE
+
+We can control for time, adding time dummies to our FE model. This is common called two ways (time-and-cluster) fixed effect. 
+### <span style="color:red">**STATA**</span>
+
+We use the same components of our previous fixed effect model (fe). 
+
+We create new variables for each wave.
+
+```{r eval= FALSE}
+tab wave, gen(wavv)
+```
+
+We include the time dummies to our fe model!
+
+```{r eval=FALSE}
+xtreg know_w totalce_w wavv2 wavv3, fe
+```
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('./Stata_images/fe_4.png')
+```
+
+
+The results of our main variable had changed!- We can compare the estimates. The effect main variable have changed, therefore in this case it was important to include the time effect.
+
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('./Stata_images/fe_5.png')
+```
+
 
 ## FE, robust standard errors (RSE). <a name="FE2"></a>
 
