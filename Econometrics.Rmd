@@ -366,7 +366,9 @@ summary(FE2)
 
 ## Two ways FE
 
-We can control for time, adding time dummies to our FE model. This is common called two ways (time-and-cluster) fixed effect. 
+We can control for time, adding time dummies to our FE model. This is common called two ways (time-and-cluster) fixed effect.
+
+
 ### <span style="color:red">**STATA**</span>
 
 We use the same components of our previous fixed effect model (fe). 
@@ -394,6 +396,19 @@ The results of our main variable had changed!- We can compare the estimates. The
 knitr::include_graphics('./Stata_images/fe_5.png')
 ```
 
+### <span style="color:red">**R**</span>
+
+We can replicate this with R using the "plm" package. ```as.factor(wave)``` plays the same role with ```tab wave, gen(wavv)``` in Stata. 
+
+
+
+```{r}
+
+fixed2way<- plm(data=K_long, know_w ~ totalce_w+as.factor(wave))
+
+summary(fixed2way)
+
+```
 
 ## FE, robust standard errors (RSE). <a name="FE2"></a>
 
