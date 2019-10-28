@@ -7,7 +7,6 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -56,7 +55,7 @@ a.sourceLine { text-indent: -1em; padding-left: 1em; }
 pre.numberSource a.sourceLine
   { position: relative; left: -4em; }
 pre.numberSource a.sourceLine::before
-  { content: attr(title);
+  { content: attr(data-line-number);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
     border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
@@ -110,7 +109,7 @@ code span.wa { color: #008000; font-weight: bold; } /* Warning */
       if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -328,9 +327,48 @@ $(document).ready(function () {
 }
 </style>
 
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
 <!-- code folding -->
 
 
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <style type="text/css">
 
@@ -492,17 +530,14 @@ div.tocify {
 <h1><span class="header-section-number">3</span> Basics</h1>
 <p><strong>Code:</strong></p>
 <p>STATA and R code will be in grey boxes like this:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">Code here </a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">Code here </a></code></pre></div>
 <p>Notes about R, and R features will also be in boxes like this:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode css"><code class="sourceCode css"><a class="sourceLine" id="cb2-1" title="1"><span class="fu">.Comment1</span> {</a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="kw">background-color</span>: <span class="cn">paleTurquoise</span><span class="op">;</span></a>
-<a class="sourceLine" id="cb2-3" title="3">}</a></code></pre></div>
 <style type="text/css">
 .Comment1 {
 background-color: paleTurquoise;
 }
 </style>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r Comment1"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">This is a comment. </a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r Comment1"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">This is a comment. </a></code></pre></div>
 <p>Sometimes the output has warnings. We are not showing those here. In general, you should not worry about warnings. However, be wary about errors. When the output shows “<strong>error</strong>” that means something is wrong and R didn’t execute the code.</p>
 <div id="r-packages-and-data-sets" class="section level2">
 <h2><span class="header-section-number">3.1</span> R packages and data sets <a name="packages"></a></h2>
@@ -532,11 +567,11 @@ background-color: paleTurquoise;
 <li>Packages are grouped using “c()” and separated by “,”. It is possible to install one by one, or several at the same time.</li>
 <li>You need to install a package <strong>only one time</strong>.</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">install.packages</span>(<span class="kw">c</span>(<span class="st">&quot;lme4&quot;</span>, <span class="st">&quot;panelr&quot;</span>,<span class="st">&quot;plm&quot;</span>,<span class="st">&quot;rio&quot;</span>,<span class="st">&quot;lmtest&quot;</span>,<span class="st">&quot;dplyr&quot;</span>,<span class="st">&quot;tidyr&quot;</span>, <span class="st">&quot;lavaan&quot;</span>,<span class="st">&quot;semPlot&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="kw">c</span>(<span class="st">&quot;lme4&quot;</span>, <span class="st">&quot;panelr&quot;</span>,<span class="st">&quot;plm&quot;</span>,<span class="st">&quot;rio&quot;</span>,<span class="st">&quot;lmtest&quot;</span>,<span class="st">&quot;dplyr&quot;</span>,<span class="st">&quot;tidyr&quot;</span>, <span class="st">&quot;lavaan&quot;</span>,<span class="st">&quot;semPlot&quot;</span>))</a></code></pre></div>
 <ul>
 <li>If you want to know which packages you have installed use the code below (Becareful, the output could be long.):</li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">installed.packages</span>(.Library)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">installed.packages</span>(.Library)</a></code></pre></div>
 <ul>
 <li>You can find a menu to install and browse your package at the right panel in R Studio (Highly recommended!!).</li>
 </ul>
@@ -562,49 +597,6 @@ $(document).ready(function () {
 });
 
 
-</script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
-<!-- code folding -->
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

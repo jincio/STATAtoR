@@ -62,7 +62,7 @@ Code here
 Notes about R, and R features will also be in boxes like this:
 
 
-```{css}
+```{css, echo=FALSE}
 .Comment1 {
 background-color: paleTurquoise;
 }
