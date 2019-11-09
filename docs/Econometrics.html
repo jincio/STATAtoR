@@ -916,6 +916,12 @@ background-color: paleTurquoise;
 ## R-Squared:      0.12951
 ## Adj. R-Squared: -0.30955
 ## F-statistic: 39.6251 on 3 and 799 DF, p-value: &lt; 2.22e-16</code></pre>
+<p>As we mentioned before STATA show the intercept as part of the results of FE models, and R doesn’t. However, we can obtained it using the <code>plm</code> package.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" title="1"><span class="kw">within_intercept</span>(fixed2way)</a></code></pre></div>
+<pre><code>## (overall_intercept) 
+##            2.301746 
+## attr(,&quot;se&quot;)
+## [1] 0.03893616</code></pre>
 </div>
 </div>
 <div id="fe-robust-standard-errors-rse." class="section level2">
@@ -923,7 +929,7 @@ background-color: paleTurquoise;
 <p>We can deal with the heteroskedasticity of the error terms obtaining the “ROBUST” standard errors. Panel analysis has potential problems with the error terms produced by unit-level clustering.</p>
 <div id="stata-4" class="section level3">
 <h3><span class="header-section-number">1.5.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" title="1">xtreg know_w totalce_w, <span class="kw">fe</span> (cluster id)</a></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" title="1">xtreg know_w totalce_w, <span class="kw">fe</span> (cluster id)</a></code></pre></div>
 <p><img src="Stata_images/fe_3.png" width="80%" /></p>
 <p>As we can see, now the SE are “robust”.</p>
 </div>
@@ -935,7 +941,7 @@ background-color: paleTurquoise;
 <li>With PLM we can add the argument <code>vcov</code> in <code>summary()</code></li>
 <li>Remember: our model was stored in the object <strong>FE</strong> above.</li>
 </ul>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" title="1"><span class="kw">summary</span>(FE,<span class="dt">vcov =</span> <span class="kw">vcovHC</span>(FE))</a></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" title="1"><span class="kw">summary</span>(FE,<span class="dt">vcov =</span> <span class="kw">vcovHC</span>(FE))</a></code></pre></div>
 <pre><code>## Oneway (individual) effect Within Model
 ## 
 ## Note: Coefficient variance-covariance matrix supplied: vcovHC(FE)
@@ -965,8 +971,8 @@ background-color: paleTurquoise;
 <li>Another option is to use a generic function to test our coeficients. The function <code>coeftest</code> from the package <strong>lmtest</strong> performs z and t Wald tests (significance) of the estimated coefficients.</li>
 <li>The argument <strong>vcov</strong> allows us to select a particular variance-covariance matrix.</li>
 </ul>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" title="1"><span class="kw">library</span>(lmtest)</a>
-<a class="sourceLine" id="cb47-2" title="2"><span class="kw">coeftest</span>(FE, <span class="dt">vcov =</span> vcovHC, <span class="dt">type =</span> <span class="st">&quot;HC1&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb49-1" title="1"><span class="kw">library</span>(lmtest)</a>
+<a class="sourceLine" id="cb49-2" title="2"><span class="kw">coeftest</span>(FE, <span class="dt">vcov =</span> vcovHC, <span class="dt">type =</span> <span class="st">&quot;HC1&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ## t test of coefficients:
 ## 
@@ -977,8 +983,8 @@ background-color: paleTurquoise;
 <ul>
 <li>Now we get the robust standard error for the intercept.</li>
 </ul>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb49-1" title="1"><span class="kw">within_intercept</span>(FE, <span class="dt">vcov =</span> <span class="cf">function</span>(x) </a>
-<a class="sourceLine" id="cb49-2" title="2">  <span class="kw">vcovHC</span>(x, <span class="dt">type=</span><span class="st">&quot;HC1&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb51-1" title="1"><span class="kw">within_intercept</span>(FE, <span class="dt">vcov =</span> <span class="cf">function</span>(x) </a>
+<a class="sourceLine" id="cb51-2" title="2">  <span class="kw">vcovHC</span>(x, <span class="dt">type=</span><span class="st">&quot;HC1&quot;</span>))</a></code></pre></div>
 <pre><code>## (overall_intercept) 
 ##            2.572018 
 ## attr(,&quot;se&quot;)
@@ -1001,12 +1007,12 @@ background-color: paleTurquoise;
 <li>We add <strong>theta</strong> (<span class="math inline">\(\theta\)</span>) in the line. Because <span class="math inline">\(\theta\)</span> gives us an idea of the error term’s compositions. As <span class="math inline">\(\theta\)</span>
 (theta) gets closer to 1, it means that more and more of the composite error variance is made up of <span class="math inline">\(U_i\)</span> unit-level or “between” variance. Where <span class="math inline">\(\theta\)</span> closser to 1 the RE models reduce to a FE model</li>
 </ul>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb51-1" title="1">xtreg know_w totalce_w sex educ age, re theta</a></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb53-1" title="1">xtreg know_w totalce_w sex educ age, re theta</a></code></pre></div>
 <p><img src="Stata_images/re_1.png" width="80%" /></p>
 <ul>
 <li>We can also add <strong>Robust Standard Errors</strong> to the model. We added <code>vce(cluster id)</code> same as we did with the Fixed Effects model.</li>
 </ul>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" title="1">xtreg know_w totalce_w sex educ age, re <span class="kw">vce</span> (cluster id) </a></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" title="1">xtreg know_w totalce_w sex educ age, re <span class="kw">vce</span> (cluster id) </a></code></pre></div>
 </div>
 <div id="r-5" class="section level3">
 <h3><span class="header-section-number">1.6.2</span> <span style="color:red"><strong>R</strong></span></h3>
@@ -1016,11 +1022,11 @@ background-color: paleTurquoise;
 <li>The difference is in model we select <strong>random</strong>: <code>model = "random"</code></li>
 <li></li>
 </ul>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb53-1" title="1">RE&lt;-<span class="kw">plm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex,<span class="dt">data =</span>K_long,</a>
-<a class="sourceLine" id="cb53-2" title="2">        <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
-<a class="sourceLine" id="cb53-3" title="3">        <span class="dt">model =</span> <span class="st">&quot;random&quot;</span>)</a>
-<a class="sourceLine" id="cb53-4" title="4"></a>
-<a class="sourceLine" id="cb53-5" title="5"><span class="kw">summary</span>(RE)</a></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb55-1" title="1">RE&lt;-<span class="kw">plm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex,<span class="dt">data =</span>K_long,</a>
+<a class="sourceLine" id="cb55-2" title="2">        <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
+<a class="sourceLine" id="cb55-3" title="3">        <span class="dt">model =</span> <span class="st">&quot;random&quot;</span>)</a>
+<a class="sourceLine" id="cb55-4" title="4"></a>
+<a class="sourceLine" id="cb55-5" title="5"><span class="kw">summary</span>(RE)</a></code></pre></div>
 <pre><code>## Oneway (individual) effect Random Effect Model 
 ##    (Swamy-Arora&#39;s transformation)
 ## 
@@ -1063,7 +1069,7 @@ background-color: paleTurquoise;
 <ul>
 <li>We can get the **robust standard errors adding the argument in the function <code>summary()</code> as we did with FE models</li>
 </ul>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb55-1" title="1"><span class="kw">summary</span>(RE, <span class="dt">vcov =</span> <span class="kw">vcovHC</span>(RE))</a></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb57-1" title="1"><span class="kw">summary</span>(RE, <span class="dt">vcov =</span> <span class="kw">vcovHC</span>(RE))</a></code></pre></div>
 <pre><code>## Oneway (individual) effect Random Effect Model 
 ##    (Swamy-Arora&#39;s transformation)
 ## 
@@ -1117,13 +1123,13 @@ background-color: paleTurquoise;
 <li><code>qui</code> is to estimate the model but no showing the output.</li>
 <li><code>estimate store</code> save the estimates from the model in the “object” fixed and random respectively.</li>
 </ul>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb57-1" title="1">qui xtreg know_w totalce_w sex educ age, fe  </a>
-<a class="sourceLine" id="cb57-2" title="2">estimates store fixed</a>
-<a class="sourceLine" id="cb57-3" title="3"></a>
-<a class="sourceLine" id="cb57-4" title="4">qui xtreg know_w totalce_w sex educ age, re theta</a>
-<a class="sourceLine" id="cb57-5" title="5">estimates store random</a></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb59-1" title="1">qui xtreg know_w totalce_w sex educ age, fe  </a>
+<a class="sourceLine" id="cb59-2" title="2">estimates store fixed</a>
+<a class="sourceLine" id="cb59-3" title="3"></a>
+<a class="sourceLine" id="cb59-4" title="4">qui xtreg know_w totalce_w sex educ age, re theta</a>
+<a class="sourceLine" id="cb59-5" title="5">estimates store random</a></code></pre></div>
 <p>We conduct the Hausman test using the command: <code>hausman fixed random</code></p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb58-1" title="1">hausman fixed random</a></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" title="1">hausman fixed random</a></code></pre></div>
 <p><img src="Stata_images/ht_1.png" width="80%" /></p>
 </div>
 <div id="r-6" class="section level3">
@@ -1132,17 +1138,17 @@ background-color: paleTurquoise;
 <ul>
 <li>We have created the models before, but we will do it again to be sure we are comparing the right estimators.</li>
 </ul>
-<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb59-1" title="1">FE&lt;-<span class="kw">plm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex,<span class="dt">data =</span>K_long,</a>
-<a class="sourceLine" id="cb59-2" title="2">        <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
-<a class="sourceLine" id="cb59-3" title="3">        <span class="dt">model =</span> <span class="st">&quot;within&quot;</span>) </a>
-<a class="sourceLine" id="cb59-4" title="4"></a>
-<a class="sourceLine" id="cb59-5" title="5">RE&lt;-<span class="kw">plm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex,<span class="dt">data =</span>K_long,</a>
-<a class="sourceLine" id="cb59-6" title="6">        <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
-<a class="sourceLine" id="cb59-7" title="7">        <span class="dt">model =</span> <span class="st">&quot;random&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" title="1">FE&lt;-<span class="kw">plm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex,<span class="dt">data =</span>K_long,</a>
+<a class="sourceLine" id="cb61-2" title="2">        <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
+<a class="sourceLine" id="cb61-3" title="3">        <span class="dt">model =</span> <span class="st">&quot;within&quot;</span>) </a>
+<a class="sourceLine" id="cb61-4" title="4"></a>
+<a class="sourceLine" id="cb61-5" title="5">RE&lt;-<span class="kw">plm</span>(know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex,<span class="dt">data =</span>K_long,</a>
+<a class="sourceLine" id="cb61-6" title="6">        <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
+<a class="sourceLine" id="cb61-7" title="7">        <span class="dt">model =</span> <span class="st">&quot;random&quot;</span>)</a></code></pre></div>
 <ul>
 <li>Now we can conduct the Hausman test.</li>
 </ul>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" title="1"><span class="kw">phtest</span>(FE, RE)</a></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" title="1"><span class="kw">phtest</span>(FE, RE)</a></code></pre></div>
 <pre><code>## 
 ##  Hausman Test
 ## 
@@ -1154,8 +1160,8 @@ background-color: paleTurquoise;
 <li><p>We create the object <strong>model</strong> that contains the name of the dependent and independent variables (separated by ~)</p></li>
 <li></li>
 </ul>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" title="1">modht=<span class="st"> </span>know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex <span class="co">#an object with the model </span></a>
-<a class="sourceLine" id="cb62-2" title="2"><span class="kw">phtest</span>(modht, <span class="dt">data=</span>K_long)  <span class="co">#We can run the test with the model. </span></a></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb64-1" title="1">modht=<span class="st"> </span>know_w<span class="op">~</span>totalce_w<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex <span class="co">#an object with the model </span></a>
+<a class="sourceLine" id="cb64-2" title="2"><span class="kw">phtest</span>(modht, <span class="dt">data=</span>K_long)  <span class="co">#We can run the test with the model. </span></a></code></pre></div>
 <pre><code>## 
 ##  Hausman Test
 ## 
@@ -1175,9 +1181,9 @@ background-color: paleTurquoise;
 </ul>
 <div id="stata-7" class="section level3">
 <h3><span class="header-section-number">2.1.1</span> <span style="color:red"><strong>STATA</strong></span></h3>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb64-1" title="1">egen totalce_mn=<span class="kw">mean</span>(totalce_w), <span class="kw">by</span> (id) <span class="op">/</span><span class="er">/</span><span class="st"> </span>egen creates new  variables</a>
-<a class="sourceLine" id="cb64-2" title="2"></a>
-<a class="sourceLine" id="cb64-3" title="3">xtreg polpart_w totalce_w totalce_mn sex educ age wavv2 wavv3, re <span class="kw">vce</span>(cluster id) </a></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb66-1" title="1">egen totalce_mn=<span class="kw">mean</span>(totalce_w), <span class="kw">by</span> (id) <span class="op">/</span><span class="er">/</span><span class="st"> </span>egen creates new  variables</a>
+<a class="sourceLine" id="cb66-2" title="2"></a>
+<a class="sourceLine" id="cb66-3" title="3">xtreg polpart_w totalce_w totalce_mn sex educ age wavv2 wavv3, re <span class="kw">vce</span>(cluster id) </a></code></pre></div>
 <p><img src="Stata_images/HY_1.png" width="80%" /></p>
 </div>
 <div id="r-7" class="section level3">
@@ -1187,23 +1193,23 @@ background-color: paleTurquoise;
 <li><p>We are going to use the dummys variables for wave. We had created those dummies using mutate for the Multiwave First Difference model <a href="#FD_MW">here</a></p></li>
 <li><p>We can do it again, just in case:</p></li>
 </ul>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb65-1" title="1">K_long&lt;-K_long<span class="op">%&gt;%</span><span class="kw">mutate</span>(<span class="dt">wavv1=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>),</a>
-<a class="sourceLine" id="cb65-2" title="2">                        <span class="dt">wavv2=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>),</a>
-<a class="sourceLine" id="cb65-3" title="3">                        <span class="dt">wavv3=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">0</span>))</a></code></pre></div>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb66-1" title="1">K_long&lt;-K_long<span class="op">%&gt;%</span><span class="kw">group_by</span>(id)<span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb66-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">totalce_mn=</span><span class="kw">mean</span>(totalce_w))<span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb66-3" title="3"><span class="st">  </span><span class="kw">ungroup</span>() <span class="co"># if you don&#39;t ungroup you may encounter the following error: </span></a>
-<a class="sourceLine" id="cb66-4" title="4"><span class="co">#Can&#39;t join on &#39;.rows&#39; x &#39;.rows&#39; because of incompatible types (list / list)</span></a></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb67-1" title="1">K_long&lt;-K_long<span class="op">%&gt;%</span><span class="kw">mutate</span>(<span class="dt">wavv1=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb67-2" title="2">                        <span class="dt">wavv2=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb67-3" title="3">                        <span class="dt">wavv3=</span><span class="kw">ifelse</span>(wave<span class="op">==</span><span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">0</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb68-1" title="1">K_long&lt;-K_long<span class="op">%&gt;%</span><span class="kw">group_by</span>(id)<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb68-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">totalce_mn=</span><span class="kw">mean</span>(totalce_w))<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb68-3" title="3"><span class="st">  </span><span class="kw">ungroup</span>() <span class="co"># if you don&#39;t ungroup you may encounter the following error: </span></a>
+<a class="sourceLine" id="cb68-4" title="4"><span class="co">#Can&#39;t join on &#39;.rows&#39; x &#39;.rows&#39; because of incompatible types (list / list)</span></a></code></pre></div>
 <ul>
 <li><p>We include the mean of <strong>totalce_w</strong> by group in our Random Effects model. Using <strong>plm</strong> we obtained the same results as STATA</p></li>
 <li><p>In <code>summary</code> we added the <strong>vcov</strong> option to request the robust standard errors.</p></li>
 </ul>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb67-1" title="1">HY&lt;-<span class="kw">plm</span>(polpart_w<span class="op">~</span>totalce_w<span class="op">+</span>totalce_mn<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex<span class="op">+</span></a>
-<a class="sourceLine" id="cb67-2" title="2"><span class="st">           </span>wavv2<span class="op">+</span>wavv3,<span class="dt">data =</span>K_long,</a>
-<a class="sourceLine" id="cb67-3" title="3">         <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
-<a class="sourceLine" id="cb67-4" title="4">         <span class="dt">model =</span> <span class="st">&quot;random&quot;</span>) <span class="co">## </span></a>
-<a class="sourceLine" id="cb67-5" title="5"></a>
-<a class="sourceLine" id="cb67-6" title="6"><span class="kw">summary</span>(HY, <span class="dt">vcov =</span> <span class="kw">vcovHC</span>(HY))</a></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb69-1" title="1">HY&lt;-<span class="kw">plm</span>(polpart_w<span class="op">~</span>totalce_w<span class="op">+</span>totalce_mn<span class="op">+</span>age<span class="op">+</span>educ<span class="op">+</span>sex<span class="op">+</span></a>
+<a class="sourceLine" id="cb69-2" title="2"><span class="st">           </span>wavv2<span class="op">+</span>wavv3,<span class="dt">data =</span>K_long,</a>
+<a class="sourceLine" id="cb69-3" title="3">         <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;wave&quot;</span>), </a>
+<a class="sourceLine" id="cb69-4" title="4">         <span class="dt">model =</span> <span class="st">&quot;random&quot;</span>) <span class="co">## </span></a>
+<a class="sourceLine" id="cb69-5" title="5"></a>
+<a class="sourceLine" id="cb69-6" title="6"><span class="kw">summary</span>(HY, <span class="dt">vcov =</span> <span class="kw">vcovHC</span>(HY))</a></code></pre></div>
 <pre><code>## Oneway (individual) effect Random Effect Model 
 ##    (Swamy-Arora&#39;s transformation)
 ## 
@@ -1249,19 +1255,19 @@ background-color: paleTurquoise;
 <ul>
 <li>First we need to <em>panel</em> the data:</li>
 </ul>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb69-1" title="1">K_longp&lt;-<span class="kw">panel_data</span>(K_long, <span class="dt">id =</span> id, <span class="dt">wave =</span> wave) </a></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb71-1" title="1">K_longp&lt;-<span class="kw">panel_data</span>(K_long, <span class="dt">id =</span> id, <span class="dt">wave =</span> wave) </a></code></pre></div>
 <ul>
 <li>The structure of the model is the following:</li>
 </ul>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r Comment1"><code class="sourceCode r"><a class="sourceLine" id="cb70-1" title="1">dv <span class="op">~</span><span class="st"> </span>varying_variables <span class="op">|</span><span class="st"> </span>invariant_variables <span class="op">|</span><span class="st"> </span>cross_level_interactions<span class="op">/</span>random effects</a></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r Comment1"><code class="sourceCode r"><a class="sourceLine" id="cb72-1" title="1">dv <span class="op">~</span><span class="st"> </span>varying_variables <span class="op">|</span><span class="st"> </span>invariant_variables <span class="op">|</span><span class="st"> </span>cross_level_interactions<span class="op">/</span>random effects</a></code></pre></div>
 <ul>
 <li><p>our varying variables are : <strong>totalce_w</strong> , and <strong>wavv2</strong> + <strong>wavv3</strong></p></li>
 <li><p>Time invariant variables: age, educ, sex</p></li>
 <li><p>Random effect: id</p></li>
 </ul>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb71-1" title="1">model &lt;-<span class="st"> </span><span class="kw">wbm</span>(polpart_w <span class="op">~</span>totalce_w <span class="op">+</span><span class="st"> </span>wavv2<span class="op">+</span>wavv3<span class="op">|</span><span class="st"> </span>totalce_w <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>educ <span class="op">+</span><span class="st"> </span>sex <span class="op">|</span><span class="st"> </span>id, <span class="dt">data =</span> K_longp)</a></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb73-1" title="1">model &lt;-<span class="st"> </span><span class="kw">wbm</span>(polpart_w <span class="op">~</span>totalce_w <span class="op">+</span><span class="st"> </span>wavv2<span class="op">+</span>wavv3<span class="op">|</span><span class="st"> </span>totalce_w <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>educ <span class="op">+</span><span class="st"> </span>sex <span class="op">|</span><span class="st"> </span>id, <span class="dt">data =</span> K_longp)</a></code></pre></div>
 <pre><code>## fixed-effect model matrix is rank deficient so dropping 2 columns / coefficients</code></pre>
-<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb73-1" title="1"><span class="kw">summary</span>(model)</a></code></pre></div>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb75-1" title="1"><span class="kw">summary</span>(model)</a></code></pre></div>
 <pre><code>## MODEL INFO:
 ## Entities: 401
 ## Time periods: 1-3
@@ -1323,10 +1329,10 @@ Y_{it}= \alpha+ \beta_1Y_{it-1}+\beta_2X_{it}+\beta_3X_{it-1}+...U_{it}+\epsilon
 <li>Second, we are going to creat a dummy variable for each year to use them as control variables using the command <code>tab</code></li>
 <li>Finally, we use the command <code>xtabond</code> to estimate the Arellano Bond (1991) model also known as “Generalized Method of Moments (GMM)”</li>
 </ul>
-<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb75-1" title="1">xtset cc_<span class="dv">2</span> yearnum</a>
-<a class="sourceLine" id="cb75-2" title="2">tab yearnum, <span class="kw">gen</span>(yrr) </a></code></pre></div>
-<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb76-1" title="1">use <span class="st">&quot;./datasets/democracy.dta&quot;</span></a></code></pre></div>
-<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb77-1" title="1">xtabond dg02i aid100 yrr3<span class="op">-</span>yrr14, noconstant twostep  </a></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb77-1" title="1">xtset cc_<span class="dv">2</span> yearnum</a>
+<a class="sourceLine" id="cb77-2" title="2">tab yearnum, <span class="kw">gen</span>(yrr) </a></code></pre></div>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb78-1" title="1">use <span class="st">&quot;./datasets/democracy.dta&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb79-1" title="1">xtabond dg02i aid100 yrr3<span class="op">-</span>yrr14, noconstant twostep  </a></code></pre></div>
 <p><strong>Output</strong></p>
 <p><img src="Stata_images/dynamic1.png" width="80%" /></p>
 </div>
@@ -1336,7 +1342,7 @@ Y_{it}= \alpha+ \beta_1Y_{it-1}+\beta_2X_{it}+\beta_3X_{it-1}+...U_{it}+\epsilon
 <li>For GMM models we can use the function <code>pgmm</code> from the package <code>plm</code>.</li>
 <li>First, lets get the data with the function <code>import</code> from the package <code>rio</code></li>
 </ul>
-<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb78-1" title="1">demo&lt;-<span class="kw">import</span>(<span class="st">&quot;./datasets/democracy.dta&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb80-1" title="1">demo&lt;-<span class="kw">import</span>(<span class="st">&quot;./datasets/democracy.dta&quot;</span>)</a></code></pre></div>
 <ul>
 <li>Now the model. The basic model follows the same estructure of the lineal models we ran before: <code>~</code> separates the dependent and independent variables</li>
 <li>In this model we have <code>aid100</code> and the lag of <code>dg02i</code> as independent variables.</li>
@@ -1344,11 +1350,11 @@ Y_{it}= \alpha+ \beta_1Y_{it-1}+\beta_2X_{it}+\beta_3X_{it-1}+...U_{it}+\epsilon
 <li>We index <code>index=c("cname","year")</code> to let R know the structure of our data.</li>
 <li>We run the model in two steps, this is the same as STATA.</li>
 </ul>
-<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb79-1" title="1">dynamic1&lt;-<span class="kw">pgmm</span>(dg02i<span class="op">~</span><span class="st"> </span>aid100<span class="op">+</span><span class="kw">lag</span>(dg02i,<span class="dv">1</span>)<span class="op">|</span><span class="st"> </span><span class="kw">lag</span>(dg02i,<span class="dv">2</span><span class="op">:</span><span class="dv">14</span>), <span class="dt">data =</span> demo,</a>
-<a class="sourceLine" id="cb79-2" title="2">         <span class="dt">index=</span><span class="kw">c</span>(<span class="st">&quot;cname&quot;</span>,<span class="st">&quot;year&quot;</span>),</a>
-<a class="sourceLine" id="cb79-3" title="3">         <span class="dt">effect =</span> <span class="st">&quot;twoways&quot;</span>, <span class="dt">model =</span> <span class="st">&quot;twosteps&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb81-1" title="1">dynamic1&lt;-<span class="kw">pgmm</span>(dg02i<span class="op">~</span><span class="st"> </span>aid100<span class="op">+</span><span class="kw">lag</span>(dg02i,<span class="dv">1</span>)<span class="op">|</span><span class="st"> </span><span class="kw">lag</span>(dg02i,<span class="dv">2</span><span class="op">:</span><span class="dv">14</span>), <span class="dt">data =</span> demo,</a>
+<a class="sourceLine" id="cb81-2" title="2">         <span class="dt">index=</span><span class="kw">c</span>(<span class="st">&quot;cname&quot;</span>,<span class="st">&quot;year&quot;</span>),</a>
+<a class="sourceLine" id="cb81-3" title="3">         <span class="dt">effect =</span> <span class="st">&quot;twoways&quot;</span>, <span class="dt">model =</span> <span class="st">&quot;twosteps&quot;</span>)</a></code></pre></div>
 <p><strong>Output</strong></p>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb80-1" title="1"><span class="kw">summary</span>(dynamic1)</a></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb82-1" title="1"><span class="kw">summary</span>(dynamic1)</a></code></pre></div>
 <pre><code>## Twoways effects Two steps model
 ## 
 ## Call:
@@ -1379,7 +1385,7 @@ Y_{it}= \alpha+ \beta_1Y_{it-1}+\beta_2X_{it}+\beta_3X_{it-1}+...U_{it}+\epsilon
 <ul>
 <li>We can also test our coefficient using <strong>robust standard errors</strong></li>
 </ul>
-<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb82-1" title="1"><span class="kw">summary</span>(dynamic1, <span class="dt">robust=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb84-1" title="1"><span class="kw">summary</span>(dynamic1, <span class="dt">robust=</span><span class="ot">TRUE</span>)</a></code></pre></div>
 <pre><code>## Twoways effects Two steps model
 ## 
 ## Call:

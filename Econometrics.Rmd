@@ -410,6 +410,13 @@ summary(fixed2way)
 
 ```
 
+As we mentioned before STATA show the intercept as part of the results of FE models, and R doesn't. However, we can obtained it using the ```plm``` package.
+
+```{r}
+within_intercept(fixed2way)
+```
+
+
 ## FE, robust standard errors (RSE). <a name="FE2"></a>
 
 We can deal with the heteroskedasticity of the error terms obtaining the "ROBUST" standard errors. Panel analysis has potential problems with the error terms produced by unit-level clustering. 
